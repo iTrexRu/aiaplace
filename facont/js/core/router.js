@@ -107,13 +107,21 @@ async function facontShowView(view) {
     return;
   }
 
+  if (view === 'titles') {
+    const main = await facontLoadPartial('titles.html');
+    if (typeof facontInitTitles === 'function') facontInitTitles();
+    return;
+  }
+
   if (view === 'carousel') {
-    await facontLoadPartial('carousel.html');
+    const main = await facontLoadPartial('carousel.html');
+    if (typeof facontInitCarousel === 'function') facontInitCarousel();
     return;
   }
 
   if (view === 'reels') {
-    await facontLoadPartial('reels.html');
+    const main = await facontLoadPartial('reels.html');
+    if (typeof facontInitReels === 'function') facontInitReels();
     return;
   }
 
@@ -121,6 +129,9 @@ async function facontShowView(view) {
     await facontLoadPartial('nlp.html');
     return;
   }
+
+  // Unknown view -> 404 placeholder
+  await facontLoadPartial('404.html');
 }
 
 // Отдельный просмотр элемента

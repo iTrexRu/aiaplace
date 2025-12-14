@@ -59,6 +59,17 @@ async function facontLoadPartial(relativePath) {
 
   const res = await fetch(url, { cache: "no-cache" });
   if (!res.ok) {
+    // If partial missing -> show friendly 404 stub
+    if (res.status === 404) {
+      try {
+        const stub = await facontLoadPartialStr('404.html');
+        main.innerHTML = stub;
+      } catch (_) {
+        main.innerHTML = '<div class="card">Ошибка загрузки: 404</div>';
+      }
+      return null;
+    }
+
     main.innerHTML = '<div class="card">Ошибка загрузки: ' + res.status + "</div>";
     return null;
   }

@@ -345,6 +345,14 @@
   color: #059669;
 }
 
+/* inline errors under textareas */
+.facont-error {
+  color: #b91c1c;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
 .facont-status-todo,
 .facont-onb-status.todo {
   color: #b91c1c;

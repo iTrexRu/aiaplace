@@ -8,7 +8,7 @@ $facont_dir = get_stylesheet_directory() . '/facont';
 $facont_uri = get_stylesheet_directory_uri() . '/facont';
 $facont_version = 0;
 
-foreach ( array( 'facont.css', 'facont.js', 'js/core/api.js', 'js/auth/auth.js', 'js/onboarding/onboarding.js', 'js/user/user.js', 'js/content/content.js', 'js/features/stories-text.js', 'js/core/router.js', 'js/core/bootstrap.js' ) as $facont_asset ) {
+foreach ( array( 'facont.css', 'facont.js', 'js/core/api.js', 'js/auth/auth.js', 'js/onboarding/onboarding.js', 'js/user/user.js', 'js/content/content.js', 'js/features/generic-generator.js', 'js/features/stories-text.js', 'js/features/titles.js', 'js/features/carousel.js', 'js/features/reels.js', 'js/core/router.js', 'js/core/bootstrap.js' ) as $facont_asset ) {
   $asset_path = $facont_dir . '/' . $facont_asset;
 
   if ( file_exists( $asset_path ) ) {
@@ -41,6 +41,7 @@ if ( ! $facont_version ) {
         <li class="facont-menu-item active" data-view="onboarding_overview">Онбординг</li>
         <li class="facont-menu-item" data-view="voice_post">Пост из голоса</li>
         <li class="facont-menu-item" data-view="stories_text">Сторис из текста</li>
+        <li class="facont-menu-item" data-view="titles">Заголовки</li>
         <li class="facont-menu-item" data-view="carousel">Карусель</li>
         <li class="facont-menu-item" data-view="reels">Reels</li>
         <li class="facont-menu-item" data-view="nlp">НЛП</li>
@@ -72,7 +73,11 @@ if ( ! $facont_version ) {
 <script src="<?php echo esc_url( $facont_uri . '/js/onboarding/onboarding.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/user/user.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/content/content.js?ver=' . $facont_version ); ?>"></script>
+<script src="<?php echo esc_url( $facont_uri . '/js/features/generic-generator.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/features/stories-text.js?ver=' . $facont_version ); ?>"></script>
+<script src="<?php echo esc_url( $facont_uri . '/js/features/titles.js?ver=' . $facont_version ); ?>"></script>
+<script src="<?php echo esc_url( $facont_uri . '/js/features/carousel.js?ver=' . $facont_version ); ?>"></script>
+<script src="<?php echo esc_url( $facont_uri . '/js/features/reels.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/core/router.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/core/bootstrap.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/facont.js?ver=' . $facont_version ); ?>"></script>
