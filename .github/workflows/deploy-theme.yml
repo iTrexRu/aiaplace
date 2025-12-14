@@ -24,7 +24,7 @@ jobs:
           # port: ${{ secrets.FTP_PORT }}
           protocol: ftp
           local-dir: ./    # корень репо = папка темы
-          server-dir: /website_8e29bb1a/wp-content/themes/blocksy-child/
+          server-dir: /wp-content/themes/blocksy-child/
           exclude: |
             **/.git*
             **/.git*/**
