@@ -1,0 +1,64 @@
+<div class="facont-login-page">
+  <div class="facont-login-card" style="text-align:center;">
+    <h1>Подтверждение Email</h1>
+    <div id="verify-status" class="muted">Проверка токена...</div>
+    <div id="verify-success" style="display:none; margin-top:20px;">
+      <p style="color:green; font-weight:bold; margin-bottom:16px;">Email успешно подтвержден!</p>
+      <button class="facont-btn-primary" onclick="window.location.href='/facont/'">Перейти в приложение</button>
+    </div>
+    <div id="verify-error" class="facont-login-error" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+  (async function() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const statusEl = document.getElementById('verify-status');
+    const successEl = document.getElementById('verify-success');
+    const errorEl = document.getElementById('verify-error');
+
+    if (!token) {
+      statusEl.style.display = 'none';
+      errorEl.textContent = 'Ошибка: Токен не найден.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    try {
+      // Используем глобальную функцию facontCallAPI, если она доступна (если загружен facont.js)
+      // Если verify.html загружается как отдельная страница, нужно подключить facont.js
+      // Но так как это SPA partial, мы предполагаем, что он грузится в #facont-root?
+      // Нет, ссылки из письма ведут на verify.html. Это должна быть ОТДЕЛЬНАЯ страница?
+      // В WordPress архитектуре, вероятно, это будет страница, которая использует шаблон page-facont.php?
+      // Или статический файл?
+      // Если это статический файл, он не будет иметь доступа к facont.js из page-facont.php.
+      // РЕШЕНИЕ: Ссылка в письме должна вести на главную страницу с параметром, например /?view=verify&token=...
+      // Но пользователь просил html файлы.
+      // Предположим, что пользователь настроит роутинг так, чтобы открывался этот HTML.
+      // Я напишу автономный скрипт внутри, но использующий тот же API URL.
+      
+      const API_URL = 'https://itrex-auto-prod.up.railway.app/webhook/d3499289-9710-47bc-bd72-8aa9ccbd1426';
+      
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cmd: 'auth_confirm_email', token })
+      });
+      
+      const data = await res.json();
+      
+      statusEl.style.display = 'none';
+      
+      if (data.ok) {
+        successEl.style.display = 'block';
+      } else {
+        throw new Error(data.message || 'Неверный или истекший токен.');
+      }
+    } catch (e) {
+      statusEl.style.display = 'none';
+      errorEl.textContent = 'Ошибка: ' + e.message;
+      errorEl.style.display = 'block';
+    }
+  })();
+</script>

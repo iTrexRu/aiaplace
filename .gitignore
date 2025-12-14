@@ -1,0 +1,13 @@
+﻿# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Node / build
+node_modules/
+dist/
+build/
+vendor/
+
+# IDE
+.idea/
+.vscode/

@@ -1,0 +1,714 @@
+
+// -----------------------------
+// ONBOARDING MODULE (extracted from facont.js)
+// -----------------------------
+
+/* -----------------------------
+   Экран: Обзор онбординга
+   (onboarding-overview.html)
+------------------------------*/
+
+async function facontInitOnboardingOverview() {
+  const root = document.getElementById('facont-onb0');
+  if (!root) return;
+
+  const statusElems = {
+    identity: root.querySelector('[data-status="identity"]'),
+    product: root.querySelector('[data-status="product"]'),
+    audience: root.querySelector('[data-status="audience"]'),
+    style: root.querySelector('[data-status="style"]')
+  };
+  const completeCard = root.querySelector('#facont-onb-complete');
+
+  function isDoneValue(value) {
+    let status = null;
+    if (value && typeof value === 'object') {
+      status = value.status || null;
+    } else {
+      status = value;
+    }
+    return status === 'ok';
+  }
+
+  function setStatus(block, value) {
+    const el = statusElems[block];
+    if (!el) return;
+
+    const done = isDoneValue(value);
+
+    el.textContent = done ? 'Готово' : 'Не заполнен';
+    el.classList.remove('done', 'todo');
+    el.classList.add(done ? 'done' : 'todo');
+
+    const card = root.querySelector('.facont-onb-block[data-block="' + block + '"]');
+    if (!card) return;
+
+    const btn = card.querySelector('[data-open-block]');
+    if (!btn) return;
+
+    btn.textContent = done ? 'Редактировать' : 'Заполнить';
+  }
+
+  let onboarding = {};
+
+  try {
+    const res = await facontCallAPI('get_settings', {});
+    const user = res && res.user ? res.user : {};
+    onboarding = user.onboarding || {};
+
+    setStatus('identity', onboarding.identity || null);
+    setStatus('product', onboarding.product || null);
+    setStatus('audience', onboarding.audience || null);
+    setStatus('style', onboarding.style || null);
+  } catch (e) {
+    ['identity', 'product', 'audience', 'style'].forEach(b => setStatus(b, null));
+  }
+
+  const allDone = ['identity', 'product', 'audience', 'style']
+    .every(b => isDoneValue(onboarding[b] || null));
+
+  if (completeCard) {
+    completeCard.style.display = allDone ? 'block' : 'none';
+  }
+
+  root.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-open-block]');
+    if (btn) {
+      const block = btn.dataset.openBlock;
+      if (block === 'identity') {
+        facontShowView('onboarding_identity');
+      } else if (block === 'product') {
+        facontShowView('onboarding_product');
+      } else if (block === 'audience') {
+        facontShowView('onboarding_audience');
+      } else if (block === 'style') {
+        facontShowView('onboarding_style');
+      }
+      return;
+    }
+
+    const fin = e.target.closest('[data-onb-complete]');
+    if (fin) {
+      const action = fin.dataset.onbComplete;
+      if (action === 'extended') {
+        alert('Расширенная настройка пока не реализована.');
+      } else if (action === 'content') {
+        alert('Создание контента пока не реализовано.');
+      }
+    }
+  });
+}
+
+/* -----------------------------
+   Блок 1: Identity
+------------------------------*/
+
+function facontInitOnboardingIdentity() {
+  const anyStep = document.querySelector('.onb1-step');
+  if (!anyStep) return;
+  const root = anyStep.parentElement || document;
+
+  const steps = [
+    'intro',
+    'q1_1',
+    'q1_2',
+    'q1_3',
+    'q1_4',
+    'q1_5',
+    'summary'
+  ];
+  let index = 0;
+
+  const total = steps.length;
+  const label = document.getElementById('onb1-progress-label');
+  const bar = document.getElementById('onb1-progress-bar-inner');
+
+  function showStep() {
+    const all = root.querySelectorAll('.onb1-step');
+    all.forEach(el => { el.style.display = 'none'; });
+
+    const currentId = 'onb1-step-' + steps[index];
+    const current = document.getElementById(currentId);
+    if (current) current.style.display = 'block';
+
+    if (label) {
+      label.textContent = 'Шаг ' + (index + 1) + ' из ' + total;
+    }
+    if (bar) {
+      const maxIndex = total - 1;
+      const percent = maxIndex > 0 ? (index / maxIndex) * 100 : 100;
+      bar.style.width = percent + '%';
+    }
+  }
+
+  function validateRequired(requireId) {
+    if (!requireId) return true;
+
+    const el = document.getElementById(requireId);
+    if (!el) return true;
+
+    const value = (el.value || '').trim();
+    if (!value) {
+      alert('Заполни поле перед тем, как идти дальше.');
+      el.focus();
+      return false;
+    }
+    return true;
+  }
+
+  function collectAnswers() {
+    return {
+      q1_1_name: (document.getElementById('onb-q1-1-name')?.value || '').trim(),
+      q1_2_role: (document.getElementById('onb-q1-2-role')?.value || '').trim(),
+      q1_3_achievements: (document.getElementById('onb-q1-3-achievements')?.value || '').trim(),
+      q1_4_what: (document.getElementById('onb-q1-4-what')?.value || '').trim(),
+      q1_5_values: (document.getElementById('onb-q1-5-values')?.value || '').trim()
+    };
+  }
+
+  async function saveBlock() {
+    const btn = document.getElementById('btn-onb1-save');
+    const busy = document.getElementById('onb1-busy');
+    const status = document.getElementById('onb1-status');
+    const finalEl = document.getElementById('onb1-final-text');
+
+    if (!btn || !busy || !status || !finalEl) return;
+
+    const answers = collectAnswers();
+
+    const lines = [];
+    Object.keys(answers).forEach(key => {
+      const val = answers[key];
+      if (val) {
+        lines.push(key + ': ' + val);
+      }
+    });
+    const inputText = lines.join('\n');
+    const finalText = (finalEl.value || '').trim() || inputText;
+
+    btn.disabled = true;
+    busy.style.display = 'inline-block';
+    status.textContent = '';
+
+    try {
+      await facontCallAPI('onboarding_save', {
+        block: 'identity',
+        answers,
+        inputText,
+        finalText,
+        meta: {
+          answers,
+          ui_version: 1,
+          saved_from: 'frontend_onboarding'
+        }
+      });
+      status.textContent = 'Сохранено.';
+    } catch (e) {
+      status.textContent = 'Ошибка: ' + (e.message || e);
+    } finally {
+      btn.disabled = false;
+      busy.style.display = 'none';
+    }
+  }
+
+  root.addEventListener('click', (e) => {
+    const nextBtn = e.target.closest('[data-onb1-next]');
+    if (nextBtn) {
+      const requireId = nextBtn.dataset.onb1Require || null;
+      if (!validateRequired(requireId)) return;
+      if (index < steps.length - 1) {
+        index += 1;
+        showStep();
+      }
+      return;
+    }
+
+    const prevBtn = e.target.closest('[data-onb1-prev]');
+    if (prevBtn) {
+      if (index > 0) {
+        index -= 1;
+        showStep();
+      }
+      return;
+    }
+
+    const saveBtn = e.target.closest('#btn-onb1-save');
+    if (saveBtn) {
+      saveBlock();
+    }
+  });
+
+  showStep();
+}
+
+/* -----------------------------
+   Блок 2: Product
+------------------------------*/
+
+function facontInitOnboardingProduct() {
+  const anyStep = document.querySelector('.onb2-step');
+  if (!anyStep) return;
+  const root = anyStep.parentElement || document;
+
+  const steps = [
+    'intro',
+    'q2_1',
+    'q2_2',
+    'q2_3',
+    'q2_4',
+    'q2_5',
+    'q2_6',
+    'summary'
+  ];
+  let index = 0;
+
+  const total = steps.length;
+  const label = document.getElementById('onb2-progress-label');
+  const bar = document.getElementById('onb2-progress-bar-inner');
+
+  function showStep() {
+    const all = root.querySelectorAll('.onb2-step');
+    all.forEach(el => { el.style.display = 'none'; });
+
+    const currentId = 'onb2-step-' + steps[index];
+    const current = document.getElementById(currentId);
+    if (current) current.style.display = 'block';
+
+    if (label) {
+      label.textContent = 'Шаг ' + (index + 1) + ' из ' + total;
+    }
+    if (bar) {
+      const maxIndex = total - 1;
+      const percent = maxIndex > 0 ? (index / maxIndex) * 100 : 100;
+      bar.style.width = percent + '%';
+    }
+  }
+
+  function validateRequired(requireKey) {
+    if (!requireKey) return true;
+
+    if (requireKey === 'price') {
+      const checked = root.querySelector('input[name="onb-q2-5-price"]:checked');
+      if (!checked) {
+        alert('Выбери примерный ценовой уровень перед продолжением.');
+        return false;
+      }
+      return true;
+    }
+
+    const el = document.getElementById(requireKey);
+    if (!el) return true;
+
+    const value = (el.value || '').trim();
+    if (!value) {
+      alert('Заполни поле перед тем, как идти дальше.');
+      el.focus();
+      return false;
+    }
+    return true;
+  }
+
+  function collectAnswers() {
+    const priceInput = root.querySelector('input[name="onb-q2-5-price"]:checked');
+    const priceLevel = priceInput ? priceInput.value : '';
+
+    return {
+      q2_1_name: (document.getElementById('onb-q2-1-name')?.value || '').trim(),
+      q2_2_what: (document.getElementById('onb-q2-2-what')?.value || '').trim(),
+      q2_3_problems: (document.getElementById('onb-q2-3-problems')?.value || '').trim(),
+      q2_4_benefits: (document.getElementById('onb-q2-4-benefits')?.value || '').trim(),
+      q2_5_price_level: priceLevel,
+      q2_6_unique: (document.getElementById('onb-q2-6-unique')?.value || '').trim()
+    };
+  }
+
+  async function saveBlock() {
+    const btn = document.getElementById('btn-onb2-save');
+    const busy = document.getElementById('onb2-busy');
+    const status = document.getElementById('onb2-status');
+    const finalEl = document.getElementById('onb2-final-text');
+
+    if (!btn || !busy || !status || !finalEl) return;
+
+    const answers = collectAnswers();
+
+    const lines = [];
+    Object.keys(answers).forEach(key => {
+      const val = answers[key];
+      if (val) {
+        lines.push(key + ': ' + val);
+      }
+    });
+    const inputText = lines.join('\n');
+    const finalText = (finalEl.value || '').trim() || inputText;
+
+    btn.disabled = true;
+    busy.style.display = 'inline-block';
+    status.textContent = '';
+
+    try {
+      await facontCallAPI('onboarding_save', {
+        block: 'product',
+        answers,
+        inputText,
+        finalText,
+        meta: {
+          answers,
+          ui_version: 1,
+          saved_from: 'frontend_onboarding'
+        }
+      });
+      status.textContent = 'Сохранено.';
+    } catch (e) {
+      status.textContent = 'Ошибка: ' + (e.message || e);
+    } finally {
+      btn.disabled = false;
+      busy.style.display = 'none';
+    }
+  }
+
+  root.addEventListener('click', (e) => {
+    const nextBtn = e.target.closest('[data-onb2-next]');
+    if (nextBtn) {
+      const requireKey = nextBtn.dataset.onb2Require || null;
+      if (!validateRequired(requireKey)) return;
+      if (index < steps.length - 1) {
+        index += 1;
+        showStep();
+      }
+      return;
+    }
+
+    const prevBtn = e.target.closest('[data-onb2-prev]');
+    if (prevBtn) {
+      if (index > 0) {
+        index -= 1;
+        showStep();
+      }
+      return;
+    }
+
+    const saveBtn = e.target.closest('#btn-onb2-save');
+    if (saveBtn) {
+      saveBlock();
+    }
+  });
+
+  showStep();
+}
+
+/* -----------------------------
+   Блок 3: Audience
+------------------------------*/
+
+function facontInitOnboardingAudience() {
+  const anyStep = document.querySelector('.onb3-step');
+  if (!anyStep) return;
+  const root = anyStep.parentElement || document;
+
+  const steps = [
+    'intro',
+    'q3_1',
+    'q3_2',
+    'q3_3',
+    'summary'
+  ];
+  let index = 0;
+
+  const total = steps.length;
+  const label = document.getElementById('onb3-progress-label');
+  const bar = document.getElementById('onb3-progress-bar-inner');
+
+  function showStep() {
+    const all = root.querySelectorAll('.onb3-step');
+    all.forEach(el => { el.style.display = 'none'; });
+
+    const currentId = 'onb3-step-' + steps[index];
+    const current = document.getElementById(currentId);
+    if (current) current.style.display = 'block';
+
+    if (label) {
+      label.textContent = 'Шаг ' + (index + 1) + ' из ' + total;
+    }
+    if (bar) {
+      const maxIndex = total - 1;
+      const percent = maxIndex > 0 ? (index / maxIndex) * 100 : 100;
+      bar.style.width = percent + '%';
+    }
+  }
+
+  function validateRequired(requireId) {
+    if (!requireId) return true;
+
+    const el = document.getElementById(requireId);
+    if (!el) return true;
+
+    const value = (el.value || '').trim();
+    if (!value) {
+      alert('Заполни поле перед тем, как идти дальше.');
+      el.focus();
+      return false;
+    }
+    return true;
+  }
+
+  function collectAnswers() {
+    return {
+      q3_1_who: (document.getElementById('onb-q3-1-who')?.value || '').trim(),
+      q3_2_problems: (document.getElementById('onb-q3-2-problems')?.value || '').trim(),
+      q3_3_needs: (document.getElementById('onb-q3-3-needs')?.value || '').trim()
+    };
+  }
+
+  async function saveBlock() {
+    const btn = document.getElementById('btn-onb3-save');
+    const busy = document.getElementById('onb3-busy');
+    const status = document.getElementById('onb3-status');
+    const finalEl = document.getElementById('onb3-final-text');
+
+    if (!btn || !busy || !status || !finalEl) return;
+
+    const answers = collectAnswers();
+
+    const lines = [];
+    Object.keys(answers).forEach(key => {
+      const val = answers[key];
+      if (val) {
+        lines.push(key + ': ' + val);
+      }
+    });
+    const inputText = lines.join('\n');
+    const finalText = (finalEl.value || '').trim() || inputText;
+
+    btn.disabled = true;
+    busy.style.display = 'inline-block';
+    status.textContent = '';
+
+    try {
+      await facontCallAPI('onboarding_save', {
+        block: 'audience',
+        answers,
+        inputText,
+        finalText,
+        meta: {
+          answers,
+          ui_version: 1,
+          saved_from: 'frontend_onboarding'
+        }
+      });
+      status.textContent = 'Сохранено.';
+    } catch (e) {
+      status.textContent = 'Ошибка: ' + (e.message || e);
+    } finally {
+      btn.disabled = false;
+      busy.style.display = 'none';
+    }
+  }
+
+  root.addEventListener('click', (e) => {
+    const nextBtn = e.target.closest('[data-onb3-next]');
+    if (nextBtn) {
+      const requireId = nextBtn.dataset.onb3Require || null;
+      if (!validateRequired(requireId)) return;
+      if (index < steps.length - 1) {
+        index += 1;
+        showStep();
+      }
+      return;
+    }
+
+    const prevBtn = e.target.closest('[data-onb3-prev]');
+    if (prevBtn) {
+      if (index > 0) {
+        index -= 1;
+        showStep();
+      }
+      return;
+    }
+
+    const saveBtn = e.target.closest('#btn-onb3-save');
+    if (saveBtn) {
+      saveBlock();
+    }
+  });
+
+  showStep();
+}
+
+/* -----------------------------
+   Блок 4: Style
+------------------------------*/
+
+function facontInitOnboardingStyle() {
+  const anyStep = document.querySelector('.onb4-step');
+  if (!anyStep) return;
+  const root = anyStep.parentElement || document;
+
+  const steps = [
+    'intro',
+    'q4_1',
+    'q4_2',
+    'process',
+    'result',
+    'full'
+  ];
+  let index = 0;
+
+  const total = steps.length;
+  const label = document.getElementById('onb4-progress-label');
+  const bar = document.getElementById('onb4-progress-bar-inner');
+  const statusEl = document.getElementById('onb4-status');
+  const busyEl = document.getElementById('onb4-busy');
+
+  function showStep() {
+    const all = root.querySelectorAll('.onb4-step');
+    all.forEach(el => { el.style.display = 'none'; });
+
+    const currentId = 'onb4-step-' + steps[index];
+    const current = document.getElementById(currentId);
+    if (current) current.style.display = 'block';
+
+    if (label) {
+      label.textContent = 'Шаг ' + (index + 1) + ' из ' + total;
+    }
+    if (bar) {
+      const maxIndex = total - 1;
+      const percent = maxIndex > 0 ? (index / maxIndex) * 100 : 100;
+      bar.style.width = percent + '%';
+    }
+  }
+
+  function validateRequired(id) {
+    if (!id) return true;
+    const el = document.getElementById(id);
+    if (!el) return true;
+    const value = (el.value || '').trim();
+    if (!value) {
+      alert('Заполни поле перед тем, как идти дальше.');
+      el.focus();
+      return false;
+    }
+    return true;
+  }
+
+  function collectTexts() {
+    return {
+      text1: (document.getElementById('onb-q4-1-text')?.value || '').trim(),
+      text2: (document.getElementById('onb-q4-2-text')?.value || '').trim(),
+      text3: (document.getElementById('onb-q4-3-text')?.value || '').trim()
+    };
+  }
+
+  async function runAnalysis() {
+    const texts = collectTexts();
+    if (!texts.text1 || !texts.text2) {
+      alert('Нужны минимум два текста для анализа.');
+      return;
+    }
+
+    if (statusEl) statusEl.textContent = '';
+    if (busyEl) busyEl.style.display = 'inline-block';
+
+    index = steps.indexOf('process');
+    if (index < 0) index = 3;
+    showStep();
+
+    try {
+      const res = await facontCallAPI('style_analyze', {
+        text1: texts.text1,
+        text2: texts.text2,
+        text3: texts.text3
+      });
+
+      const summary = (res && res.summary) || '[краткое резюме стиля пока не сформировано]';
+      const full = (res && res.full) || (res && res.analysis) || '';
+
+      const summaryEl = document.getElementById('onb4-summary-short');
+      const fullEl = document.getElementById('onb4-full-analysis');
+
+      if (summaryEl) summaryEl.textContent = summary;
+      if (fullEl) fullEl.textContent = full || summary;
+
+      const inputText = [texts.text1, texts.text2, texts.text3].filter(Boolean).join('\n\n-----\n\n');
+      const finalText = (res && res.stylePrompt) || full || summary;
+
+      await facontCallAPI('onboarding_save', {
+        block: 'style',
+        answers: texts,
+        inputText,
+        finalText,
+        meta: {
+          summary,
+          full,
+          stylePrompt: res && res.stylePrompt
+        }
+      });
+
+      if (statusEl) statusEl.textContent = 'Анализ завершён.';
+
+      index = steps.indexOf('result');
+      if (index < 0) index = 4;
+      showStep();
+    } catch (e) {
+      if (statusEl) statusEl.textContent = 'Ошибка анализа: ' + (e.message || e);
+      index = steps.indexOf('q4_2');
+      if (index < 0) index = 2;
+      showStep();
+    } finally {
+      if (busyEl) busyEl.style.display = 'none';
+    }
+  }
+
+  root.addEventListener('click', (e) => {
+    const nextBtn = e.target.closest('[data-onb4-next]');
+    if (nextBtn) {
+      const requireId = nextBtn.dataset.onb4Require || null;
+      if (!validateRequired(requireId)) return;
+      if (index < steps.length - 1) {
+        index += 1;
+        showStep();
+      }
+      return;
+    }
+
+    const prevBtn = e.target.closest('[data-onb4-prev]');
+    if (prevBtn) {
+      if (index > 0) {
+        index -= 1;
+        showStep();
+      }
+      return;
+    }
+
+    const analyzeBtn = e.target.closest('[data-onb4-analyze]');
+    if (analyzeBtn) {
+      runAnalysis();
+      return;
+    }
+
+    const fullBtn = e.target.closest('[data-onb4-full]');
+    if (fullBtn) {
+      const idx = steps.indexOf('full');
+      if (idx >= 0) {
+        index = idx;
+        showStep();
+      }
+      return;
+    }
+
+    const finishBtn = e.target.closest('[data-onb4-finish]');
+    if (finishBtn) {
+      facontShowView('onboarding_overview');
+      return;
+    }
+  });
+
+  showStep();
+}
+
+// === Export ===
+window.facontInitOnboardingOverview = facontInitOnboardingOverview;
+window.facontInitOnboardingIdentity = facontInitOnboardingIdentity;
+window.facontInitOnboardingProduct = facontInitOnboardingProduct;
+window.facontInitOnboardingAudience = facontInitOnboardingAudience;
+window.facontInitOnboardingStyle = facontInitOnboardingStyle;

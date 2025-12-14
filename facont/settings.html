@@ -1,0 +1,86 @@
+<div class="card">
+  <h1>Настройки</h1>
+  <p class="muted">Базовые настройки учётной записи.</p>
+</div>
+
+<div class="card">
+  <h2>Основная информация</h2>
+
+  <div class="form-group">
+    <label for="set-user-id">ID пользователя</label>
+    <input type="text" id="set-user-id" disabled />
+  </div>
+
+  <div class="form-group">
+    <label for="set-email">Email</label>
+    <input type="email" id="set-email" />
+  </div>
+
+  <div class="form-group">
+    <label for="set-first-name">Имя</label>
+    <input type="text" id="set-first-name" />
+  </div>
+
+  <div class="form-group">
+    <label for="set-last-name">Фамилия</label>
+    <input type="text" id="set-last-name" />
+  </div>
+
+  <div class="form-group">
+    <label for="set-lang">Язык постов</label>
+    <select id="set-lang">
+      <option value="">Выбрать</option>
+      <option value="ru">Русский</option>
+      <option value="en">Английский</option>
+      <option value="he">Иврит</option>
+      <option value="fr">Французский</option>
+      <option value="es">Испанский</option>
+    </select>
+  </div>
+
+  <h2>Интеграции</h2>
+
+  <div class="form-group">
+    <label for="set-telegram-account">Телеграм-аккаунт (без @)</label>
+    <input type="text" id="set-telegram-account" placeholder="username" />
+  </div>
+
+  <div class="form-group">
+    <label for="set-openai-key">OpenAI API Key (необязательно)</label>
+    <div class="input-with-toggle">
+      <input type="password" id="set-openai-key" placeholder="sk-..." />
+      <button type="button" class="btn secondary" data-toggle-pass="#set-openai-key">Показать</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="set-gemini-key">Gemini API Key (необязательно)</label>
+    <div class="input-with-toggle">
+      <input type="password" id="set-gemini-key" />
+      <button type="button" class="btn secondary" data-toggle-pass="#set-gemini-key">Показать</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="set-claude-key">Claude API Key (необязательно)</label>
+    <div class="input-with-toggle">
+      <input type="password" id="set-claude-key" />
+      <button type="button" class="btn secondary" data-toggle-pass="#set-claude-key">Показать</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="set-preferred-ai">Использовать ИИ:</label>
+    <select id="set-preferred-ai">
+      <option value="openai">OpenAI ChatGPT</option>
+      <option value="gemini">Google Gemini</option>
+      <option value="claude">Claude</option>
+    </select>
+  </div>
+
+  <div style="margin-top:12px;">
+    <button class="btn" id="btn-save-user">Сохранить</button>
+    <span id="save-user-busy" style="display:none" class="spinner"></span>
+    <div id="save-user-status" class="facont-status"></div>
+  </div>
+</div>

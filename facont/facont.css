@@ -1,0 +1,451 @@
+/* базовый сброс внутри приложения */
+.facont-app * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* -----------------------------
+   Экран логина
+------------------------------*/
+
+.facont-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  padding: 24px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.facont-login-card {
+  width: min(480px, 100%);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  padding: 32px;
+}
+
+.facont-login-card h1 {
+  margin: 0 0 12px;
+  font-size: 24px;
+  color: #111827;
+}
+
+.facont-login-card p {
+  margin: 0 0 20px;
+  color: #6b7280;
+}
+
+.facont-login-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.facont-login-form input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: #f9fafb;
+}
+
+.facont-login-form input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  background: #fff;
+}
+
+.facont-login-form .facont-field {
+  margin-bottom: 16px;
+}
+
+.facont-login-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.facont-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.facont-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 36px rgba(37, 99, 235, 0.42);
+}
+
+.facont-btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+.facont-login-error {
+  margin-top: 12px;
+  color: #b91c1c;
+  font-weight: 600;
+  min-height: 20px;
+}
+
+.facont-login-hint {
+  margin-top: 12px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* каркас приложения */
+.facont-app {
+  display: flex;
+  min-height: 100vh;
+  background: #f3f4f6;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #111827;
+}
+
+/* сайдбар слева */
+.facont-sidebar {
+  width: 260px;
+  background: #111827;
+  color: #e5e7eb;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.facont-logo {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+
+/* меню в сайдбаре */
+.facont-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.facont-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #e5e7eb;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.facont-menu-item:hover {
+  background: #1f2937;
+}
+
+.facont-menu-item.active {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+/* блок с подсказками в сайдбаре */
+.facont-tg-box {
+  margin-top: auto;
+  padding: 10px;
+  border-radius: 6px;
+  background: #1f2937;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #d1d5db;
+}
+
+.facont-tg-box a {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+/* правая часть */
+.facont-main {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background: #f9fafb;
+}
+
+/* карточки
+   используется и .card (онбординг), и .facont-card (обзор онбординга) */
+.card,
+.facont-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px 18px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  margin-bottom: 16px;
+}
+
+.card h1,
+.facont-card h1 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.card h2,
+.facont-card h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.card p,
+.facont-card p,
+.muted,
+.facont-subtitle {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+/* текстовые подсказки */
+.muted {
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* примеры вопросов */
+.onb-question-example {
+  font-size: 13px;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+/* поля ввода, которые есть в онбординге и настройках */
+.card input[type="text"],
+.card input[type="url"],
+.card textarea,
+.facont-card input[type="text"],
+.facont-card input[type="url"],
+.facont-card textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  font-family: inherit;
+  background: #ffffff;
+}
+
+.card textarea,
+.facont-card textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.card input:focus,
+.card textarea:focus,
+.facont-card input:focus,
+.facont-card textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+}
+
+/* кнопки
+   в html используются .btn и .facont-btn */
+.btn,
+.facont-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #2563eb;
+  color: #ffffff;
+  gap: 6px;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.btn:hover,
+.facont-btn:hover {
+  background: #1d4ed8;
+}
+
+.btn:active,
+.facont-btn:active {
+  transform: translateY(1px);
+}
+
+/* вторичная кнопка */
+.btn.secondary,
+.facont-btn.secondary {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.btn.secondary:hover,
+.facont-btn.secondary:hover {
+  background: #d1d5db;
+}
+
+/* спиннер */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid #d1d5db;
+  border-top-color: #2563eb;
+  animation: facont-spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+
+@keyframes facont-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* статусные подписи */
+.facont-status,
+.facont-onb-status {
+  font-size: 13px;
+  margin-top: 6px;
+  color: #6b7280;
+}
+
+.facont-status-done,
+.facont-onb-status.done {
+  color: #059669;
+}
+
+.facont-status-todo,
+.facont-onb-status.todo {
+  color: #b91c1c;
+}
+
+/* прогресс онбординга (блоки 1 и 2) */
+.onb1-progress {
+  margin-bottom: 16px;
+}
+
+.onb1-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+.onb1-progress-bar {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.onb1-progress-bar-inner {
+  height: 6px;
+  background: #2563eb;
+  width: 0;
+  transition: width 0.2s ease;
+}
+
+/* шаги онбординга
+   сами шаги переключаются через display:none в js */
+.onb1-step,
+.onb2-step,
+.onb3-step,
+.onb4-step {
+  margin-top: 8px;
+}
+
+/* обзор онбординга */
+.facont-onb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.facont-onb-block h2 {
+  margin-bottom: 4px;
+}
+
+/* настройки - сетка */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.col {
+  flex: 1 1 0;
+  min-width: 180px;
+}
+
+/* поле только для чтения в настройках */
+#set-company-info {
+  min-height: 160px;
+}
+
+/* адаптив */
+@media (max-width: 900px) {
+  .facont-app {
+    flex-direction: column;
+  }
+
+  .facont-sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .facont-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .facont-main {
+    padding: 16px;
+  }
+
+  .card,
+  .facont-card {
+    padding: 16px 14px;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+}

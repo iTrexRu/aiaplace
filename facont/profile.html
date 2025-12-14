@@ -1,0 +1,64 @@
+<div class="card">
+  <h1>Профиль</h1>
+  <p class="muted">
+    Здесь хранится информация о твоём бизнесе, стиле и ссылках на ресурсы.
+  </p>
+</div>
+
+<div class="card">
+  <h2>Информация о моем бизнесе</h2>
+  <p class="muted">
+    Эта информация подтягивается из базы (например, после сценария «Собрать информацию»).
+  </p>
+
+  <div style="margin-bottom:16px; border-bottom:1px solid #eee; padding-bottom:16px;">
+    <label style="display:block; margin-bottom:4px; font-weight:600; font-size:14px;">Ссылка на сайт или Google Doc</label>
+    <div style="display:flex; gap:8px;">
+      <input type="text" id="prof-collect-url" placeholder="https://..." style="flex:1;">
+      <button class="btn" id="btn-collect-info">Собрать информацию</button>
+    </div>
+    <p class="muted" style="margin-top:6px; font-size:13px; color:#b91c1c;">
+      Внимание: это заменит текст, который вы сейчас видите в поле Информация о моем бизнесе.
+    </p>
+    <div style="margin-top:8px;">
+        <span id="collect-info-busy" style="display:none" class="spinner"></span>
+        <div id="collect-info-status" class="facont-status"></div>
+    </div>
+  </div>
+
+  <textarea id="prof-company-info" readonly></textarea>
+</div>
+
+<div class="card">
+  <h2>Мой стиль</h2>
+  <p class="muted">
+    Здесь хранится текущий промт стиля, который будет использоваться для генерации контента.
+  </p>
+  <textarea id="prof-style-prompt"></textarea>
+  <div style="margin-top:10px;">
+    <button class="btn" id="btn-save-style-profile">Сохранить стиль</button>
+    <span id="save-style-busy" style="display:none" class="spinner"></span>
+    <div id="save-style-status" class="facont-status"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Ссылки на мои ресурсы</h2>
+  <p class="muted">
+    Добавь ссылки на сайт, соцсети и другие важные площадки.
+  </p>
+
+  <div style="margin-bottom:8px;">
+    <button class="btn secondary" id="btn-add-link">Добавить</button>
+  </div>
+
+  <div id="facont-links-list">
+    <!-- сюда JS будет добавлять строки ссылок -->
+  </div>
+
+  <div style="margin-top:12px;">
+    <button class="btn" id="btn-save-links">Сохранить</button>
+    <span id="save-links-busy" style="display:none" class="spinner"></span>
+    <div id="save-links-status" class="facont-status"></div>
+  </div>
+</div>

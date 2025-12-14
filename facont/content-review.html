@@ -1,0 +1,24 @@
+<div class="facont-card">
+  <div style="margin-bottom:16px;">
+    <button class="facont-btn secondary" onclick="facontShowView('content_list')">← Назад к списку</button>
+  </div>
+
+  <h1 id="review-title">Просмотр контента</h1>
+  <p class="muted" id="review-date"></p>
+  
+  <div style="margin-top:24px;">
+    <label class="facont-label" style="display:block; margin-bottom:8px;">Транскрипция (исходный голос):</label>
+    <div id="review-transcription" style="padding:12px; background:#f9f9f9; border-radius:8px; margin-bottom:24px; font-size:14px; color:#555;">
+      Загрузка...
+    </div>
+    
+    <label class="facont-label" style="display:block; margin-bottom:8px;">Результат генерации:</label>
+    <textarea id="review-content" class="facont-input" style="min-height:300px; line-height:1.5;"></textarea>
+  </div>
+  
+  <div style="margin-top:24px; display:flex; gap:12px; align-items:center;">
+    <button id="btn-save-content" class="facont-btn-primary">Сохранить изменения</button>
+    <span id="save-content-status" style="margin-left:12px; color:#666;"></span>
+    <div id="save-content-busy" class="facont-spinner" style="display:none;"></div>
+  </div>
+</div>

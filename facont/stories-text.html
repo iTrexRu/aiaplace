@@ -1,0 +1,78 @@
+
+<div class="card" id="stories-text-container">
+
+  <h1>Сторис из текста</h1>
+
+  <div id="stories-instruction-block" class="card" style="margin-top:20px;">
+    <h2>Инструкция</h2>
+
+    <h3>Что нужно сделать</h3>
+    <p>Вставьте любой свой текст: пост, статью, заметки, черновик.<br>Нажмите кнопку генерации сторис.</p>
+
+    <h3>Что вы получите через 1 минуту</h3>
+    <p>3 разных сценария сторис под один и тот же текст:</p>
+    <ul>
+      <li>готовая разбивка на экраны с текстом для каждой сторис,</li>
+      <li>варианты интерактивов (вопросы, опросы, квизы – с юмором и без),</li>
+      <li>подсказки: что написать титром, а что лучше сказать голосом,</li>
+      <li>идеи для визуалов и советы, как увеличить охваты и вовлечённость.</li>
+    </ul>
+
+    <p>Вы даёте сырой текст – "Фабрика" пишет три готовых формата сторис, из которых можно сразу собирать публикацию.</p>
+
+    <textarea id="stories-text-input" class="facont-textarea" placeholder="Вставьте ваш текст здесь..." style="margin-top:15px;"></textarea>
+
+    <button id="stories-generate-btn" class="facont-btn primary" style="margin-top:15px;">Создать сторис</button>
+  </div>
+
+  <div id="stories-result-block" class="card" style="margin-top:30px; display:none;">
+    <h1>Сторис из текста</h1>
+
+    <div style="margin-bottom:20px;">
+      <strong>&#128142; Что вы получили:</strong><br><br>
+
+      &#8594; Серия из 5–7 сторис с интерактивом<br>
+      &#8594; Опросы и вопросы для вовлечения встроены<br>
+      &#8594; Время создания: 2 минуты вместо 40–60 минут<br>
+      &#8594; Готово к публикации прямо сейчас<br><br>
+
+      &#128202; SMM-специалист берёт €30–50 за такие сторис<br><br>
+
+      &#128293; Сторис с интерактивом:<br>
+      &#8594; Досматривают на 60% чаще<br>
+      &#8594; Охваты выше на 35–45%<br>
+      &#8594; Люди возвращаются на следующий день<br>
+    </div>
+
+    <textarea id="stories-result-text" class="facont-textarea" style="height:240px;"></textarea>
+
+    <button id="stories-save-result" class="facont-btn primary" style="margin-top:15px;">Сохранить</button>
+
+    <div id="stories-actions" style="display:none; margin-top:30px; flex-direction: column;">
+      
+      <div style="margin-bottom:20px;">
+        <strong>&#128640; Усилить ещё больше:</strong><br><br>
+
+        &#8594; Создать карусель для ленты<br>
+        <span style="color:#666; font-size:0.9em;">&#8594; Охваты каруселей на 65% выше обычных постов</span><br><br>
+
+        &#8594; Сделать Reels на базе той же идеи<br>
+        <span style="color:#666; font-size:0.9em;">&#8594; Видео даёт x3-5 к охватам</span><br><br>
+
+        &#8594; Добавить НЛП для подсознательного воздействия<br>
+        <span style="color:#666; font-size:0.9em;">&#8594; Вовлечение +35%, но текст читается естественно</span>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="facont-btn secondary" data-open="carousel">&#128202; Карусель</button>
+        <button class="facont-btn secondary" data-open="reels">&#127916; Reels</button>
+        <button class="facont-btn secondary" data-open="nlp">&#129504; НЛП</button>
+      </div>
+
+      <div style="margin-top:20px;">
+        <a href="#" id="stories-new-link">Создать что-то новое &#8594;</a>
+      </div>
+    </div>
+  </div>
+
+</div>
