@@ -23,14 +23,32 @@ function facontInitContentList() {
     try {
       // Запрашиваем список у n8n
       const res = await facontCallAPI('content-list', {});
-      // Ожидаем массив items: [{ id, created_at, generated_content, ... }]
-      const items = (res && res.items) ? res.items : [];
+
+      // Нормализация формата ответа:
+      // - ожидаемый формат: { items: [...] }
+      // - иногда приходит массив: [ { ok: true, items: [...] } ]
+      const rawItems =
+        (res && typeof res === 'object' && !Array.isArray(res) && Array.isArray(res.items))
+          ? res.items
+          : (Array.isArray(res) && res[0] && Array.isArray(res[0].items))
+            ? res[0].items
+            : [];
+
+      // Убираем «пустышки» (когда backend возвращает items с пустыми полями)
+      const items = (rawItems || []).filter((it) => {
+        const generated = (it && it.generated_content ? String(it.generated_content) : '').trim();
+        const transcription = (it && it.transcription ? String(it.transcription) : '').trim();
+        const hasAnyText = !!(generated || transcription);
+        const hasMeta = !!(it && (it.id || it.created_at));
+        // если есть метаданные или есть хоть какой-то текст — считаем запись реальной
+        return hasMeta || hasAnyText;
+      });
 
       if (tbody) {
         tbody.innerHTML = '';
         if (items.length === 0) {
           if (status) {
-            status.textContent = 'Нет созданного контента.';
+            status.textContent = 'Вы еще не делали контент. Как только сделаете, он появится здесь';
             status.style.display = 'block';
           }
           return;
@@ -66,8 +84,19 @@ function facontInitContentList() {
       if (table) table.style.display = 'table';
 
     } catch (e) {
+      const msg = (e && e.message ? String(e.message) : String(e || '')).trim();
+
+      // n8n в сценарии «контента нет» иногда возвращает 500 Workflow execution failed.
+      // Это не критичная ошибка для пользователя — показываем empty-state.
+      const isEmptyWorkflowFailure =
+        /HTTP\s*500/i.test(msg) && /Workflow execution failed/i.test(msg);
+
       if (status) {
-        status.textContent = 'Ошибка загрузки: ' + (e.message || e);
+        if (isEmptyWorkflowFailure) {
+          status.textContent = 'Вы еще не делали контент. Как только сделаете, он появится здесь';
+        } else {
+          status.textContent = 'Ошибка загрузки: ' + msg;
+        }
         status.style.display = 'block';
       }
     }
