@@ -34,25 +34,29 @@ function facontInitContentList() {
             ? res[0].items
             : [];
 
-      // Убираем «пустышки» (когда backend возвращает items с пустыми полями)
+      // В "Готовом контенте" показываем только готовые записи:
+      // если есть запись "в обработке" (generated_content пустой) — не отображаем её здесь.
       const items = (rawItems || []).filter((it) => {
         const generated = (it && it.generated_content ? String(it.generated_content) : '').trim();
-        const transcription = (it && it.transcription ? String(it.transcription) : '').trim();
-        const hasAnyText = !!(generated || transcription);
-        const hasMeta = !!(it && (it.id || it.created_at));
-        // если есть метаданные или есть хоть какой-то текст — считаем запись реальной
-        return hasMeta || hasAnyText;
+        return generated.length > 0;
       });
 
       if (tbody) {
         tbody.innerHTML = '';
+
+        // Empty-state: нет готового контента
         if (items.length === 0) {
           if (status) {
             status.textContent = 'Вы еще не делали контент. Как только сделаете, он появится здесь';
             status.style.display = 'block';
           }
+          // таблицу оставляем скрытой
+          if (table) table.style.display = 'none';
           return;
         }
+
+        // Есть готовый контент -> статус прячем
+        if (status) status.style.display = 'none';
 
         items.forEach(item => {
           const row = document.createElement('tr');
@@ -64,9 +68,8 @@ function facontInitContentList() {
           const text = item.generated_content || '';
           const snippet = text.length > 60 ? text.substring(0, 60) + '...' : text;
           
-          // Статус (если есть поле status, иначе по наличию текста)
-          const isDone = !!text;
-          const statusLabel = isDone ? '<span style="color:green">Готово</span>' : '<span style="color:orange">В обработке</span>';
+          // В этом списке показываем только готовые записи
+          const statusLabel = '<span style="color:green">Готово</span>';
 
           row.innerHTML = `
             <td style="padding:12px; border-bottom:1px solid #eee;">${dateStr}</td>
