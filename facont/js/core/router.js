@@ -2,8 +2,59 @@
 // ROUTER MODULE (extracted from facont.js)
 // -----------------------------
 
+function facontGetRouteFromLocation() {
+  const params = new URLSearchParams(window.location.search);
+  const view = params.get('view') || '';
+  const id = params.get('id') || '';
+  return { view, id };
+}
+
+function facontBuildUrlForRoute(route) {
+  const url = new URL(window.location.href);
+  const params = url.searchParams;
+
+  if (route && route.view) {
+    params.set('view', route.view);
+  } else {
+    params.delete('view');
+  }
+
+  // ID актуален только для content_review
+  if (route && route.view === 'content_review' && route.id) {
+    params.set('id', route.id);
+  } else {
+    params.delete('id');
+  }
+
+  url.search = params.toString();
+  return url.toString();
+}
+
+function facontSyncHistory(route, options = {}) {
+  const { replace = false, fromPopstate = false } = options || {};
+  if (fromPopstate) return;
+
+  const url = facontBuildUrlForRoute(route);
+  const state = { ...(route || {}) };
+
+  if (replace) {
+    history.replaceState(state, '', url);
+  } else {
+    history.pushState(state, '', url);
+  }
+}
+
 // Основная функция отображения экранов
-async function facontShowView(view) {
+async function facontShowView(view, options = {}) {
+  const opts = options || {};
+
+  // Safety: content_review без id -> отправляем на список
+  if (view === 'content_review' && !opts.id) {
+    view = 'content_list';
+  }
+
+  facontSyncHistory({ view, id: opts.id }, opts);
+
   const sidebar = document.querySelector('.facont-sidebar');
   if (sidebar) {
     sidebar.querySelectorAll('.facont-menu-item')
@@ -77,7 +128,7 @@ async function facontShowView(view) {
 
   if (view === 'content_review') {
     const main = await facontLoadPartial('content-review.html');
-    if (main) facontInitContentReview();
+    if (main) facontInitContentReview(opts.id);
     return;
   }
 
@@ -135,11 +186,12 @@ async function facontShowView(view) {
 }
 
 // Отдельный просмотр элемента
-async function facontShowReview(contentId) {
-  const main = await facontLoadPartial('content-review.html');
-  if (main) facontInitContentReview(contentId);
+async function facontShowReview(contentId, options = {}) {
+  // Делегируем в facontShowView, чтобы URL/History синхронизировались в одном месте
+  return facontShowView('content_review', { ...(options || {}), id: contentId });
 }
 
 // Экспорт в глобальную область
+window.facontGetRouteFromLocation = facontGetRouteFromLocation;
 window.facontShowView = facontShowView;
 window.facontShowReview = facontShowReview;

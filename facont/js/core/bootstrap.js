@@ -17,7 +17,7 @@ function facontRenderApp() {
     sidebar.addEventListener('click', (e) => {
       const item = e.target.closest('.facont-menu-item');
       if (!item) return;
-      
+
       const action = item.dataset.action;
       if (action === 'logout') {
         facontLogout();
@@ -29,8 +29,37 @@ function facontRenderApp() {
     });
   }
 
-  // Load default view
-  facontShowView('onboarding_overview');
+  // Enable browser Back/Forward for internal views
+  window.addEventListener('popstate', (event) => {
+    const state = event && event.state ? event.state : null;
+
+    const routeFromState = state && state.view ? state : null;
+    const routeFromUrl = (typeof facontGetRouteFromLocation === 'function')
+      ? facontGetRouteFromLocation()
+      : { view: '', id: '' };
+
+    const view = (routeFromState && routeFromState.view) ? routeFromState.view : routeFromUrl.view;
+    const id = (routeFromState && routeFromState.id) ? routeFromState.id : routeFromUrl.id;
+
+    // If no internal route -> go to default
+    if (!view) {
+      facontShowView('onboarding_overview', { replace: true, fromPopstate: true });
+      return;
+    }
+
+    facontShowView(view, { id, fromPopstate: true });
+  });
+
+  // Initial view: from URL if present, otherwise default
+  const initial = (typeof facontGetRouteFromLocation === 'function')
+    ? facontGetRouteFromLocation()
+    : { view: '', id: '' };
+
+  if (initial && initial.view) {
+    facontShowView(initial.view, { id: initial.id, replace: true });
+  } else {
+    facontShowView('onboarding_overview', { replace: true });
+  }
 }
 
 // === Auth Init ===
