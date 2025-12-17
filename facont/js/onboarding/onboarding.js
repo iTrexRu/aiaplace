@@ -157,13 +157,24 @@ function facontInitOnboardingIdentity() {
     return true;
   }
 
-  function collectAnswers() {
+  function collectAnswersRaw() {
     return {
       q1_1_name: (document.getElementById('onb-q1-1-name')?.value || '').trim(),
       q1_2_role: (document.getElementById('onb-q1-2-role')?.value || '').trim(),
       q1_3_achievements: (document.getElementById('onb-q1-3-achievements')?.value || '').trim(),
       q1_4_what: (document.getElementById('onb-q1-4-what')?.value || '').trim(),
       q1_5_values: (document.getElementById('onb-q1-5-values')?.value || '').trim()
+    };
+  }
+
+  function collectAnswers() {
+    const raw = collectAnswersRaw();
+    return {
+      q1_1_name: ['Имя', raw.q1_1_name],
+      q1_2_role: ['Профессиональная роль', raw.q1_2_role],
+      q1_3_achievements: ['Достижения', raw.q1_3_achievements],
+      q1_4_what: ['Чем занимаешься', raw.q1_4_what],
+      q1_5_values: ['Ценности', raw.q1_5_values]
     };
   }
 
@@ -201,7 +212,8 @@ function facontInitOnboardingIdentity() {
     const finalEl = document.getElementById('onb1-final-text');
 
     const answers = collectAnswers();
-    const inputText = buildInputTextFromAnswers(answers);
+    const answersRaw = collectAnswersRaw();
+    const inputText = buildInputTextFromAnswers(answersRaw);
 
     if (status) status.textContent = '';
     if (busy) busy.style.display = 'inline-block';
@@ -246,7 +258,8 @@ function facontInitOnboardingIdentity() {
     if (!btn || !busy || !status || !finalEl) return;
 
     const answers = collectAnswers();
-    const inputText = buildInputTextFromAnswers(answers);
+    const answersRaw = collectAnswersRaw();
+    const inputText = buildInputTextFromAnswers(answersRaw);
     const finalText = (finalEl.value || '').trim() || inputText;
 
     btn.disabled = true;
@@ -385,7 +398,7 @@ function facontInitOnboardingProduct() {
     return true;
   }
 
-  function collectAnswers() {
+  function collectAnswersRaw() {
     const priceInput = root.querySelector('input[name="onb-q2-5-price"]:checked');
     const priceLevel = priceInput ? priceInput.value : '';
 
@@ -396,6 +409,18 @@ function facontInitOnboardingProduct() {
       q2_4_benefits: (document.getElementById('onb-q2-4-benefits')?.value || '').trim(),
       q2_5_price_level: priceLevel,
       q2_6_unique: (document.getElementById('onb-q2-6-unique')?.value || '').trim()
+    };
+  }
+
+  function collectAnswers() {
+    const raw = collectAnswersRaw();
+    return {
+      q2_1_name: ['Название продукта', raw.q2_1_name],
+      q2_2_what: ['Что делает продукт', raw.q2_2_what],
+      q2_3_problems: ['Какие проблемы решает', raw.q2_3_problems],
+      q2_4_benefits: ['Преимущества', raw.q2_4_benefits],
+      q2_5_price_level: ['Уровень цен', raw.q2_5_price_level],
+      q2_6_unique: ['Уникальность', raw.q2_6_unique]
     };
   }
 
@@ -432,7 +457,8 @@ function facontInitOnboardingProduct() {
     const finalEl = document.getElementById('onb2-final-text');
 
     const answers = collectAnswers();
-    const inputText = buildInputTextFromAnswers(answers);
+    const answersRaw = collectAnswersRaw();
+    const inputText = buildInputTextFromAnswers(answersRaw);
 
     if (status) status.textContent = '';
     if (busy) busy.style.display = 'inline-block';
@@ -475,7 +501,8 @@ function facontInitOnboardingProduct() {
     if (!btn || !busy || !status || !finalEl) return;
 
     const answers = collectAnswers();
-    const inputText = buildInputTextFromAnswers(answers);
+    const answersRaw = collectAnswersRaw();
+    const inputText = buildInputTextFromAnswers(answersRaw);
     const finalText = (finalEl.value || '').trim() || inputText;
 
     btn.disabled = true;
@@ -601,11 +628,20 @@ function facontInitOnboardingAudience() {
     return true;
   }
 
-  function collectAnswers() {
+  function collectAnswersRaw() {
     return {
       q3_1_who: (document.getElementById('onb-q3-1-who')?.value || '').trim(),
       q3_2_problems: (document.getElementById('onb-q3-2-problems')?.value || '').trim(),
       q3_3_needs: (document.getElementById('onb-q3-3-needs')?.value || '').trim()
+    };
+  }
+
+  function collectAnswers() {
+    const raw = collectAnswersRaw();
+    return {
+      q3_1_who: ['Кто твоя ЦА', raw.q3_1_who],
+      q3_2_problems: ['Проблемы аудитории', raw.q3_2_problems],
+      q3_3_needs: ['Потребности аудитории', raw.q3_3_needs]
     };
   }
 
@@ -642,7 +678,8 @@ function facontInitOnboardingAudience() {
     const finalEl = document.getElementById('onb3-final-text');
 
     const answers = collectAnswers();
-    const inputText = buildInputTextFromAnswers(answers);
+    const answersRaw = collectAnswersRaw();
+    const inputText = buildInputTextFromAnswers(answersRaw);
 
     if (status) status.textContent = '';
     if (busy) busy.style.display = 'inline-block';
@@ -685,7 +722,8 @@ function facontInitOnboardingAudience() {
     if (!btn || !busy || !status || !finalEl) return;
 
     const answers = collectAnswers();
-    const inputText = buildInputTextFromAnswers(answers);
+    const answersRaw = collectAnswersRaw();
+    const inputText = buildInputTextFromAnswers(answersRaw);
     const finalText = (finalEl.value || '').trim() || inputText;
 
     btn.disabled = true;
