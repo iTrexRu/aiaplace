@@ -2,7 +2,7 @@
   <div class="onb1-progress">
     <div class="onb1-progress-header">
       <span>Базовый онбординг • Блок 1: кто ты и что делаешь</span>
-      <span id="onb1-progress-label">Шаг 1 из 7</span>
+      <span id="onb1-progress-label">Шаг 1 из 8</span>
     </div>
     <div class="onb1-progress-bar">
       <div class="onb1-progress-bar-inner" id="onb1-progress-bar-inner"></div>
@@ -132,7 +132,20 @@
   </div>
 </div>
 
-<!-- Шаг 6: Итоговый текст и сохранение -->
+<!-- Шаг 6: обработка ответов -->
+<div class="card onb1-step" id="onb1-step-process" style="display:none;">
+  <h2>⏳ Обрабатываю ответы...</h2>
+  <p class="muted">
+    Сейчас соберу итог по блоку 1 и сохраню его. Обычно это занимает 5–15 секунд.
+  </p>
+  <div style="margin-top:12px;">
+    <button class="btn secondary" data-onb1-prev="1">Назад</button>
+  </div>
+  <span id="onb1-submit-busy" class="spinner" style="display:inline-block;"></span>
+  <div id="onb1-submit-status" class="facont-status"></div>
+</div>
+
+<!-- Шаг 7: Итоговый текст и сохранение -->
 <div class="card onb1-step" id="onb1-step-summary" style="display:none;">
   <h2>Итог по блоку 1</h2>
   <p class="muted">

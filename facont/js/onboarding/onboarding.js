@@ -115,6 +115,7 @@ function facontInitOnboardingIdentity() {
     'q1_3',
     'q1_4',
     'q1_5',
+    'process',
     'summary'
   ];
   let index = 0;
@@ -166,6 +167,76 @@ function facontInitOnboardingIdentity() {
     };
   }
 
+  function buildInputTextFromAnswers(answers) {
+    const lines = [];
+    Object.keys(answers || {}).forEach(key => {
+      const val = (answers && answers[key]) ? String(answers[key]).trim() : '';
+      if (val) {
+        lines.push(key + ': ' + val);
+      }
+    });
+    return lines.join('\n');
+  }
+
+  function extractFinalText(res) {
+    if (!res) return '';
+
+    // Sometimes backend may return array
+    if (Array.isArray(res) && res[0] && res[0].ok) {
+      return String(
+        res[0].finalText || res[0].text || res[0].result || res[0].summary || res[0].stylePrompt || ''
+      ).trim();
+    }
+
+    if (typeof res === 'object') {
+      return String(res.finalText || res.text || res.result || res.summary || res.stylePrompt || '').trim();
+    }
+
+    return String(res).trim();
+  }
+
+  async function submitBlock() {
+    const busy = document.getElementById('onb1-submit-busy');
+    const status = document.getElementById('onb1-submit-status');
+    const finalEl = document.getElementById('onb1-final-text');
+
+    const answers = collectAnswers();
+    const inputText = buildInputTextFromAnswers(answers);
+
+    if (status) status.textContent = '';
+    if (busy) busy.style.display = 'inline-block';
+
+    try {
+      const res = await facontCallAPI('onboarding_submit', {
+        block: 'identity',
+        answers,
+        inputText,
+        meta: {
+          answers,
+          ui_version: 2,
+          submitted_from: 'frontend_onboarding'
+        }
+      });
+
+      const finalText = extractFinalText(res) || inputText;
+      if (finalEl) finalEl.value = finalText;
+
+      // Go to summary
+      index = steps.indexOf('summary');
+      if (index < 0) index = steps.length - 1;
+      showStep();
+
+    } catch (e) {
+      if (status) status.textContent = 'Ошибка: ' + (e.message || e);
+      // return to last question
+      index = steps.indexOf('q1_5');
+      if (index < 0) index = 5;
+      showStep();
+    } finally {
+      if (busy) busy.style.display = 'none';
+    }
+  }
+
   async function saveBlock() {
     const btn = document.getElementById('btn-onb1-save');
     const busy = document.getElementById('onb1-busy');
@@ -175,15 +246,7 @@ function facontInitOnboardingIdentity() {
     if (!btn || !busy || !status || !finalEl) return;
 
     const answers = collectAnswers();
-
-    const lines = [];
-    Object.keys(answers).forEach(key => {
-      const val = answers[key];
-      if (val) {
-        lines.push(key + ': ' + val);
-      }
-    });
-    const inputText = lines.join('\n');
+    const inputText = buildInputTextFromAnswers(answers);
     const finalText = (finalEl.value || '').trim() || inputText;
 
     btn.disabled = true;
@@ -198,7 +261,7 @@ function facontInitOnboardingIdentity() {
         finalText,
         meta: {
           answers,
-          ui_version: 1,
+          ui_version: 2,
           saved_from: 'frontend_onboarding'
         }
       });
@@ -216,6 +279,19 @@ function facontInitOnboardingIdentity() {
     if (nextBtn) {
       const requireId = nextBtn.dataset.onb1Require || null;
       if (!validateRequired(requireId)) return;
+
+      const currentStep = steps[index];
+      const lastQuestionStep = 'q1_5';
+
+      // Last question -> submit to n8n, show process
+      if (currentStep === lastQuestionStep) {
+        index = steps.indexOf('process');
+        if (index < 0) index = steps.length - 2;
+        showStep();
+        submitBlock();
+        return;
+      }
+
       if (index < steps.length - 1) {
         index += 1;
         showStep();
@@ -258,6 +334,7 @@ function facontInitOnboardingProduct() {
     'q2_4',
     'q2_5',
     'q2_6',
+    'process',
     'summary'
   ];
   let index = 0;
@@ -322,6 +399,73 @@ function facontInitOnboardingProduct() {
     };
   }
 
+  function buildInputTextFromAnswers(answers) {
+    const lines = [];
+    Object.keys(answers || {}).forEach(key => {
+      const val = (answers && answers[key]) ? String(answers[key]).trim() : '';
+      if (val) {
+        lines.push(key + ': ' + val);
+      }
+    });
+    return lines.join('\n');
+  }
+
+  function extractFinalText(res) {
+    if (!res) return '';
+
+    if (Array.isArray(res) && res[0] && res[0].ok) {
+      return String(
+        res[0].finalText || res[0].text || res[0].result || res[0].summary || res[0].stylePrompt || ''
+      ).trim();
+    }
+
+    if (typeof res === 'object') {
+      return String(res.finalText || res.text || res.result || res.summary || res.stylePrompt || '').trim();
+    }
+
+    return String(res).trim();
+  }
+
+  async function submitBlock() {
+    const busy = document.getElementById('onb2-submit-busy');
+    const status = document.getElementById('onb2-submit-status');
+    const finalEl = document.getElementById('onb2-final-text');
+
+    const answers = collectAnswers();
+    const inputText = buildInputTextFromAnswers(answers);
+
+    if (status) status.textContent = '';
+    if (busy) busy.style.display = 'inline-block';
+
+    try {
+      const res = await facontCallAPI('onboarding_submit', {
+        block: 'product',
+        answers,
+        inputText,
+        meta: {
+          answers,
+          ui_version: 2,
+          submitted_from: 'frontend_onboarding'
+        }
+      });
+
+      const finalText = extractFinalText(res) || inputText;
+      if (finalEl) finalEl.value = finalText;
+
+      index = steps.indexOf('summary');
+      if (index < 0) index = steps.length - 1;
+      showStep();
+
+    } catch (e) {
+      if (status) status.textContent = 'Ошибка: ' + (e.message || e);
+      index = steps.indexOf('q2_6');
+      if (index < 0) index = 6;
+      showStep();
+    } finally {
+      if (busy) busy.style.display = 'none';
+    }
+  }
+
   async function saveBlock() {
     const btn = document.getElementById('btn-onb2-save');
     const busy = document.getElementById('onb2-busy');
@@ -331,15 +475,7 @@ function facontInitOnboardingProduct() {
     if (!btn || !busy || !status || !finalEl) return;
 
     const answers = collectAnswers();
-
-    const lines = [];
-    Object.keys(answers).forEach(key => {
-      const val = answers[key];
-      if (val) {
-        lines.push(key + ': ' + val);
-      }
-    });
-    const inputText = lines.join('\n');
+    const inputText = buildInputTextFromAnswers(answers);
     const finalText = (finalEl.value || '').trim() || inputText;
 
     btn.disabled = true;
@@ -354,7 +490,7 @@ function facontInitOnboardingProduct() {
         finalText,
         meta: {
           answers,
-          ui_version: 1,
+          ui_version: 2,
           saved_from: 'frontend_onboarding'
         }
       });
@@ -372,6 +508,18 @@ function facontInitOnboardingProduct() {
     if (nextBtn) {
       const requireKey = nextBtn.dataset.onb2Require || null;
       if (!validateRequired(requireKey)) return;
+
+      const currentStep = steps[index];
+      const lastQuestionStep = 'q2_6';
+
+      if (currentStep === lastQuestionStep) {
+        index = steps.indexOf('process');
+        if (index < 0) index = steps.length - 2;
+        showStep();
+        submitBlock();
+        return;
+      }
+
       if (index < steps.length - 1) {
         index += 1;
         showStep();
@@ -411,6 +559,7 @@ function facontInitOnboardingAudience() {
     'q3_1',
     'q3_2',
     'q3_3',
+    'process',
     'summary'
   ];
   let index = 0;
@@ -460,6 +609,73 @@ function facontInitOnboardingAudience() {
     };
   }
 
+  function buildInputTextFromAnswers(answers) {
+    const lines = [];
+    Object.keys(answers || {}).forEach(key => {
+      const val = (answers && answers[key]) ? String(answers[key]).trim() : '';
+      if (val) {
+        lines.push(key + ': ' + val);
+      }
+    });
+    return lines.join('\n');
+  }
+
+  function extractFinalText(res) {
+    if (!res) return '';
+
+    if (Array.isArray(res) && res[0] && res[0].ok) {
+      return String(
+        res[0].finalText || res[0].text || res[0].result || res[0].summary || res[0].stylePrompt || ''
+      ).trim();
+    }
+
+    if (typeof res === 'object') {
+      return String(res.finalText || res.text || res.result || res.summary || res.stylePrompt || '').trim();
+    }
+
+    return String(res).trim();
+  }
+
+  async function submitBlock() {
+    const busy = document.getElementById('onb3-submit-busy');
+    const status = document.getElementById('onb3-submit-status');
+    const finalEl = document.getElementById('onb3-final-text');
+
+    const answers = collectAnswers();
+    const inputText = buildInputTextFromAnswers(answers);
+
+    if (status) status.textContent = '';
+    if (busy) busy.style.display = 'inline-block';
+
+    try {
+      const res = await facontCallAPI('onboarding_submit', {
+        block: 'audience',
+        answers,
+        inputText,
+        meta: {
+          answers,
+          ui_version: 2,
+          submitted_from: 'frontend_onboarding'
+        }
+      });
+
+      const finalText = extractFinalText(res) || inputText;
+      if (finalEl) finalEl.value = finalText;
+
+      index = steps.indexOf('summary');
+      if (index < 0) index = steps.length - 1;
+      showStep();
+
+    } catch (e) {
+      if (status) status.textContent = 'Ошибка: ' + (e.message || e);
+      index = steps.indexOf('q3_3');
+      if (index < 0) index = 3;
+      showStep();
+    } finally {
+      if (busy) busy.style.display = 'none';
+    }
+  }
+
   async function saveBlock() {
     const btn = document.getElementById('btn-onb3-save');
     const busy = document.getElementById('onb3-busy');
@@ -469,15 +685,7 @@ function facontInitOnboardingAudience() {
     if (!btn || !busy || !status || !finalEl) return;
 
     const answers = collectAnswers();
-
-    const lines = [];
-    Object.keys(answers).forEach(key => {
-      const val = answers[key];
-      if (val) {
-        lines.push(key + ': ' + val);
-      }
-    });
-    const inputText = lines.join('\n');
+    const inputText = buildInputTextFromAnswers(answers);
     const finalText = (finalEl.value || '').trim() || inputText;
 
     btn.disabled = true;
@@ -492,7 +700,7 @@ function facontInitOnboardingAudience() {
         finalText,
         meta: {
           answers,
-          ui_version: 1,
+          ui_version: 2,
           saved_from: 'frontend_onboarding'
         }
       });
@@ -510,6 +718,18 @@ function facontInitOnboardingAudience() {
     if (nextBtn) {
       const requireId = nextBtn.dataset.onb3Require || null;
       if (!validateRequired(requireId)) return;
+
+      const currentStep = steps[index];
+      const lastQuestionStep = 'q3_3';
+
+      if (currentStep === lastQuestionStep) {
+        index = steps.indexOf('process');
+        if (index < 0) index = steps.length - 2;
+        showStep();
+        submitBlock();
+        return;
+      }
+
       if (index < steps.length - 1) {
         index += 1;
         showStep();
