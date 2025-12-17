@@ -207,7 +207,7 @@ function facontInitOnboardingIdentity() {
     if (busy) busy.style.display = 'inline-block';
 
     try {
-      const res = await facontCallAPI('onboarding_submit', {
+      const res = await facontCallAPI('submit_onboarding', {
         block: 'identity',
         answers,
         inputText,
@@ -438,7 +438,7 @@ function facontInitOnboardingProduct() {
     if (busy) busy.style.display = 'inline-block';
 
     try {
-      const res = await facontCallAPI('onboarding_submit', {
+      const res = await facontCallAPI('submit_onboarding', {
         block: 'product',
         answers,
         inputText,
@@ -648,7 +648,7 @@ function facontInitOnboardingAudience() {
     if (busy) busy.style.display = 'inline-block';
 
     try {
-      const res = await facontCallAPI('onboarding_submit', {
+      const res = await facontCallAPI('submit_onboarding', {
         block: 'audience',
         answers,
         inputText,
