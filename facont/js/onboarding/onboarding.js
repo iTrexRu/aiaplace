@@ -81,15 +81,44 @@ async function facontInitOnboardingOverview() {
 
   let onboarding = {};
 
+  function setPreviewAnswers(block, answers) {
+    const card = root.querySelector('.facont-onb-block[data-block="' + block + '"]');
+    if (!card) return;
+
+    // If answers missing/empty -> remove
+    if (!answers || typeof answers !== 'object' || !Object.keys(answers).length) {
+      delete card.dataset.answers;
+      return;
+    }
+
+    try {
+      card.dataset.answers = JSON.stringify(answers);
+    } catch (_) {
+      delete card.dataset.answers;
+    }
+  }
+
   try {
     const res = await facontCallAPI('get_settings', {});
     const user = res && res.user ? res.user : {};
     onboarding = user.onboarding || {};
 
+    // n8n now returns onboarding entries separately
+    const onboardingByStep = (res && res.onboardingByStep && typeof res.onboardingByStep === 'object')
+      ? res.onboardingByStep
+      : {};
+
     setStatus('identity', onboarding.identity || null);
     setStatus('product', onboarding.product || null);
     setStatus('audience', onboarding.audience || null);
     setStatus('style', onboarding.style || null);
+
+    // Fill modal preview data from onboardingByStep[block].meta.answers
+    ['identity', 'product', 'audience', 'style'].forEach((block) => {
+      const entry = onboardingByStep[block];
+      const answers = entry && entry.meta && entry.meta.answers ? entry.meta.answers : null;
+      setPreviewAnswers(block, answers);
+    });
   } catch (e) {
     ['identity', 'product', 'audience', 'style'].forEach(b => setStatus(b, null));
   }
@@ -206,7 +235,8 @@ async function facontInitOnboardingOverview() {
       const titleByBlock = {
         identity: 'Блок 1: Твоя личность — ответы',
         product: 'Блок 2: Продукт — ответы',
-        audience: 'Блок 3: Аудитория — ответы'
+        audience: 'Блок 3: Аудитория — ответы',
+        style: 'Блок 4: Стиль — ответы'
       };
 
       openModal(titleByBlock[block] || 'Ответы', answers);
