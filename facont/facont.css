@@ -1,7 +1,7 @@
 :root {
   /* Backgrounds */
-  --facont-bg-app: #fffff2;
-  --facont-bg-main: #fafbee;
+  --facont-bg-app: #fbfff4;
+  --facont-bg-main: #ffffff;
   --facont-bg-card: #ffffff;
   --facont-bg-example: #fffff2;
   --facont-bg-sidebar: #140194;
@@ -9,8 +9,8 @@
 
   /* Text */
   --facont-text: #140194;
-  --facont-text-muted: #665ab9;
-  --facont-text-secondary: #8a80ca;
+  --facont-text-muted: #4f46b3;
+  --facont-text-secondary: #6f67bf;
   --facont-text-on-dark: #fffff2;
   --facont-text-tg: #fdffc9;
 
@@ -20,8 +20,8 @@
   --facont-highlight: #f7ff28;
 
   /* Borders */
-  --facont-border-soft: #e8eeb4;
-  --facont-border: #d0ccea;
+  --facont-border-soft: #dfe6a0;
+  --facont-border: #c9c3e6;
 
   /* Status */
   --facont-success: #b3c805;
@@ -235,6 +235,7 @@
 .card,
 .facont-card {
   background: var(--facont-bg-card);
+  border: 1px solid var(--facont-border-soft);
   border-radius: 10px;
   padding: 20px 18px;
   box-shadow: 0 1px 3px var(--facont-shadow-card);
@@ -339,16 +340,18 @@
   transform: translateY(1px);
 }
 
-/* вторичная кнопка */
+/* вторичная кнопка (variant 2: outline + лёгкая заливка) */
 .btn.secondary,
 .facont-btn.secondary {
-  background: var(--facont-border-soft);
+  background: var(--facont-bg-app);
+  border: 1px solid var(--facont-border);
   color: var(--facont-text);
 }
 
 .btn.secondary:hover,
 .facont-btn.secondary:hover {
-  background: var(--facont-border);
+  background: var(--facont-bg-main);
+  border-color: var(--facont-text-muted);
 }
 
 /* спиннер */
@@ -482,9 +485,16 @@
   font-size: 0.9em;
 }
 
+/* links in main white area: use indigo, keep highlight on dark (tg-box) */
+.facont-main a,
 .facont-link {
-  color: var(--facont-primary);
+  color: var(--facont-text-muted);
   text-decoration: underline;
+}
+
+.facont-main a:hover,
+.facont-link:hover {
+  color: var(--facont-text);
 }
 
 .facont-flex {
