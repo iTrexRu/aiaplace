@@ -21,7 +21,13 @@ function facontInitHome() {
   }
 
   function setBody(text) {
-    if (bodyEl) bodyEl.textContent = text || '';
+    if (!bodyEl) return;
+    bodyEl.textContent = text || '';
+  }
+
+  function setBodyHtml(html) {
+    if (!bodyEl) return;
+    bodyEl.innerHTML = html || '';
   }
 
   function clearActions() {
@@ -30,10 +36,12 @@ function facontInitHome() {
     actionsEl.style.display = 'none';
   }
 
-  function addBtn(label, view, variant = 'primary') {
-    if (!actionsEl) return;
+  function addBtn(label, view, mountEl = actionsEl) {
+    if (!mountEl) return;
+
     const btn = document.createElement('button');
-    btn.className = variant === 'secondary' ? 'facont-btn secondary' : 'facont-btn';
+    // Home: always primary
+    btn.className = 'facont-btn';
     btn.type = 'button';
     btn.textContent = label;
     btn.addEventListener('click', () => {
@@ -41,7 +49,8 @@ function facontInitHome() {
         facontShowView(view);
       }
     });
-    actionsEl.appendChild(btn);
+
+    mountEl.appendChild(btn);
   }
 
   function ensureActionsVisible() {
@@ -91,44 +100,54 @@ function facontInitHome() {
 
       // all blocks done
       const allDone = doneCount === blocks.length;
+
+      // all done: show generators as primary buttons
       if (allDone) {
         if (titleEl) titleEl.textContent = 'Чем займемся сегодня?';
         setBody('');
-      } else {
-        if (titleEl) titleEl.textContent = 'Добро пожаловать в Фабрику контента!';
-        setBody(
-          'Что будем делать сейчас?\n' +
-          '- Завершим настройку системы под вас (это займёт 5–7 минут)'
-        );
+
+        ensureActionsVisible();
+        addBtn('Пост из голоса', 'voice_post');
+        addBtn('Сторис из текста', 'stories_text');
+        addBtn('Заголовки', 'titles');
+        addBtn('Карусель', 'carousel');
+        addBtn('Reels', 'reels');
+        addBtn('Готовый контент', 'content_list');
+        return;
       }
 
-      // Actions for partial or full onboarding
-      ensureActionsVisible();
+      // partial onboarding: structured layout with buttons under each пункт
+      if (titleEl) titleEl.textContent = 'Добро пожаловать в Фабрику контента!';
 
-      if (!allDone) {
-        addBtn('Завершить настройку', 'onboarding_overview');
-      }
+      // (1) no "Добро пожаловать..." in the body
+      // (2) make "Что будем делать сейчас?" bold
+      setBodyHtml(
+        '<strong>Что будем делать сейчас?</strong>' +
+          '<div class="facont-mt-12">- Завершим настройку системы под вас (это займёт 5–7 минут)</div>' +
+          '<div id="facont-home-actions-onboarding" class="facont-home-actions facont-mt-10"></div>' +
+          '<div class="facont-mt-16">- Начнем создавать контент?</div>' +
+          '<div id="facont-home-actions-generators" class="facont-home-actions facont-mt-10"></div>' +
+          '<div class="facont-mt-16">- Посмотрим, какой контент уже сделан раньше?</div>' +
+          '<div id="facont-home-actions-content" class="facont-home-actions facont-mt-10"></div>'
+      );
 
-      // Generators
-      addBtn('Пост из голоса', 'voice_post', 'secondary');
-      addBtn('Сторис из текста', 'stories_text', 'secondary');
-      addBtn('Заголовки', 'titles', 'secondary');
-      addBtn('Карусель', 'carousel', 'secondary');
-      addBtn('Reels', 'reels', 'secondary');
+      const onboardingActionsEl = document.getElementById('facont-home-actions-onboarding');
+      const generatorsActionsEl = document.getElementById('facont-home-actions-generators');
+      const contentActionsEl = document.getElementById('facont-home-actions-content');
 
-      // Content list
-      addBtn('Готовый контент', 'content_list');
+      // (3) "Завершить настройку" under onboarding пункт
+      addBtn('Завершить настройку', 'onboarding_overview', onboardingActionsEl);
 
-      if (!allDone) {
-        // Add text after buttons for non-complete state
-        setBody(
-          'Добро пожаловать в Фабрику контента!\n\n' +
-          'Что будем делать сейчас?\n' +
-          '- Завершим настройку системы под вас (это займёт 5–7 минут)\n\n' +
-          '- Начнем создавать контент?\n\n' +
-          '- Посмотрим, какой контент уже сделан раньше?'
-        );
-      }
+      // (4) generators under "Начнем создавать контент?"
+      addBtn('Пост из голоса', 'voice_post', generatorsActionsEl);
+      addBtn('Сторис из текста', 'stories_text', generatorsActionsEl);
+      addBtn('Заголовки', 'titles', generatorsActionsEl);
+      addBtn('Карусель', 'carousel', generatorsActionsEl);
+      addBtn('Reels', 'reels', generatorsActionsEl);
+
+      // content list under "Посмотрим..."
+      addBtn('Готовый контент', 'content_list', contentActionsEl);
+      return;
 
     } catch (e) {
       if (titleEl) titleEl.textContent = 'Facont';
