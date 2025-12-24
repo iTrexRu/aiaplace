@@ -65,6 +65,12 @@ async function facontShowView(view, options = {}) {
   // РОУТЫ ОНБОРДИНГА
   // ==========================
 
+  if (view === 'home') {
+    const main = await facontLoadPartial('home.html');
+    if (main && typeof facontInitHome === 'function') facontInitHome();
+    return;
+  }
+
   if (view === 'onboarding_overview') {
     const main = await facontLoadPartial('onboarding-overview.html');
     if (main) facontInitOnboardingOverview();

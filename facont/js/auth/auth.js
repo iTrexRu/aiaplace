@@ -111,19 +111,21 @@ function facontInitForgot() {
     if (statusEl) {
       statusEl.textContent = "Отправка...";
       statusEl.style.display = "block";
-      statusEl.style.color = "black";
+      statusEl.classList.remove('facont-text-success', 'facont-text-danger');
     }
 
     try {
       await facontCallAPI("auth_forgot_password", { email });
       if (statusEl) {
         statusEl.textContent = "Если такой email существует, мы отправили ссылку.";
-        statusEl.style.color = "green";
+        statusEl.classList.remove('facont-text-danger');
+        statusEl.classList.add('facont-text-success');
       }
     } catch (err) {
       if (statusEl) {
         statusEl.textContent = "Ошибка: " + err.message;
-        statusEl.style.color = "#b91c1c";
+        statusEl.classList.remove('facont-text-success');
+        statusEl.classList.add('facont-text-danger');
       }
     } finally {
       btn.disabled = false;

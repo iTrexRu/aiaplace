@@ -69,13 +69,13 @@ function facontInitContentList() {
           const snippet = text.length > 60 ? text.substring(0, 60) + '...' : text;
           
           // В этом списке показываем только готовые записи
-          const statusLabel = '<span style="color:green">Готово</span>';
+          const statusLabel = '<span class="facont-text-success">Готово</span>';
 
           row.innerHTML = `
-            <td style="padding:12px; border-bottom:1px solid #eee;">${dateStr}</td>
-            <td style="padding:12px; border-bottom:1px solid #eee;">${statusLabel}</td>
-            <td style="padding:12px; border-bottom:1px solid #eee; color:#555;">${snippet}</td>
-            <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
+            <td class="facont-td">${dateStr}</td>
+            <td class="facont-td">${statusLabel}</td>
+            <td class="facont-td facont-text-muted">${snippet}</td>
+            <td class="facont-td facont-td-right">
               <button class="facont-btn secondary small" data-open-id="${item.id}">Открыть</button>
             </td>
           `;

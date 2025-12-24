@@ -43,7 +43,7 @@ function facontRenderApp() {
 
     // If no internal route -> go to default
     if (!view) {
-      facontShowView('onboarding_overview', { replace: true, fromPopstate: true });
+      facontShowView('home', { replace: true, fromPopstate: true });
       return;
     }
 
@@ -58,7 +58,7 @@ function facontRenderApp() {
   if (initial && initial.view) {
     facontShowView(initial.view, { id: initial.id, replace: true });
   } else {
-    facontShowView('onboarding_overview', { replace: true });
+    facontShowView('home', { replace: true });
   }
 }
 

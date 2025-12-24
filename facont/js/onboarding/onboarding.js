@@ -43,10 +43,40 @@ async function facontInitOnboardingOverview() {
     const card = root.querySelector('.facont-onb-block[data-block="' + block + '"]');
     if (!card) return;
 
-    const btn = card.querySelector('[data-open-block]');
-    if (!btn) return;
+    const btnFill = card.querySelector('[data-open-block]');
+    const btnView = card.querySelector('[data-onb-view]');
+    const btnRestart = card.querySelector('[data-onb-restart]');
 
-    btn.textContent = done ? 'Редактировать' : 'Заполнить';
+    if (done) {
+      if (btnFill) btnFill.style.display = 'none';
+      if (btnView) btnView.style.display = 'inline-flex';
+      if (btnRestart) btnRestart.style.display = 'inline-flex';
+    } else {
+      if (btnFill) {
+        btnFill.style.display = 'inline-flex';
+        btnFill.textContent = 'Заполнить';
+      }
+      if (btnView) btnView.style.display = 'none';
+      if (btnRestart) btnRestart.style.display = 'none';
+    }
+
+    // Save answers (meta.answers) for modal preview
+    const answers =
+      (value && typeof value === 'object' && value.meta && value.meta.answers && typeof value.meta.answers === 'object')
+        ? value.meta.answers
+        : (value && typeof value === 'object' && value.answers && typeof value.answers === 'object')
+          ? value.answers
+          : null;
+
+    if (answers && card) {
+      try {
+        card.dataset.answers = JSON.stringify(answers);
+      } catch (_) {
+        // ignore
+      }
+    } else if (card) {
+      delete card.dataset.answers;
+    }
   }
 
   let onboarding = {};
@@ -71,10 +101,70 @@ async function facontInitOnboardingOverview() {
     completeCard.style.display = allDone ? 'block' : 'none';
   }
 
+  function openModal(title, answers) {
+    const modal = document.getElementById('facont-onb-view-modal');
+    const titleEl = document.getElementById('facont-onb-view-title');
+    const contentEl = document.getElementById('facont-onb-view-content');
+
+    if (!modal || !contentEl) return;
+
+    if (titleEl) titleEl.textContent = title || 'Просмотр';
+
+    const entries = answers && typeof answers === 'object' ? Object.entries(answers) : [];
+
+    if (!entries.length) {
+      contentEl.innerHTML = '<p class="muted">Нет сохранённых ответов для просмотра.</p>';
+    } else {
+      const html = entries.map(([key, val]) => {
+        let q = key;
+        let a = '';
+
+        if (Array.isArray(val)) {
+          q = (val[0] != null ? String(val[0]) : key);
+          a = (val[1] != null ? String(val[1]) : '');
+        } else if (val && typeof val === 'object') {
+          // fallback: { label, value }
+          q = String(val.label || key);
+          a = String(val.value || '');
+        } else {
+          a = (val != null ? String(val) : '');
+        }
+
+        return `
+          <div class="facont-onb-qa-item">
+            <div class="facont-onb-qa-q">${q}</div>
+            <div class="facont-onb-qa-a">${a || '—'}</div>
+          </div>
+        `;
+      }).join('');
+
+      contentEl.innerHTML = `<div class="facont-onb-qa">${html}</div>`;
+    }
+
+    modal.style.display = 'flex';
+
+    // Close handlers
+    const closeBtns = modal.querySelectorAll('[data-modal-close]');
+    closeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modal.style.display = 'none';
+      }, { once: true });
+    });
+
+    // Esc
+    const onKey = (ev) => {
+      if (ev.key === 'Escape') {
+        modal.style.display = 'none';
+        window.removeEventListener('keydown', onKey);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+  }
+
   root.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-open-block]');
-    if (btn) {
-      const block = btn.dataset.openBlock;
+    const btnFill = e.target.closest('[data-open-block]');
+    if (btnFill) {
+      const block = btnFill.dataset.openBlock;
       if (block === 'identity') {
         facontShowView('onboarding_identity');
       } else if (block === 'product') {
@@ -84,6 +174,42 @@ async function facontInitOnboardingOverview() {
       } else if (block === 'style') {
         facontShowView('onboarding_style');
       }
+      return;
+    }
+
+    const btnRestart = e.target.closest('[data-onb-restart]');
+    if (btnRestart) {
+      const block = btnRestart.dataset.onbRestart;
+      if (block === 'identity') {
+        facontShowView('onboarding_identity');
+      } else if (block === 'product') {
+        facontShowView('onboarding_product');
+      } else if (block === 'audience') {
+        facontShowView('onboarding_audience');
+      }
+      return;
+    }
+
+    const btnView = e.target.closest('[data-onb-view]');
+    if (btnView) {
+      const block = btnView.dataset.onbView;
+      const card = btnView.closest('.facont-onb-block');
+      let answers = null;
+      if (card && card.dataset.answers) {
+        try {
+          answers = JSON.parse(card.dataset.answers);
+        } catch (_) {
+          answers = null;
+        }
+      }
+
+      const titleByBlock = {
+        identity: 'Блок 1: Твоя личность — ответы',
+        product: 'Блок 2: Продукт — ответы',
+        audience: 'Блок 3: Аудитория — ответы'
+      };
+
+      openModal(titleByBlock[block] || 'Ответы', answers);
       return;
     }
 

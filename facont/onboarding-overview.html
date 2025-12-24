@@ -11,21 +11,33 @@
       <h2>Блок 1: Твоя личность</h2>
       <p>Кто ты, чем занимаешься, опыт и ценности.</p>
       <p class="facont-onb-status" data-status="identity">Загрузка…</p>
-      <button class="facont-btn" data-open-block="identity">Открыть</button>
+      <div class="facont-onb-actions">
+        <button class="facont-btn" data-open-block="identity">Заполнить</button>
+        <button class="facont-btn secondary" data-onb-view="identity" style="display:none;">Просмотреть</button>
+        <button class="facont-btn" data-onb-restart="identity" style="display:none;">Пройти заново</button>
+      </div>
     </div>
 
     <div class="facont-card facont-onb-block" data-block="product">
       <h2>Блок 2: Продукт</h2>
       <p>Что ты продаёшь, чем продукт полезен и чем отличается.</p>
       <p class="facont-onb-status" data-status="product">Загрузка…</p>
-      <button class="facont-btn" data-open-block="product">Открыть</button>
+      <div class="facont-onb-actions">
+        <button class="facont-btn" data-open-block="product">Заполнить</button>
+        <button class="facont-btn secondary" data-onb-view="product" style="display:none;">Просмотреть</button>
+        <button class="facont-btn" data-onb-restart="product" style="display:none;">Пройти заново</button>
+      </div>
     </div>
 
     <div class="facont-card facont-onb-block" data-block="audience">
       <h2>Блок 3: Аудитория</h2>
       <p>Кому продаёшь, их боли, цели и контекст.</p>
       <p class="facont-onb-status" data-status="audience">Загрузка…</p>
-      <button class="facont-btn" data-open-block="audience">Открыть</button>
+      <div class="facont-onb-actions">
+        <button class="facont-btn" data-open-block="audience">Заполнить</button>
+        <button class="facont-btn secondary" data-onb-view="audience" style="display:none;">Просмотреть</button>
+        <button class="facont-btn" data-onb-restart="audience" style="display:none;">Пройти заново</button>
+      </div>
     </div>
 
     <div class="facont-card facont-onb-block" data-block="style">
@@ -35,6 +47,20 @@
       <button class="facont-btn" data-open-block="style">Открыть</button>
     </div>
 
+  </div>
+
+  <!-- Modal: view answers -->
+  <div class="facont-modal" id="facont-onb-view-modal" style="display:none;">
+    <div class="facont-modal-backdrop" data-modal-close></div>
+    <div class="facont-modal-dialog" role="dialog" aria-modal="true">
+      <div class="facont-modal-header">
+        <h2 id="facont-onb-view-title">Просмотр</h2>
+        <button class="facont-btn secondary" data-modal-close>Закрыть</button>
+      </div>
+      <div class="facont-modal-body">
+        <div id="facont-onb-view-content"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Финальный блок: показывается только если все 4 блока онбординга заполнены (status = ok) -->

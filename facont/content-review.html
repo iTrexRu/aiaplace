@@ -8,7 +8,7 @@
   
   <div style="margin-top:24px;">
     <label class="facont-label" style="display:block; margin-bottom:8px;">Транскрипция (исходный голос):</label>
-    <div id="review-transcription" style="padding:12px; background:#f9f9f9; border-radius:8px; margin-bottom:24px; font-size:14px; color:#555;">
+<div id="review-transcription" class="facont-transcription-box">
       Загрузка...
     </div>
     
@@ -16,9 +16,9 @@
     <textarea id="review-content" class="facont-input" style="min-height:300px; line-height:1.5;"></textarea>
   </div>
   
-  <div style="margin-top:24px; display:flex; gap:12px; align-items:center;">
+<div class="facont-mt-24 facont-flex facont-gap-12" style="align-items:center;">
     <button id="btn-save-content" class="facont-btn-primary">Сохранить изменения</button>
-    <span id="save-content-status" style="margin-left:12px; color:#666;"></span>
-    <div id="save-content-busy" class="facont-spinner" style="display:none;"></div>
+<span id="save-content-status" class="facont-text-secondary" style="margin-left:12px;"></span>
+<div id="save-content-busy" class="facont-spinner facont-hidden"></div>
   </div>
 </div>

@@ -1521,13 +1521,13 @@ function facontInitContentList() {
           
           // Статус (если есть поле status, иначе по наличию текста)
           const isDone = !!text;
-          const statusLabel = isDone ? '<span style="color:green">Готово</span>' : '<span style="color:orange">В обработке</span>';
+          const statusLabel = isDone ? '<span style="color:#b3c805">Готово</span>' : '<span style="color:#f7ff28">В обработке</span>';
 
           row.innerHTML = `
-            <td style="padding:12px; border-bottom:1px solid #eee;">${dateStr}</td>
-            <td style="padding:12px; border-bottom:1px solid #eee;">${statusLabel}</td>
-            <td style="padding:12px; border-bottom:1px solid #eee; color:#555;">${snippet}</td>
-            <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
+            <td style="padding:12px; border-bottom:1px solid #e8eeb4;">${dateStr}</td>
+            <td style="padding:12px; border-bottom:1px solid #e8eeb4;">${statusLabel}</td>
+            <td style="padding:12px; border-bottom:1px solid #e8eeb4; color:#665ab9;">${snippet}</td>
+            <td style="padding:12px; border-bottom:1px solid #e8eeb4; text-align:right;">
               <button class="facont-btn secondary small" data-open-id="${item.id}">Открыть</button>
             </td>
           `;
