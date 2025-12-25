@@ -25,7 +25,7 @@ if ( ! $facont_version ) {
 
 <div id="facont-root">
   <!-- JS will render app here -->
-  <div style="padding:40px; text-align:center; color:#666;">Загрузка...</div>
+  <div class="facont-loading">Загрузка...</div>
 </div>
 
 <!-- Template for App Shell (hidden by default) -->
@@ -49,7 +49,7 @@ if ( ! $facont_version ) {
         <li class="facont-menu-item" data-view="content_list">Готовый контент</li>
         <li class="facont-menu-item" data-view="settings">Настройки</li>
 		<li class="facont-menu-item" data-view="profile">Профиль</li>
-        <li class="facont-menu-item" data-action="logout" style="margin-top:auto; border-top:1px solid #d0ccea;">Выход</li>
+		<li class="facont-menu-item" data-action="logout" style="margin-top:auto; border-top:1px solid var(--facont-border);">Выход</li>
       </ul>
 
       <div class="facont-tg-box">

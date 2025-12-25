@@ -1,39 +1,43 @@
 :root {
   /* Backgrounds */
-  --facont-bg-app: #fbfff4;
-  --facont-bg-main: #ffffff;
+  --facont-bg-app: #f5f5f5;
+  --facont-bg-main: #fafafa;
   --facont-bg-card: #ffffff;
-  --facont-bg-example: #fffff2;
+  --facont-bg-example: #f5f5f5;
   --facont-bg-sidebar: #140194;
-  --facont-bg-sidebar-hover: #0f0170;
+  --facont-bg-sidebar-hover: #2a2a2a;
 
   /* Text */
-  --facont-text: #140194;
-  --facont-text-muted: #4f46b3;
-  --facont-text-secondary: #6f67bf;
-  --facont-text-on-dark: #fffff2;
-  --facont-text-tg: #fdffc9;
+  --facont-text: #1a1a1a;
+  --facont-text-muted: #666666;
+  --facont-text-secondary: #888888;
+  --facont-text-on-dark: #ffffff;
+  --facont-text-tg: #aaaaaa;
 
   /* Primary / highlight */
-  --facont-primary: #b3c805;
-  --facont-primary-hover: #98aa04;
-  --facont-highlight: #f7ff28;
+  --facont-primary: #e6f50a;
+  --facont-primary-hover: #d4e309;
+  --facont-highlight: #e6f50a;
+
+  /* Focus */
+  --facont-focus: #140194;
+  --facont-shadow-focus: rgba(20, 1, 148, 0.1);
 
   /* Borders */
-  --facont-border-soft: #dfe6a0;
-  --facont-border: #c9c3e6;
+  --facont-border-soft: #e8e8e8;
+  --facont-border: #e8e8e8;
 
   /* Status */
-  --facont-success: #b3c805;
-  --facont-danger: #fc3b41;
+  --facont-success: #e6f50a;
+  --facont-danger: #e11d48;
 
   /* Shadows */
-  --facont-shadow-card: rgba(20, 1, 148, 0.08);
-  --facont-shadow-primary-25: rgba(179, 200, 5, 0.25);
-  --facont-shadow-primary-35: rgba(179, 200, 5, 0.35);
-  --facont-shadow-primary-42: rgba(179, 200, 5, 0.42);
+  --facont-shadow-card: rgba(0, 0, 0, 0.08);
+  --facont-shadow-primary-25: rgba(230, 245, 10, 0.25);
+  --facont-shadow-primary-35: rgba(230, 245, 10, 0.35);
+  --facont-shadow-primary-42: rgba(230, 245, 10, 0.4);
   --facont-shadow-modal: rgba(0, 0, 0, 0.25);
-  --facont-overlay: rgba(20, 1, 148, 0.55);
+  --facont-overlay: rgba(0, 0, 0, 0.45);
 }
 
 /* базовый сброс внутри приложения */
@@ -63,6 +67,13 @@
   border-radius: 16px;
   box-shadow: 0 20px 60px var(--facont-shadow-modal);
   padding: 32px;
+}
+
+/* simple loading placeholder inside facont-root (before app shell is mounted) */
+.facont-loading {
+  padding: 40px;
+  text-align: center;
+  color: var(--facont-text-secondary);
 }
 
 .facont-login-card h1 {
@@ -95,8 +106,8 @@
 
 .facont-login-form input:focus {
   outline: none;
-  border-color: var(--facont-primary);
-  box-shadow: 0 0 0 3px var(--facont-shadow-primary-25);
+  border-color: var(--facont-focus);
+  box-shadow: 0 0 0 3px var(--facont-shadow-focus);
   background: var(--facont-bg-card);
 }
 
@@ -218,7 +229,7 @@
 }
 
 .facont-tg-box a {
-  color: var(--facont-highlight);
+  color: var(--facont-bg-sidebar);
   text-decoration: underline;
 }
 
@@ -307,8 +318,8 @@
 .facont-card input:focus,
 .facont-card textarea:focus {
   outline: none;
-  border-color: var(--facont-primary);
-  box-shadow: 0 0 0 1px var(--facont-shadow-primary-25);
+  border-color: var(--facont-focus);
+  box-shadow: 0 0 0 1px var(--facont-shadow-focus);
 }
 
 /* кнопки
@@ -343,14 +354,14 @@
 /* вторичная кнопка (variant 2: outline + лёгкая заливка) */
 .btn.secondary,
 .facont-btn.secondary {
-  background: var(--facont-bg-app);
+  background: var(--facont-border);
   border: 1px solid var(--facont-border);
   color: var(--facont-text);
 }
 
 .btn.secondary:hover,
 .facont-btn.secondary:hover {
-  background: var(--facont-bg-main);
+  background: var(--facont-bg-card);
   border-color: var(--facont-text-muted);
 }
 
@@ -488,7 +499,7 @@
 /* links in main white area: use indigo, keep highlight on dark (tg-box) */
 .facont-main a,
 .facont-link {
-  color: var(--facont-text-muted);
+  color: var(--facont-bg-sidebar);
   text-decoration: underline;
 }
 
