@@ -60,3 +60,20 @@
   <div id="idea-error" class="facont-error" style="display:none; margin-top:12px;"></div>
   <span id="idea-busy" style="display:none" class="spinner"></span>
 </div>
+
+<!-- Модалка подтверждения смены таба -->
+<div class="facont-modal" id="idea-confirm-modal" style="display:none;">
+  <div class="facont-modal-backdrop"></div>
+  <div class="facont-modal-dialog">
+    <div class="facont-modal-header">
+      <h2>Новый пост?</h2>
+    </div>
+    <div class="facont-modal-body">
+      <p>Хотите сделать новый пост?</p>
+      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="facont-btn secondary" id="btn-cancel-new">Нет, продолжить с этим</button>
+        <button class="facont-btn" id="btn-confirm-new">Да, хочу новый</button>
+      </div>
+    </div>
+  </div>
+</div>
