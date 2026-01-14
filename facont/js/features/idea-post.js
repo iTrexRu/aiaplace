@@ -17,23 +17,33 @@ function facontInitIdeaPost() {
     const newBtn = saveBtn.cloneNode(true);
     saveBtn.parentNode.replaceChild(newBtn, saveBtn);
     
-    newBtn.addEventListener('click', async () => {
-      const text = document.getElementById('idea-result-text').value;
-      if (!text) return;
+      newBtn.addEventListener('click', async () => {
+        const text = document.getElementById('idea-result-text').value;
+        if (!text) return;
 
-      const spinner = document.getElementById('idea-save-busy');
-      const status = document.getElementById('idea-save-status');
+        const resultBlock = document.getElementById('idea-result-block');
+        const contentId = resultBlock ? resultBlock.dataset.id : null;
 
-      newBtn.disabled = true;
-      if (spinner) spinner.style.display = 'inline-block';
-      if (status) status.textContent = '';
+        const spinner = document.getElementById('idea-save-busy');
+        const status = document.getElementById('idea-save-status');
 
-      try {
-        await facontCallAPI('content-update', {
-          type: 'post',
-          content: text,
-          source: 'idea_post' 
-        });
+        if (!contentId) {
+          if (status) {
+            status.textContent = 'Ошибка: ID контента не найден';
+            status.className = 'facont-status facont-text-danger';
+          }
+          return;
+        }
+
+        newBtn.disabled = true;
+        if (spinner) spinner.style.display = 'inline-block';
+        if (status) status.textContent = '';
+
+        try {
+          await facontCallAPI('content-update', {
+            id: contentId,
+            generated_content: text
+          });
         if (status) {
           status.textContent = 'Сохранено!';
           status.className = 'facont-status facont-text-success';
@@ -65,7 +75,10 @@ function facontInitIdeaPost() {
 function clearIdeaResult() {
   // Скрыть результат
   const block = document.getElementById('idea-result-block');
-  if (block) block.style.display = 'none';
+  if (block) {
+    block.style.display = 'none';
+    delete block.dataset.id;
+  }
   
   // Очистить поля ввода
   const textInput = document.getElementById('idea-text-input');
@@ -187,12 +200,15 @@ function setIdeaError(msg) {
   }
 }
 
-function showIdeaResult(text) {
+function showIdeaResult(text, id) {
   const block = document.getElementById('idea-result-block');
   const area = document.getElementById('idea-result-text');
   const actions = document.getElementById('idea-actions');
   
-  if (block) block.style.display = 'block';
+  if (block) {
+    block.style.display = 'block';
+    if (id) block.dataset.id = id;
+  }
   if (area) area.value = text;
   if (actions) actions.style.display = 'flex';
   
@@ -220,7 +236,8 @@ async function facontIdeaPostSubmitText() {
     });
 
     const resultText = res.text || res.result || res.content || JSON.stringify(res);
-    showIdeaResult(resultText);
+    const resultId = res.id;
+    showIdeaResult(resultText, resultId);
 
   } catch (e) {
     setIdeaError('Ошибка: ' + e.message);
@@ -266,7 +283,8 @@ async function facontIdeaPostSubmitImage() {
       });
 
       const resultText = res.text || res.result || res.content || JSON.stringify(res);
-      showIdeaResult(resultText);
+      const resultId = res.id;
+      showIdeaResult(resultText, resultId);
 
     } catch (err) {
       setIdeaError('Ошибка отправки: ' + err.message);
