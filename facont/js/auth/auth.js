@@ -65,8 +65,11 @@ function facontInitRegister() {
     const password = form.password.value;
     const confirm = form.confirm.value;
     const errEl = document.getElementById("facont-reg-error");
-    const successEl = document.getElementById("facont-reg-success");
     const btn = form.querySelector("button");
+    
+    // Блоки для переключения видимости
+    const contentBlock = document.getElementById("facont-register-content");
+    const successBlock = document.getElementById("facont-reg-success-block");
 
     if (password !== confirm) {
       if (errEl) errEl.textContent = "Пароли не совпадают";
@@ -75,22 +78,20 @@ function facontInitRegister() {
 
     btn.disabled = true;
     if (errEl) errEl.textContent = "";
-    if (successEl) successEl.style.display = "none";
 
     try {
       const res = await facontCallAPI("auth_register", { email, password });
       if (res.ok) {
-        if (successEl) {
-          successEl.textContent = "Регистрация успешна! Проверьте почту для подтверждения.";
-          successEl.style.display = "block";
-        }
+        // Успех: скрываем форму, показываем блок успеха
+        if (contentBlock) contentBlock.style.display = "none";
+        if (successBlock) successBlock.style.display = "block";
+        // Форму можно сбросить, но она всё равно скрыта
         form.reset();
       } else {
         throw new Error(res.message || "Ошибка регистрации");
       }
     } catch (err) {
       if (errEl) errEl.textContent = err.message;
-    } finally {
       btn.disabled = false;
     }
   });
