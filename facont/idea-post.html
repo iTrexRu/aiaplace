@@ -1,0 +1,224 @@
+<div class="facont-card">
+  <h1>Идея в пост</h1>
+  <p class="muted">
+    Превратите свою идею в пост: напишите идею текстом или загрузите картинку/скриншот или наговорите ее голосом. Как вы хотите начать?
+  </p>
+
+  <!-- Табы -->
+  <div class="facont-tabs" style="margin-top: 24px; margin-bottom: 24px; display: flex; gap: 10px;">
+    <button class="facont-btn secondary" id="tab-btn-text" onclick="facontIdeaPostSwitchTab('text')">Ввести текст</button>
+    <button class="facont-btn secondary" id="tab-btn-image" onclick="facontIdeaPostSwitchTab('image')">Загрузить картинку/скриншот</button>
+    <button class="facont-btn secondary" id="tab-btn-voice" onclick="facontIdeaPostSwitchTab('voice')">Отправить голосовое в Telegram</button>
+  </div>
+
+  <!-- Контент таба: Текст -->
+  <div id="tab-content-text" style="display: none;">
+    <textarea id="idea-text-input" class="facont-textarea" style="width: 100%; height: 120px;" placeholder="Опишите вашу идею для поста..."></textarea>
+    <div style="margin-top: 12px;">
+      <button class="facont-btn" onclick="facontIdeaPostSubmitText()">Отправить</button>
+    </div>
+  </div>
+
+  <!-- Контент таба: Картинка -->
+  <div id="tab-content-image" style="display: none;">
+    <div style="margin-bottom: 12px;">
+      <input type="file" id="idea-image-input" accept="image/*">
+    </div>
+    <div>
+      <button class="facont-btn" onclick="facontIdeaPostSubmitImage()">Отправить</button>
+    </div>
+  </div>
+
+  <!-- Контент таба: Голос -->
+  <div id="tab-content-voice" style="display: none;">
+    <p class="muted" style="margin-bottom: 16px;">
+      Мы используем Telegram-бот для удобной записи голосовых сообщений.<br>
+      ИИ распознает вашу речь, очистит от слов-паразитов и напишет пост в вашем стиле.
+    </p>
+    <a href="https://t.me/facont_v1_bot?start=speak" target="_blank" class="facont-btn-primary" style="display:inline-block; text-decoration:none;">
+      Отправить голосовое в Telegram
+    </a>
+  </div>
+
+  <!-- Блок результата (скрыт по умолчанию) -->
+  <div id="idea-result-block" class="card" style="margin-top:30px; display:none;">
+    <h2>Результат</h2>
+    <textarea id="idea-result-text" class="facont-textarea" style="height:240px;"></textarea>
+    <div id="idea-save-error" class="facont-error" style="display:none; margin-top:10px;"></div>
+    
+    <div id="idea-actions" style="display:none; margin-top:30px; flex-direction: column;">
+      <div class="facont-mb-16 facont-border-bottom-soft" style="padding-bottom:16px;">
+        <button class="facont-btn" id="btn-save-idea-result">Сохранить в базу</button>
+        <span id="idea-save-busy" style="display:none" class="spinner"></span>
+        <div id="idea-save-status" class="facont-status"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="idea-error" class="facont-error" style="display:none; margin-top:12px;"></div>
+  <span id="idea-busy" style="display:none" class="spinner"></span>
+</div>
+
+<script>
+  // Логика переключения табов
+  function facontIdeaPostSwitchTab(tabName) {
+    // Скрываем все
+    document.getElementById('tab-content-text').style.display = 'none';
+    document.getElementById('tab-content-image').style.display = 'none';
+    document.getElementById('tab-content-voice').style.display = 'none';
+
+    // Сбрасываем активный класс кнопок
+    document.getElementById('tab-btn-text').classList.add('secondary');
+    document.getElementById('tab-btn-image').classList.add('secondary');
+    document.getElementById('tab-btn-voice').classList.add('secondary');
+    
+    document.getElementById('tab-btn-text').classList.remove('active'); // если есть стиль active
+    document.getElementById('tab-btn-image').classList.remove('active');
+    document.getElementById('tab-btn-voice').classList.remove('active');
+
+
+    // Показываем нужный
+    document.getElementById('tab-content-' + tabName).style.display = 'block';
+    
+    // Активируем кнопку (убираем secondary, делаем primary вид)
+    const activeBtn = document.getElementById('tab-btn-' + tabName);
+    activeBtn.classList.remove('secondary');
+    // activeBtn.classList.add('active'); // опционально
+  }
+
+  // Инициализация (по умолчанию открываем текст)
+  facontIdeaPostSwitchTab('text');
+
+  // Утилиты для UI
+  function setIdeaBusy(isBusy) {
+    const s = document.getElementById('idea-busy');
+    if (s) s.style.display = isBusy ? 'inline-block' : 'none';
+  }
+
+  function setIdeaError(msg) {
+    const el = document.getElementById('idea-error');
+    if (!el) return;
+    if (!msg) {
+      el.style.display = 'none';
+      el.textContent = '';
+    } else {
+      el.style.display = 'block';
+      el.textContent = msg;
+    }
+  }
+
+  function showIdeaResult(text) {
+    const block = document.getElementById('idea-result-block');
+    const area = document.getElementById('idea-result-text');
+    const actions = document.getElementById('idea-actions');
+    
+    if (block) block.style.display = 'block';
+    if (area) area.value = text;
+    if (actions) actions.style.display = 'flex';
+    
+    // Скролл к результату
+    if (block) block.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Логика отправки ТЕКСТА
+  async function facontIdeaPostSubmitText() {
+    const text = document.getElementById('idea-text-input').value.trim();
+    if (!text) {
+      alert('Введите текст идеи');
+      return;
+    }
+
+    setIdeaBusy(true);
+    setIdeaError('');
+
+    try {
+      // Вызов n8n webhook: post-from-text
+      // Ожидаем, что вернется { text: "..." } или { result: "..." }
+      const res = await facontCallAPI('post-from-text', {
+        inputText: text
+      });
+
+      const resultText = res.text || res.result || res.content || JSON.stringify(res);
+      showIdeaResult(resultText);
+
+    } catch (e) {
+      setIdeaError('Ошибка: ' + e.message);
+    } finally {
+      setIdeaBusy(false);
+    }
+  }
+
+  // Логика отправки КАРТИНКИ
+  async function facontIdeaPostSubmitImage() {
+    const input = document.getElementById('idea-image-input');
+    if (!input.files || !input.files[0]) {
+      alert('Выберите файл');
+      return;
+    }
+
+    const file = input.files[0];
+    
+    setIdeaBusy(true);
+    setIdeaError('');
+
+    // Читаем файл в base64
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const base64Data = e.target.result; // data:image/png;base64,....
+
+      try {
+        // Вызов n8n webhook: post-from-img
+        const res = await facontCallAPI('post-from-img', {
+          image: base64Data,
+          filename: file.name
+        });
+
+        const resultText = res.text || res.result || res.content || JSON.stringify(res);
+        showIdeaResult(resultText);
+
+      } catch (err) {
+        setIdeaError('Ошибка отправки: ' + err.message);
+      } finally {
+        setIdeaBusy(false);
+      }
+    };
+    reader.onerror = function() {
+      setIdeaError('Ошибка чтения файла');
+      setIdeaBusy(false);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Обработка кнопки "Сохранить в базу" (опционально, если нужно)
+  document.getElementById('btn-save-idea-result').addEventListener('click', async () => {
+    const text = document.getElementById('idea-result-text').value;
+    if (!text) return;
+
+    const btn = document.getElementById('btn-save-idea-result');
+    const spinner = document.getElementById('idea-save-busy');
+    const status = document.getElementById('idea-save-status');
+
+    btn.disabled = true;
+    spinner.style.display = 'inline-block';
+    status.textContent = '';
+
+    try {
+      // Пример сохранения (нужен соответствующий метод API, например save_content)
+      // Пока используем generic save_content если он есть, или заглушку
+      await facontCallAPI('save_content', {
+        type: 'post',
+        content: text,
+        source: 'idea_post' 
+      });
+      status.textContent = 'Сохранено!';
+      status.className = 'facont-status facont-text-success';
+    } catch (e) {
+      status.textContent = 'Ошибка: ' + e.message;
+      status.className = 'facont-status facont-text-danger';
+    } finally {
+      btn.disabled = false;
+      spinner.style.display = 'none';
+    }
+  });
+
+</script>

@@ -121,8 +121,8 @@ async function facontShowView(view, options = {}) {
   // КОНТЕНТНЫЕ ЭКРАНЫ
   // ==========================
 
-  if (view === 'voice_post') {
-    await facontLoadPartial('voice-post.html');
+  if (view === 'idea_post') {
+    await facontLoadPartial('idea-post.html');
     return;
   }
 

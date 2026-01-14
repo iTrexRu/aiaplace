@@ -40,7 +40,7 @@ if ( ! $facont_version ) {
 <ul class="facont-menu">
         <li class="facont-menu-item active" data-view="home">Home</li>
         <li class="facont-menu-item" data-view="onboarding_overview">Онбординг</li>
-        <li class="facont-menu-item" data-view="voice_post">Пост из голоса</li>
+        <li class="facont-menu-item" data-view="idea_post">Идея в пост</li>
         <li class="facont-menu-item" data-view="stories_text">Сторис из текста</li>
         <li class="facont-menu-item" data-view="titles">Заголовки</li>
         <li class="facont-menu-item" data-view="carousel">Карусель</li>

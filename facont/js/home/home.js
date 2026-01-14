@@ -139,7 +139,7 @@ function facontInitHome() {
       addBtn('Завершить настройку', 'onboarding_overview', onboardingActionsEl);
 
       // (4) generators under "Начнем создавать контент?"
-      addBtn('Пост из голоса', 'voice_post', generatorsActionsEl);
+      addBtn('Идея в пост', 'idea_post', generatorsActionsEl);
       addBtn('Сторис из текста', 'stories_text', generatorsActionsEl);
       addBtn('Заголовки', 'titles', generatorsActionsEl);
       addBtn('Карусель', 'carousel', generatorsActionsEl);
