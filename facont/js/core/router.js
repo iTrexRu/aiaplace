@@ -123,6 +123,7 @@ async function facontShowView(view, options = {}) {
 
   if (view === 'idea_post') {
     await facontLoadPartial('idea-post.html');
+    if (typeof facontInitIdeaPost === 'function') facontInitIdeaPost();
     return;
   }
 

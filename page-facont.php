@@ -76,6 +76,7 @@ if ( ! $facont_version ) {
 <script src="<?php echo esc_url( $facont_uri . '/js/user/user.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/content/content.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/features/generic-generator.js?ver=' . $facont_version ); ?>"></script>
+<script src="<?php echo esc_url( $facont_uri . '/js/features/idea-post.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/features/stories-text.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/features/titles.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/features/carousel.js?ver=' . $facont_version ); ?>"></script>
