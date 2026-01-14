@@ -22,7 +22,9 @@
   <!-- Контент таба: Картинка -->
   <div id="tab-content-image" style="display: none;">
     <div style="margin-bottom: 12px;">
-      <input type="file" id="idea-image-input" accept="image/*">
+      <input type="file" id="idea-image-input" accept="image/*" style="display: none;" onchange="facontIdeaPostFileChanged(this)">
+      <button class="facont-btn secondary" onclick="document.getElementById('idea-image-input').click()">Выберите файл</button>
+      <span id="idea-image-filename" class="muted" style="margin-left: 10px;">Файл не выбран</span>
     </div>
     <div>
       <button class="facont-btn" onclick="facontIdeaPostSubmitImage()">Отправить</button>

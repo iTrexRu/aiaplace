@@ -135,7 +135,7 @@ async function facontIdeaPostSubmitText() {
 
   try {
     const res = await facontCallAPI('post-from-text', {
-      inputText: text
+      text: text
     });
 
     const resultText = res.text || res.result || res.content || JSON.stringify(res);
@@ -145,6 +145,18 @@ async function facontIdeaPostSubmitText() {
     setIdeaError('Ошибка: ' + e.message);
   } finally {
     setIdeaBusy(false);
+  }
+}
+
+// Обработчик выбора файла (обновляет текст)
+function facontIdeaPostFileChanged(input) {
+  const filenameEl = document.getElementById('idea-image-filename');
+  if (filenameEl) {
+    if (input.files && input.files[0]) {
+      filenameEl.textContent = input.files[0].name;
+    } else {
+      filenameEl.textContent = 'Файл не выбран';
+    }
   }
 }
 
@@ -193,3 +205,4 @@ window.facontInitIdeaPost = facontInitIdeaPost;
 window.facontIdeaPostSwitchTab = facontIdeaPostSwitchTab;
 window.facontIdeaPostSubmitText = facontIdeaPostSubmitText;
 window.facontIdeaPostSubmitImage = facontIdeaPostSubmitImage;
+window.facontIdeaPostFileChanged = facontIdeaPostFileChanged;
