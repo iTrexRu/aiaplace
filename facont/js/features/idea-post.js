@@ -6,6 +6,8 @@ let currentIdeaTab = 'text';
 let pendingIdeaTab = null;
 
 function facontInitIdeaPost() {
+  // Сброс текущего таба перед инициализацией, чтобы переключение сработало
+  currentIdeaTab = null;
   // Инициализация (по умолчанию открываем текст)
   facontIdeaPostSwitchTab('text');
 
@@ -27,7 +29,7 @@ function facontInitIdeaPost() {
       if (status) status.textContent = '';
 
       try {
-        await facontCallAPI('save_content', {
+        await facontCallAPI('content-update', {
           type: 'post',
           content: text,
           source: 'idea_post' 
