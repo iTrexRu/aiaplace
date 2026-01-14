@@ -25,6 +25,15 @@ function facontInitLogin() {
   const form = document.getElementById("facont-login-form");
   if (!form) return;
 
+  // Auto-fill email if registered just now
+  if (window.facontLastRegisteredEmail) {
+    if (form.email && !form.email.value) {
+      form.email.value = window.facontLastRegisteredEmail;
+    }
+    // Clear it so it doesn't persist forever in session
+    window.facontLastRegisteredEmail = null;
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = form.email.value.trim();
@@ -82,6 +91,9 @@ function facontInitRegister() {
     try {
       const res = await facontCallAPI("auth_register", { email, password });
       if (res.ok) {
+        // Запоминаем email для автозаполнения логина
+        window.facontLastRegisteredEmail = email;
+
         // Успех: скрываем форму, показываем блок успеха
         if (contentBlock) contentBlock.style.display = "none";
         if (successBlock) successBlock.style.display = "block";
