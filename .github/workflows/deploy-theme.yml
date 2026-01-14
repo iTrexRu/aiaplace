@@ -14,16 +14,59 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 1) Быстрая диагностика: есть ли секреты (значения не выводим)
+      - name: Debug - secrets present
+        shell: bash
+        run: |
+          echo "FTP_SERVER set? -> $([[ -n '${{ secrets.FTP_SERVER }}' ]] && echo YES || echo NO)"
+          echo "FTP_USER set?   -> $([[ -n '${{ secrets.FTP_USER }}' ]] && echo YES || echo NO)"
+          echo "FTP_PASS set?   -> $([[ -n '${{ secrets.FTP_PASSWORD }}' ]] && echo YES || echo NO)"
+          echo "FTP_PORT set?   -> $([[ -n '${{ secrets.FTP_PORT }}' ]] && echo YES || echo NO)"
+
+      # 2) Диагностика сети: DNS и порты
+      - name: Debug - DNS and ports
+        shell: bash
+        run: |
+          set -e
+
+          echo "Server: ${{ secrets.FTP_SERVER }}"
+          echo ""
+          echo "DNS resolve:"
+          getent hosts "${{ secrets.FTP_SERVER }}" || true
+
+          echo ""
+          echo "Port checks:"
+          check_port () {
+            local host="$1"
+            local port="$2"
+            local label="$3"
+            echo "- $label ($port):"
+            if timeout 8 bash -lc "cat < /dev/null > /dev/tcp/${host}/${port}" 2>/dev/null; then
+              echo "  OPEN"
+            else
+              echo "  FAIL"
+            fi
+          }
+
+          check_port "${{ secrets.FTP_SERVER }}" 21  "FTP control"
+          check_port "${{ secrets.FTP_SERVER }}" 990 "FTPS implicit"
+          check_port "${{ secrets.FTP_SERVER }}" 22  "SSH/SFTP"
+
+          if [[ -n "${{ secrets.FTP_PORT }}" ]]; then
+            check_port "${{ secrets.FTP_SERVER }}" "${{ secrets.FTP_PORT }}" "Custom FTP_PORT"
+          fi
+
+      # 3) Собственно деплой
       - name: Sync theme files to server
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # если создал секрет FTP_PORT – раскомментируй след. строку
+          # если создал секрет FTP_PORT - раскомментируй
           # port: ${{ secrets.FTP_PORT }}
           protocol: ftp
-          local-dir: ./    # корень репо = папка темы
+          local-dir: ./
           server-dir: /wp-content/themes/blocksy-child/
           exclude: |
             **/.git*
