@@ -8,7 +8,7 @@ $facont_dir = get_stylesheet_directory() . '/facont';
 $facont_uri = get_stylesheet_directory_uri() . '/facont';
 $facont_version = 0;
 
-foreach ( array( 'facont.css', 'facont.js', 'js/core/api.js', 'js/auth/auth.js', 'js/home/home.js', 'js/onboarding/onboarding.js', 'js/user/user.js', 'js/content/content.js', 'js/features/generic-generator.js', 'js/features/stories-text.js', 'js/features/titles.js', 'js/features/carousel.js', 'js/features/reels.js', 'js/core/router.js', 'js/core/bootstrap.js' ) as $facont_asset ) {
+foreach ( array( 'facont.css', 'facont.js', 'js/core/api.js', 'js/auth/auth.js', 'js/home/home.js', 'js/onboarding/onboarding-config.js', 'js/onboarding/onboarding-engine.js', 'js/onboarding/onboarding.js', 'js/user/user.js', 'js/content/content.js', 'js/features/generic-generator.js', 'js/features/stories-text.js', 'js/features/titles.js', 'js/features/carousel.js', 'js/features/reels.js', 'js/core/router.js', 'js/core/bootstrap.js' ) as $facont_asset ) {
   $asset_path = $facont_dir . '/' . $facont_asset;
 
   if ( file_exists( $asset_path ) ) {
@@ -72,6 +72,8 @@ if ( ! $facont_version ) {
 <script src="<?php echo esc_url( $facont_uri . '/js/core/api.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/auth/auth.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/home/home.js?ver=' . $facont_version ); ?>"></script>
+<script src="<?php echo esc_url( $facont_uri . '/js/onboarding/onboarding-config.js?ver=' . $facont_version ); ?>"></script>
+<script src="<?php echo esc_url( $facont_uri . '/js/onboarding/onboarding-engine.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/onboarding/onboarding.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/user/user.js?ver=' . $facont_version ); ?>"></script>
 <script src="<?php echo esc_url( $facont_uri . '/js/content/content.js?ver=' . $facont_version ); ?>"></script>

@@ -1,53 +1,6 @@
 // -----------------------------
-// ONBOARDING MODULE (Refactored with Auto-Loading)
+// ONBOARDING MODULE (Refactored)
 // -----------------------------
-
-/* -----------------------------
-   Dependency Loader
-------------------------------*/
-let _dependenciesPromise = null;
-
-function loadScript(relativePath) {
-  return new Promise((resolve, reject) => {
-    const base = (window.FACONT_BASE_URL || "").replace(/\/$/, "");
-    const src = base ? `${base}/${relativePath}` : relativePath;
-
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = () => resolve();
-    s.onerror = () => {
-      console.error(`Failed to load script: ${src}`);
-      reject(new Error(`Failed to load ${src}`));
-    };
-    document.head.appendChild(s);
-  });
-}
-
-function ensureOnboardingDependencies() {
-  if (_dependenciesPromise) return _dependenciesPromise;
-
-  _dependenciesPromise = (async () => {
-    const loads = [];
-
-    // Load Config if missing
-    if (!window.FACONT_ONBOARDING_CONFIG) {
-      console.log('Onboarding: Auto-loading config...');
-      loads.push(loadScript('js/onboarding/onboarding-config.js'));
-    }
-
-    // Load Engine if missing
-    if (typeof window.OnboardingEngine === 'undefined') {
-      console.log('Onboarding: Auto-loading engine...');
-      loads.push(loadScript('js/onboarding/onboarding-engine.js'));
-    }
-
-    if (loads.length > 0) {
-      await Promise.all(loads);
-    }
-  })();
-
-  return _dependenciesPromise;
-}
 
 /* -----------------------------
    Helpers
@@ -131,19 +84,10 @@ async function facontInitOnboardingOverview() {
   if (!root) return;
 
   const grid = document.getElementById('onb-overview-grid');
-  
-  // Ensure dependencies
-  try {
-    await ensureOnboardingDependencies();
-  } catch (e) {
-    if (grid) grid.innerHTML = '<p class="error">Ошибка загрузки скриптов: ' + e.message + '</p>';
-    return;
-  }
-
   const config = window.FACONT_ONBOARDING_CONFIG;
 
   if (!config || !config.blocks) {
-    if (grid) grid.innerHTML = '<p class="error">Ошибка конфигурации: blocks not found.</p>';
+    if (grid) grid.innerHTML = '<p class="error">Ошибка конфигурации: blocks not found. (Config script might not be loaded)</p>';
     return;
   }
 
@@ -271,17 +215,11 @@ function openModal(title, answers) {
 /* -----------------------------
    Generic Block Init
 ------------------------------*/
-async function facontInitOnboardingGeneric(blockId, containerId) {
-  try {
-    await ensureOnboardingDependencies();
-  } catch (e) {
-    const container = document.getElementById(containerId);
-    if (container) container.innerHTML = '<p class="error">Ошибка загрузки: ' + e.message + '</p>';
-    return;
-  }
-
+function facontInitOnboardingGeneric(blockId, containerId) {
   const config = window.FACONT_ONBOARDING_CONFIG;
   if (!config || !config.blocks) {
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = '<p class="error">Ошибка конфигурации: blocks not found. (Config script might not be loaded)</p>';
     console.error('Onboarding config missing');
     return;
   }
@@ -292,10 +230,13 @@ async function facontInitOnboardingGeneric(blockId, containerId) {
     return;
   }
 
+  // If engine class is loaded
   if (typeof OnboardingEngine === 'function') {
     const engine = new OnboardingEngine(containerId, blockConfig);
     engine.start();
   } else {
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = '<p class="error">Ошибка: OnboardingEngine class not found.</p>';
     console.error('OnboardingEngine class not found');
   }
 }
