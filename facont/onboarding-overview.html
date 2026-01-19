@@ -5,52 +5,9 @@
     <p>Выбери, какой блок заполнять дальше.</p>
   </div>
 
-  <div class="facont-onb-grid">
-
-    <div class="facont-card facont-onb-block" data-block="identity">
-      <h2>Блок 1: Твоя личность</h2>
-      <p>Кто ты, чем занимаешься, опыт и ценности.</p>
-      <p class="facont-onb-status" data-status="identity">Загрузка…</p>
-      <div class="facont-onb-actions">
-        <button class="facont-btn" data-open-block="identity">Заполнить</button>
-        <button class="facont-btn secondary" data-onb-view="identity" style="display:none;">Просмотреть</button>
-        <button class="facont-btn" data-onb-restart="identity" style="display:none;">Пройти заново</button>
-      </div>
-    </div>
-
-    <div class="facont-card facont-onb-block" data-block="product">
-      <h2>Блок 2: Продукт</h2>
-      <p>Что ты продаёшь, чем продукт полезен и чем отличается.</p>
-      <p class="facont-onb-status" data-status="product">Загрузка…</p>
-      <div class="facont-onb-actions">
-        <button class="facont-btn" data-open-block="product">Заполнить</button>
-        <button class="facont-btn secondary" data-onb-view="product" style="display:none;">Просмотреть</button>
-        <button class="facont-btn" data-onb-restart="product" style="display:none;">Пройти заново</button>
-      </div>
-    </div>
-
-    <div class="facont-card facont-onb-block" data-block="audience">
-      <h2>Блок 3: Аудитория</h2>
-      <p>Кому продаёшь, их боли, цели и контекст.</p>
-      <p class="facont-onb-status" data-status="audience">Загрузка…</p>
-      <div class="facont-onb-actions">
-        <button class="facont-btn" data-open-block="audience">Заполнить</button>
-        <button class="facont-btn secondary" data-onb-view="audience" style="display:none;">Просмотреть</button>
-        <button class="facont-btn" data-onb-restart="audience" style="display:none;">Пройти заново</button>
-      </div>
-    </div>
-
-    <div class="facont-card facont-onb-block" data-block="style">
-      <h2>Блок 4: Стиль</h2>
-      <p>Тон, подача, примеры текстов, твой voice & tone.</p>
-      <p class="facont-onb-status" data-status="style">Загрузка…</p>
-      <div class="facont-onb-actions">
-        <button class="facont-btn" data-open-block="style">Открыть</button>
-        <button class="facont-btn secondary" data-onb-view="style" style="display:none;">Просмотреть</button>
-        <button class="facont-btn" data-onb-restart="style" style="display:none;">Пройти заново</button>
-      </div>
-    </div>
-
+  <div class="facont-onb-grid" id="onb-overview-grid">
+    <!-- Dynamic Content -->
+    <div class="spinner" style="display:block; margin: 20px auto;"></div>
   </div>
 
   <!-- Modal: view answers -->
@@ -67,7 +24,7 @@
     </div>
   </div>
 
-  <!-- Финальный блок: показывается только если все 4 блока онбординга заполнены (status = ok) -->
+  <!-- Финальный блок: показывается только если все блоки заполнены -->
   <div class="facont-card facont-onb-complete" id="facont-onb-complete" style="display:none; margin-top:16px;">
     <h2>🎉 Базовый онбординг завершён!</h2>
 
