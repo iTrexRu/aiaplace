@@ -45,12 +45,12 @@
 }
 
 ::selection {
-  background: var(--facont-magenta);
+  background: #ff00ff;
   color: #fff;
 }
 
 ::-moz-selection {
-  background: var(--facont-magenta);
+  background: #ff00ff;
   color: #fff;
 }
 

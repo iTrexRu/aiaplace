@@ -286,3 +286,4 @@ window.facontInitOnboardingIdentity = () => facontInitOnboardingGeneric('identit
 window.facontInitOnboardingProduct = () => facontInitOnboardingGeneric('product', 'facont-onb-product-container');
 window.facontInitOnboardingAudience = () => facontInitOnboardingGeneric('audience', 'facont-onb-audience-container');
 window.facontInitOnboardingStyle = () => facontInitOnboardingGeneric('style', 'facont-onb-style-container');
+window.facontOpenOnboardingModal = openModal;

@@ -116,6 +116,10 @@ function facontInitSettings() {
 function facontInitProfile() {
   const blocks = ['identity', 'product', 'audience', 'style'];
   
+  // Local state
+  let currentLinksState = [];
+  let lastOnboardingByStep = {};
+
   // Elements
   const linksContainer = document.getElementById('prof-links-list');
   const btnAddLink = document.getElementById('btn-add-link-item');
@@ -144,6 +148,7 @@ function facontInitProfile() {
 
     if (link.id) row.dataset.id = String(link.id);
     
+    // Icon based on type? For now just generic or text
     const typeLabel = link.type || 'Ссылка';
     
     row.innerHTML = `
@@ -174,10 +179,13 @@ function facontInitProfile() {
       const resProfile = await facontCallAPI('get_profile', {});
       const profile = (resProfile && resProfile.profile) || (resProfile && resProfile.user) || resProfile || {};
       
-      // Also get onboarding status from settings if needed, but try to use profile data
+      // Also get onboarding status from settings if needed
       const resSettings = await facontCallAPI('get_settings', {});
       const user = resSettings.user || {};
       const onboarding = user.onboarding || {};
+      const onboardingByStep = resSettings.onboardingByStep || {};
+      
+      lastOnboardingByStep = onboardingByStep;
 
       // Render Cards
       blocks.forEach(block => {
@@ -195,23 +203,25 @@ function facontInitProfile() {
         if (statusBadge) {
           if (isDone) {
             statusBadge.textContent = 'Заполнено';
-            statusBadge.style.background = 'var(--facont-btn-bg)';
+            statusBadge.style.background = 'var(--facont-btn-bg)'; // Yellow
             statusBadge.style.color = 'var(--facont-text)';
           } else {
             statusBadge.textContent = 'Не заполнен';
-            statusBadge.style.background = '#ffe0e0';
+            statusBadge.style.background = '#ffe0e0'; // Pinkish
             statusBadge.style.color = 'var(--facont-danger)';
           }
         }
 
-        // Summary - Prefer 'result' from get_profile, fallback to settings
+        // Summary
         if (summaryEl) {
           let text = '';
-          // Check profile response for result text
-          if (profile[block] && profile[block].result) {
-             text = profile[block].result;
-          } else if (typeof profile[block] === 'string') {
-             text = profile[block];
+          // Check onboardingByStep[block].aiOutput
+          const stepData = onboardingByStep[block];
+          if (stepData && stepData.aiOutput) {
+             text = stepData.aiOutput;
+          } else if (stepData && stepData.meta) {
+             // Fallback
+             text = stepData.meta.summary || stepData.meta.finalText || '';
           }
           
           if (!text && isDone) text = 'Данные заполнены.';
@@ -250,13 +260,22 @@ function facontInitProfile() {
       const action = btn.dataset.profAction;
       const block = btn.dataset.block;
       
-      if (action === 'view' || action === 'edit') {
+      if (action === 'view') {
+        const stepData = lastOnboardingByStep[block];
+        const answers = stepData && stepData.meta && stepData.meta.answers;
+        const blockConfig = window.FACONT_ONBOARDING_CONFIG ? window.FACONT_ONBOARDING_CONFIG.blocks.find(b => b.id === block) : null;
+        const title = blockConfig ? `${blockConfig.title} — ответы` : 'Ответы';
+        
+        if (window.facontOpenOnboardingModal) {
+           window.facontOpenOnboardingModal(title, answers);
+        } else {
+           console.error('facontOpenOnboardingModal not found');
+        }
+      } else if (action === 'edit') {
         if (window.facontShowView) window.facontShowView('onboarding_' + block);
       }
     });
   });
-
-  let currentLinksState = [];
 
   // Add Link
   if (btnAddLink) {
