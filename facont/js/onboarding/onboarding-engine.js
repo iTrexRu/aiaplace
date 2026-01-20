@@ -41,9 +41,6 @@ class OnboardingEngine {
     if (step.type === 'process') {
       this.runProcess(step);
     }
-
-    // Scroll to top
-    // this.container.scrollIntoView({ behavior: 'smooth' });
   }
 
   renderHeader() {
@@ -191,8 +188,8 @@ class OnboardingEngine {
     });
   }
 
-  handleNext() {
-    if (this.isBusy) return;
+  handleNext(force = false) {
+    if (this.isBusy && !force) return;
     const step = this.getCurrentStep();
     
     // Validate & Collect
@@ -203,6 +200,10 @@ class OnboardingEngine {
     if (this.currentStepIndex < this.config.steps.length - 1) {
       this.currentStepIndex++;
       this.renderStep();
+      
+      if (force) {
+        this.isBusy = false;
+      }
     }
   }
 
@@ -253,23 +254,18 @@ class OnboardingEngine {
       if (!step.action) throw new Error('No action defined');
 
       // Prepare payload
-      // Special logic for style: text1, text2... are in answers
-      // Special logic for others: need formatted answers object?
-      
       const payload = this.preparePayload(step.action);
       
       // Call API
       const res = await window.facontCallAPI(step.action, payload);
       this.apiResult = res;
 
-      // Auto next
-      this.handleNext();
+      // Force next
+      this.handleNext(true);
 
     } catch (e) {
       console.error(e);
       if (statusEl) statusEl.textContent = 'Ошибка: ' + (e.message || e);
-      // Stay on process step or go back? 
-      // Ideally show error and button "Back"
       this.setBusy(false); // Enable buttons if any
     }
   }
@@ -289,13 +285,12 @@ class OnboardingEngine {
         inputText: this.buildInputTextFromAnswers(),
         finalText: finalText,
         meta: {
-           answers: this.answers, // raw answers
+           answers: this.answers,
            ui_version: 3,
            saved_from: 'frontend_onboarding_engine'
         }
       };
       
-      // Special handling for style meta
       if (this.config.id === 'style') {
         payload.meta.summary = this.apiResult?.summary;
         payload.meta.full = this.apiResult?.full;
@@ -306,8 +301,6 @@ class OnboardingEngine {
       
       if (statusEl) statusEl.textContent = 'Сохранено!';
       
-      // Maybe finish automatically or wait for user?
-      // Original behavior: just show "Saved".
       this.setBusy(false);
 
     } catch (e) {
@@ -325,7 +318,6 @@ class OnboardingEngine {
       };
     }
     
-    // Default submit_onboarding
     return {
       block: this.config.apiBlockName,
       answers: this.formatAnswersForSave(),
@@ -339,17 +331,9 @@ class OnboardingEngine {
   }
 
   formatAnswersForSave() {
-    // Map raw keys to [Label, Value] arrays as per original code logic
-    // We need to look up labels from config
     const result = {};
-    
     this.config.steps.forEach(s => {
       if (s.type === 'question' && s.key && this.answers[s.key]) {
-        // e.g. q1_1_name
-        // label is from s.title (often "Вопрос 1.1: Имя") or we need a cleaner label
-        // The original code used hardcoded arrays: ['Имя', val]
-        // Let's use s.title as label for now, or add a 'shortLabel' to config?
-        // Let's use s.title.
         result[s.key] = [s.title, this.answers[s.key]];
       }
     });
@@ -357,7 +341,6 @@ class OnboardingEngine {
   }
 
   buildInputTextFromAnswers() {
-    // Join all answers
     const lines = [];
     Object.keys(this.answers).forEach(key => {
       const val = this.answers[key];
@@ -369,10 +352,10 @@ class OnboardingEngine {
   extractFinalText(res) {
     if (!res) return '';
     if (Array.isArray(res) && res[0] && res[0].ok) {
-      return String(res[0].finalText || res[0].text || res[0].result || res[0].summary || res[0].stylePrompt || '').trim();
+      return String(res[0].onboarding_res || res[0].result || res[0].finalText || res[0].text || res[0].summary || res[0].stylePrompt || '').trim();
     }
     if (typeof res === 'object') {
-      return String(res.finalText || res.text || res.result || res.summary || res.stylePrompt || '').trim();
+      return String(res.onboarding_res || res.result || res.finalText || res.text || res.summary || res.stylePrompt || '').trim();
     }
     return String(res).trim();
   }
