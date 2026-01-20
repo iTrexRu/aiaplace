@@ -111,3 +111,17 @@
 <div class="facont-card" style="margin-top:24px; background:rgba(20, 1, 148, 0.05); border:none; border-left: 4px solid var(--facont-bg-sidebar);">
   <p style="color:var(--facont-text); font-weight:600; font-size:14px;">Это ваша база для генерации контента. <span style="color:var(--facont-text-muted); font-weight:400;">Чем точнее информация в профиле — тем больше тексты звучат как вы. Обычно на сбор такой базы маркетолог тратит 3-4 часа интервью с клиентом.</span></p>
 </div>
+
+<!-- Modal for View Answers (Added for Profile context) -->
+<div class="facont-modal" id="facont-onb-view-modal" style="display:none;">
+  <div class="facont-modal-backdrop" data-modal-close></div>
+  <div class="facont-modal-dialog" role="dialog" aria-modal="true">
+    <div class="facont-modal-header">
+      <h2 id="facont-onb-view-title">Просмотр</h2>
+      <button class="facont-btn secondary" data-modal-close>Закрыть</button>
+    </div>
+    <div class="facont-modal-body">
+      <div id="facont-onb-view-content"></div>
+    </div>
+  </div>
+</div>

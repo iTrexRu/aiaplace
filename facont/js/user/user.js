@@ -114,6 +114,7 @@ function facontInitSettings() {
 ------------------------------*/
 
 function facontInitProfile() {
+  console.log('Profile Init Started');
   const blocks = ['identity', 'product', 'audience', 'style'];
   
   // Local state
@@ -175,10 +176,12 @@ function facontInitProfile() {
   // --- Load Data ---
   async function loadProfile() {
     try {
+      console.log('Loading Profile Data...');
       // Use get_profile primarily as requested
       const resProfile = await facontCallAPI('get_profile', {});
       const profile = (Array.isArray(resProfile) ? resProfile[0] : resProfile) || {};
       
+      // Also get onboarding status from settings if needed
       const resSettings = await facontCallAPI('get_settings', {});
       const settingsData = (Array.isArray(resSettings) ? resSettings[0] : resSettings) || {};
       const user = settingsData.user || {};
@@ -187,6 +190,7 @@ function facontInitProfile() {
       // Merge onboardingByStep from profile (if exists) or settings
       const onboardingByStep = profile.onboardingByStep || settingsData.onboardingByStep || {};
       lastOnboardingByStep = onboardingByStep;
+      console.log('OnboardingByStep Loaded:', lastOnboardingByStep);
 
       // Render Cards
       blocks.forEach(block => {
@@ -204,11 +208,11 @@ function facontInitProfile() {
         if (statusBadge) {
           if (isDone) {
             statusBadge.textContent = 'Заполнено';
-            statusBadge.style.background = 'var(--facont-btn-bg)';
+            statusBadge.style.background = 'var(--facont-btn-bg)'; // Yellow
             statusBadge.style.color = 'var(--facont-text)';
           } else {
             statusBadge.textContent = 'Не заполнен';
-            statusBadge.style.background = '#ffe0e0';
+            statusBadge.style.background = '#ffe0e0'; // Pinkish
             statusBadge.style.color = 'var(--facont-danger)';
           }
         }
@@ -216,8 +220,8 @@ function facontInitProfile() {
         // Summary
         if (summaryEl) {
           let text = '';
+          // Check onboardingByStep[block].aiOutput
           const stepData = onboardingByStep[block];
-          
           if (stepData && stepData.aiOutput) {
              text = stepData.aiOutput;
           } else if (stepData && stepData.meta) {
@@ -246,19 +250,12 @@ function facontInitProfile() {
       });
 
       // Render Links
-      // Check where links are: profile.links, or profile.user.links?
-      // Based on user provided JSON: user object inside profile?
-      // "[ { user: { ... }, onboardingEntries: ... } ]"
-      // So profile.user.links might be it? Or profile.links?
-      // The JSON shows `user` object. It doesn't show `links` property in user in the snippet.
-      // But previous code used `profile.links`.
-      // I'll check both.
       const links = profile.links || (profile.user && profile.user.links) || [];
       currentLinksState = links;
       renderLinks(currentLinksState);
 
     } catch (e) {
-      console.error(e);
+      console.error('Error loading profile:', e);
     }
   }
 
@@ -268,16 +265,20 @@ function facontInitProfile() {
     btn.addEventListener('click', (e) => {
       const action = btn.dataset.profAction;
       const block = btn.dataset.block;
+      console.log('Profile Action Clicked:', action, block);
       
       if (action === 'view') {
         const stepData = lastOnboardingByStep[block];
         const answers = stepData && stepData.meta && stepData.meta.answers;
         const aiOutput = stepData && stepData.aiOutput;
         
+        console.log('View Data:', { stepData, answers, aiOutput });
+        
         const blockConfig = window.FACONT_ONBOARDING_CONFIG ? window.FACONT_ONBOARDING_CONFIG.blocks.find(b => b.id === block) : null;
         const title = blockConfig ? `${blockConfig.title} — ответы` : 'Ответы';
         
         if (window.facontOpenOnboardingModal) {
+           console.log('Opening Modal via Global Function');
            window.facontOpenOnboardingModal(title, answers, aiOutput);
         } else {
            console.error('facontOpenOnboardingModal not found');
