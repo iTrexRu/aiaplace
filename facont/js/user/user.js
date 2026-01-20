@@ -177,14 +177,15 @@ function facontInitProfile() {
     try {
       // Use get_profile primarily as requested
       const resProfile = await facontCallAPI('get_profile', {});
-      const profile = (resProfile && resProfile.profile) || (resProfile && resProfile.user) || resProfile || {};
+      const profile = (Array.isArray(resProfile) ? resProfile[0] : resProfile) || {};
       
-      // Also get onboarding status from settings if needed
       const resSettings = await facontCallAPI('get_settings', {});
-      const user = resSettings.user || {};
+      const settingsData = (Array.isArray(resSettings) ? resSettings[0] : resSettings) || {};
+      const user = settingsData.user || {};
       const onboarding = user.onboarding || {};
-      const onboardingByStep = resSettings.onboardingByStep || {};
       
+      // Merge onboardingByStep from profile (if exists) or settings
+      const onboardingByStep = profile.onboardingByStep || settingsData.onboardingByStep || {};
       lastOnboardingByStep = onboardingByStep;
 
       // Render Cards
@@ -203,11 +204,11 @@ function facontInitProfile() {
         if (statusBadge) {
           if (isDone) {
             statusBadge.textContent = 'Заполнено';
-            statusBadge.style.background = 'var(--facont-btn-bg)'; // Yellow
+            statusBadge.style.background = 'var(--facont-btn-bg)';
             statusBadge.style.color = 'var(--facont-text)';
           } else {
             statusBadge.textContent = 'Не заполнен';
-            statusBadge.style.background = '#ffe0e0'; // Pinkish
+            statusBadge.style.background = '#ffe0e0';
             statusBadge.style.color = 'var(--facont-danger)';
           }
         }
@@ -215,8 +216,8 @@ function facontInitProfile() {
         // Summary
         if (summaryEl) {
           let text = '';
-          // Check onboardingByStep[block].aiOutput
           const stepData = onboardingByStep[block];
+          
           if (stepData && stepData.aiOutput) {
              text = stepData.aiOutput;
           } else if (stepData && stepData.meta) {
@@ -245,7 +246,15 @@ function facontInitProfile() {
       });
 
       // Render Links
-      currentLinksState = profile.links || [];
+      // Check where links are: profile.links, or profile.user.links?
+      // Based on user provided JSON: user object inside profile?
+      // "[ { user: { ... }, onboardingEntries: ... } ]"
+      // So profile.user.links might be it? Or profile.links?
+      // The JSON shows `user` object. It doesn't show `links` property in user in the snippet.
+      // But previous code used `profile.links`.
+      // I'll check both.
+      const links = profile.links || (profile.user && profile.user.links) || [];
+      currentLinksState = links;
       renderLinks(currentLinksState);
 
     } catch (e) {
@@ -263,11 +272,13 @@ function facontInitProfile() {
       if (action === 'view') {
         const stepData = lastOnboardingByStep[block];
         const answers = stepData && stepData.meta && stepData.meta.answers;
+        const aiOutput = stepData && stepData.aiOutput;
+        
         const blockConfig = window.FACONT_ONBOARDING_CONFIG ? window.FACONT_ONBOARDING_CONFIG.blocks.find(b => b.id === block) : null;
         const title = blockConfig ? `${blockConfig.title} — ответы` : 'Ответы';
         
         if (window.facontOpenOnboardingModal) {
-           window.facontOpenOnboardingModal(title, answers);
+           window.facontOpenOnboardingModal(title, answers, aiOutput);
         } else {
            console.error('facontOpenOnboardingModal not found');
         }

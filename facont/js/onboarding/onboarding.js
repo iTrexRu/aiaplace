@@ -200,7 +200,7 @@ async function facontInitOnboardingOverview() {
   });
 }
 
-function openModal(title, answers) {
+function openModal(title, answers, aiOutput) {
   const modal = document.getElementById('facont-onb-view-modal');
   const titleEl = document.getElementById('facont-onb-view-title');
   const contentEl = document.getElementById('facont-onb-view-content');
@@ -208,12 +208,25 @@ function openModal(title, answers) {
   if (!modal || !contentEl) return;
   if (titleEl) titleEl.textContent = title || 'Просмотр';
 
+  let htmlContent = '';
+
+  // AI Output Block
+  if (aiOutput) {
+    htmlContent += `
+      <div style="margin-bottom:20px; padding:12px; background:var(--facont-bg-main); border-radius:8px; border:1px solid var(--facont-border);">
+        <h3 style="margin-top:0; margin-bottom:8px; font-size:14px; font-weight:700; color:var(--facont-text);">Результат анализа</h3>
+        <div style="white-space:pre-wrap; font-size:14px; color:var(--facont-text-muted);">${aiOutput}</div>
+      </div>
+    `;
+  }
+
+  // Answers Block
   const entries = answers && typeof answers === 'object' ? Object.entries(answers) : [];
 
   if (!entries.length) {
-    contentEl.innerHTML = '<p class="muted">Нет сохранённых ответов для просмотра.</p>';
+    htmlContent += '<p class="muted">Нет сохранённых ответов для просмотра.</p>';
   } else {
-    const html = entries.map(([key, val]) => {
+    const listHtml = entries.map(([key, val]) => {
       let q = key;
       let a = '';
       if (Array.isArray(val)) {
@@ -232,9 +245,10 @@ function openModal(title, answers) {
         </div>
       `;
     }).join('');
-    contentEl.innerHTML = `<div class="facont-onb-qa">${html}</div>`;
+    htmlContent += `<div class="facont-onb-qa">${listHtml}</div>`;
   }
 
+  contentEl.innerHTML = htmlContent;
   modal.style.display = 'flex';
 
   const closeBtns = modal.querySelectorAll('[data-modal-close]');
