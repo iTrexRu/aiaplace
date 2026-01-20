@@ -65,6 +65,11 @@ class OnboardingEngine {
   renderContent(step) {
     let content = '';
 
+    // Optional badge
+    if (step.type === 'question' && step.required === false) {
+       content += `<div style="float: right; font-size: 12px; background: #eee; padding: 4px 8px; border-radius: 6px; color: #666; margin-left: 10px;">можно пропустить</div>`;
+    }
+
     // Title & Description
     if (step.title) content += `<h2>${step.title}</h2>`;
     if (step.description) content += `<p class="muted">${step.description}</p>`;
@@ -144,11 +149,16 @@ class OnboardingEngine {
     content += `<div id="step-status" class="facont-status"></div>`;
 
     // Buttons
-    content += `<div style="margin-top:12px;">`;
+    content += `<div style="margin-top:12px; display:flex; gap:10px; align-items:center;">`;
     
     // Back Button
     if (this.currentStepIndex > 0 && step.type !== 'process') {
       content += `<button class="btn secondary" data-action="prev">Назад</button> `;
+    }
+
+    // Skip Button
+    if (step.type === 'question' && step.required === false) {
+      content += `<button class="btn secondary" data-action="skip" style="border:none; background:transparent;">Пропустить</button> `;
     }
 
     // Next / Action Button
@@ -182,8 +192,10 @@ class OnboardingEngine {
         const action = e.target.dataset.action;
         if (action === 'next') this.handleNext();
         if (action === 'prev') this.handlePrev();
-        if (action === 'save') this.handleSave();
+        if (action === 'skip') this.handleSkip();
+        if (action === 'save') this.handleSave(e.target);
         if (action === 'finish') this.handleFinish();
+        if (action === 'nav') this.handleNav(e.target.dataset.target);
       });
     });
   }
@@ -207,6 +219,15 @@ class OnboardingEngine {
     }
   }
 
+  handleSkip() {
+    if (this.isBusy) return;
+    // Just move next without validation/collection
+    if (this.currentStepIndex < this.config.steps.length - 1) {
+      this.currentStepIndex++;
+      this.renderStep();
+    }
+  }
+
   handlePrev() {
     if (this.isBusy) return;
     if (this.currentStepIndex > 0) {
@@ -216,11 +237,14 @@ class OnboardingEngine {
   }
 
   handleFinish() {
-    // Go to overview
     if (window.facontShowView) {
       window.facontShowView('onboarding_overview');
-    } else {
-      console.log('Finished');
+    }
+  }
+
+  handleNav(target) {
+    if (target && window.facontShowView) {
+      window.facontShowView(target);
     }
   }
 
@@ -253,24 +277,20 @@ class OnboardingEngine {
     try {
       if (!step.action) throw new Error('No action defined');
 
-      // Prepare payload
       const payload = this.preparePayload(step.action);
-      
-      // Call API
       const res = await window.facontCallAPI(step.action, payload);
       this.apiResult = res;
 
-      // Force next
       this.handleNext(true);
 
     } catch (e) {
       console.error(e);
       if (statusEl) statusEl.textContent = 'Ошибка: ' + (e.message || e);
-      this.setBusy(false); // Enable buttons if any
+      this.setBusy(false); 
     }
   }
 
-  async handleSave() {
+  async handleSave(btn) {
     this.setBusy(true);
     const statusEl = document.getElementById('step-status');
     if (statusEl) statusEl.textContent = '';
@@ -301,7 +321,37 @@ class OnboardingEngine {
       
       if (statusEl) statusEl.textContent = 'Сохранено!';
       
+      // Determine Next Block Logic
       this.setBusy(false);
+      
+      if (btn) {
+        btn.style.display = 'none'; // Hide Save button
+        
+        // Find next block
+        const allBlocks = window.FACONT_ONBOARDING_CONFIG.blocks.sort((a,b)=>a.order-b.order);
+        const currentIdx = allBlocks.findIndex(b => b.id === this.config.id);
+        const nextBlock = allBlocks[currentIdx + 1];
+        
+        const actionsContainer = btn.parentElement;
+        
+        if (nextBlock) {
+          const nextBtn = document.createElement('button');
+          nextBtn.className = 'btn';
+          nextBtn.textContent = `Следующий блок: ${nextBlock.title}`;
+          nextBtn.dataset.action = 'nav';
+          nextBtn.dataset.target = 'onboarding_' + nextBlock.id;
+          nextBtn.addEventListener('click', () => this.handleNav('onboarding_' + nextBlock.id));
+          actionsContainer.appendChild(nextBtn);
+        } else {
+          const finishBtn = document.createElement('button');
+          finishBtn.className = 'btn';
+          finishBtn.textContent = 'Сделать пост';
+          finishBtn.dataset.action = 'nav';
+          finishBtn.dataset.target = 'idea_post';
+          finishBtn.addEventListener('click', () => this.handleNav('idea_post'));
+          actionsContainer.appendChild(finishBtn);
+        }
+      }
 
     } catch (e) {
       if (statusEl) statusEl.textContent = 'Ошибка: ' + (e.message || e);
@@ -365,7 +415,6 @@ class OnboardingEngine {
     const busyEl = document.getElementById('step-busy');
     if (busyEl) busyEl.style.display = isBusy ? 'inline-block' : 'none';
     
-    // Disable buttons
     const btns = this.container.querySelectorAll('button');
     btns.forEach(b => b.disabled = isBusy);
   }

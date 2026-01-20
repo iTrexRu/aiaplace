@@ -107,7 +107,7 @@ function facontInitHome() {
         setBody('');
 
         ensureActionsVisible();
-        addBtn('Пост из голоса', 'voice_post');
+        addBtn('Идея в пост', 'idea_post');
         addBtn('Сторис из текста', 'stories_text');
         addBtn('Заголовки', 'titles');
         addBtn('Карусель', 'carousel');

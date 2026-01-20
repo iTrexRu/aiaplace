@@ -38,6 +38,15 @@
   --facont-shadow-primary-42: rgba(230, 245, 10, 0.4);
   --facont-shadow-modal: rgba(0, 0, 0, 0.25);
   --facont-overlay: rgba(0, 0, 0, 0.45);
+  
+  --facont-btn-bg: #dceb00;
+  --facont-magenta: #ff00ff;
+  --facont-spinner: #0044cc;
+}
+
+::selection {
+  background: var(--facont-magenta);
+  color: #fff;
 }
 
 /* базовый сброс внутри приложения */
@@ -330,12 +339,12 @@
   align-items: center;
   justify-content: center;
   padding: 8px 14px;
-  border-radius: 999px;
+  border-radius: 12px;
   border: none;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  background: var(--facont-primary);
+  background: var(--facont-btn-bg);
   color: var(--facont-text);
   gap: 6px;
   transition: background 0.15s ease, transform 0.05s ease;
@@ -343,7 +352,7 @@
 
 .btn:hover,
 .facont-btn:hover {
-  background: var(--facont-primary-hover);
+  filter: brightness(0.95);
 }
 
 .btn:active,
@@ -372,7 +381,7 @@
   height: 16px;
   border-radius: 999px;
   border: 2px solid var(--facont-border);
-  border-top-color: var(--facont-primary);
+  border-top-color: var(--facont-spinner);
   animation: facont-spin 0.7s linear infinite;
   vertical-align: middle;
   margin-left: 8px;

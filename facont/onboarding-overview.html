@@ -1,8 +1,14 @@
 <div id="facont-onb0">
 
   <div class="facont-card">
-    <h1>Онбординг: прогресс</h1>
-    <p>Выбери, какой блок заполнять дальше.</p>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h1 style="margin:0;">Онбординг</h1>
+      <span id="onb-total-progress-text" style="color:var(--facont-text-secondary); font-size:14px; font-weight:600;">0/4</span>
+    </div>
+    <div class="onb1-progress-bar">
+      <div class="onb1-progress-bar-inner" id="onb-total-progress-bar" style="width: 0%"></div>
+    </div>
+    <p style="margin-top:12px;">Пройди все этапы, чтобы нейросеть научилась писать как ты.</p>
   </div>
 
   <div class="facont-onb-grid" id="onb-overview-grid">
@@ -24,7 +30,30 @@
     </div>
   </div>
 
-  <!-- Финальный блок: показывается только если все блоки заполнены -->
+  <!-- Modal: Welcome -->
+  <div class="facont-modal" id="facont-onb-welcome-modal" style="display:none; z-index:10000;">
+    <div class="facont-modal-backdrop"></div>
+    <div class="facont-modal-dialog" style="max-width: 480px; padding: 0;">
+      <div style="padding: 32px 24px;">
+        <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 16px; line-height: 1.3;">Привет! Давай настроим Фабрику под тебя</h2>
+        <p style="margin-bottom: 20px;">Задам несколько вопросов о тебе, твоём проекте и аудитории.</p>
+        
+        <p style="font-weight: 600; margin-bottom: 12px;">Зачем это нужно:</p>
+        <ul style="list-style: none; padding: 0; margin-bottom: 24px; color: var(--facont-text-muted); font-size: 14px; line-height: 1.6;">
+          <li>→ Буду писать контент от твоего имени</li>
+          <li>→ Покажу твою экспертность в текстах</li>
+          <li>→ Попаду в боли и язык твоей аудитории</li>
+          <li>→ Сохраню твой стиль и голос</li>
+        </ul>
+        
+        <p style="color: var(--facont-text-secondary); margin-bottom: 24px; font-size: 14px;">Займёт 5–7 минут.</p>
+        
+        <button class="btn facont-w-100" style="padding: 14px; font-size: 16px; justify-content: center;" id="btn-onb-start">Начинаем!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Финальный блок -->
   <div class="facont-card facont-onb-complete" id="facont-onb-complete" style="display:none; margin-top:16px;">
     <h2>🎉 Базовый онбординг завершён!</h2>
 
@@ -40,31 +69,8 @@
 
     <hr>
 
-    <p class="muted">
-      💡 Можешь начать создавать контент прямо сейчас!
-    </p>
-    <p class="muted">
-      Но есть расширенная настройка (ещё 5–7 мин), которая сделает результаты ЕЩЁ точнее.
-    </p>
-
-    <hr>
-
-    <p class="muted">
-      Что даст расширенная настройка:
-    </p>
-    <ul class="muted">
-      <li>📍 Узнаю язык твоей аудитории → буду писать их жаргоном</li>
-      <li>📍 Определю твою тональность → формат/неформат, юмор/серьёзность</li>
-      <li>📍 Пойму какие у тебя ресурсы → буду давать реализуемые идеи</li>
-      <li>📍 Узнаю табу-темы → не предложу то, что не опубликуешь</li>
-      <li>📍 Узнаю твой успешный контент → буду генерить похожие идеи</li>
-    </ul>
-
     <div style="margin-top:12px;">
-      <button class="facont-btn" data-onb-complete="extended">
-        Пройти расширенную настройку
-      </button>
-      <button class="facont-btn secondary" data-onb-complete="content">
+      <button class="facont-btn" data-onb-complete="content">
         Начать создавать контент
       </button>
     </div>

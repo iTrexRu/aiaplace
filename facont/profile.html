@@ -1,64 +1,113 @@
-<div class="card">
-  <h1>Профиль</h1>
-  <p class="muted">
-    Здесь хранится информация о твоём бизнесе, стиле и ссылках на ресурсы.
-  </p>
+<div class="facont-card" style="border:none; background:transparent; box-shadow:none; padding:0; margin-bottom:0;">
+  <h1 style="margin-bottom:6px;">Профиль</h1>
+  <p class="muted">Информация о вас и вашем бизнесе для генерации контента</p>
 </div>
 
-<div class="card">
-  <h2>Информация о моем бизнесе</h2>
-  <p class="muted">
-    Эта информация подтягивается из базы (например, после сценария «Собрать информацию»).
-  </p>
+<h3 class="facont-subtitle" style="margin-top:24px; margin-bottom:12px; text-transform:uppercase; font-size:12px; font-weight:600; color:var(--facont-text-secondary);">Результаты онбординга</h3>
 
-<div class="facont-mb-16 facont-border-bottom-soft" style="padding-bottom:16px;">
-    <label style="display:block; margin-bottom:4px; font-weight:600; font-size:14px;">Ссылка на сайт или Google Doc</label>
-    <div style="display:flex; gap:8px;">
-      <input type="text" id="prof-collect-url" placeholder="https://..." style="flex:1;">
-      <button class="btn" id="btn-collect-info">Собрать информацию</button>
+<div class="facont-profile-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+  <!-- Card 1: Identity -->
+  <div class="facont-card" id="prof-card-identity" style="margin-bottom:0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:16px; font-weight:600;">Моя личность</h3>
+      <span class="facont-badge" data-prof-status="identity" style="font-size:11px; padding:2px 8px; border-radius:99px; background:#eee;">...</span>
     </div>
-<p class="muted facont-text-danger" style="margin-top:6px; font-size:13px;">
-      Внимание: это заменит текст, который вы сейчас видите в поле Информация о моем бизнесе.
-    </p>
-    <div style="margin-top:8px;">
-        <span id="collect-info-busy" style="display:none" class="spinner"></span>
-        <div id="collect-info-status" class="facont-status"></div>
+    <div class="prof-summary" data-prof-summary="identity" style="font-size:13px; line-height:1.5; color:var(--facont-text-muted); margin-bottom:16px; height:60px; overflow:hidden;">Загрузка...</div>
+    <div class="prof-actions" style="display:flex; gap:8px;">
+       <button class="btn secondary" style="font-size:13px; padding:6px 12px;" data-prof-action="view" data-block="identity">Просмотреть</button>
+       <button class="btn" style="font-size:13px; padding:6px 12px;" data-prof-action="edit" data-block="identity">Редактировать</button>
     </div>
   </div>
+  
+  <!-- Card 2: Product -->
+  <div class="facont-card" id="prof-card-product" style="margin-bottom:0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:16px; font-weight:600;">Мой продукт</h3>
+      <span class="facont-badge" data-prof-status="product" style="font-size:11px; padding:2px 8px; border-radius:99px; background:#eee;">...</span>
+    </div>
+    <div class="prof-summary" data-prof-summary="product" style="font-size:13px; line-height:1.5; color:var(--facont-text-muted); margin-bottom:16px; height:60px; overflow:hidden;">Загрузка...</div>
+    <div class="prof-actions" style="display:flex; gap:8px;">
+       <button class="btn secondary" style="font-size:13px; padding:6px 12px;" data-prof-action="view" data-block="product">Просмотреть</button>
+       <button class="btn" style="font-size:13px; padding:6px 12px;" data-prof-action="edit" data-block="product">Редактировать</button>
+    </div>
+  </div>
 
-  <textarea id="prof-company-info" readonly></textarea>
-</div>
+  <!-- Card 3: Audience -->
+  <div class="facont-card" id="prof-card-audience" style="margin-bottom:0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:16px; font-weight:600;">Моя аудитория</h3>
+      <span class="facont-badge" data-prof-status="audience" style="font-size:11px; padding:2px 8px; border-radius:99px; background:#eee;">...</span>
+    </div>
+    <div class="prof-summary" data-prof-summary="audience" style="font-size:13px; line-height:1.5; color:var(--facont-text-muted); margin-bottom:16px; height:60px; overflow:hidden;">Загрузка...</div>
+    <div class="prof-actions" style="display:flex; gap:8px;">
+       <button class="btn secondary" style="font-size:13px; padding:6px 12px;" data-prof-action="view" data-block="audience">Просмотреть</button>
+       <button class="btn" style="font-size:13px; padding:6px 12px;" data-prof-action="edit" data-block="audience">Редактировать</button>
+    </div>
+  </div>
 
-<div class="card">
-  <h2>Мой стиль</h2>
-  <p class="muted">
-    Здесь хранится текущий промт стиля, который будет использоваться для генерации контента.
-  </p>
-  <textarea id="prof-style-prompt"></textarea>
-  <div style="margin-top:10px;">
-    <button class="btn" id="btn-save-style-profile">Сохранить стиль</button>
-    <span id="save-style-busy" style="display:none" class="spinner"></span>
-    <div id="save-style-status" class="facont-status"></div>
+  <!-- Card 4: Style -->
+  <div class="facont-card" id="prof-card-style" style="margin-bottom:0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:16px; font-weight:600;">Мой стиль</h3>
+      <span class="facont-badge" data-prof-status="style" style="font-size:11px; padding:2px 8px; border-radius:99px; background:#eee;">...</span>
+    </div>
+    <div class="prof-summary" data-prof-summary="style" style="font-size:13px; line-height:1.5; color:var(--facont-text-muted); margin-bottom:16px; height:60px; overflow:hidden;">Загрузка...</div>
+    <div class="prof-actions" style="display:flex; gap:8px;">
+       <button class="btn secondary" style="font-size:13px; padding:6px 12px;" data-prof-action="view" data-block="style">Просмотреть</button>
+       <button class="btn" style="font-size:13px; padding:6px 12px;" data-prof-action="edit" data-block="style">Редактировать</button>
+    </div>
   </div>
 </div>
 
-<div class="card">
-  <h2>Ссылки на мои ресурсы</h2>
-  <p class="muted">
-    Добавь ссылки на сайт, соцсети и другие важные площадки.
-  </p>
+<h3 class="facont-subtitle" style="margin-top:32px; margin-bottom:12px; text-transform:uppercase; font-size:12px; font-weight:600; color:var(--facont-text-secondary);">Дополнительные источники</h3>
 
-  <div style="margin-bottom:8px;">
-    <button class="btn secondary" id="btn-add-link">Добавить</button>
+<div class="facont-card">
+  <div style="display:flex; gap:16px; align-items:flex-start;">
+    <div style="background:var(--facont-bg-sidebar); color:white; border-radius:8px; padding:10px; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">
+       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+    </div>
+    <div style="flex:1;">
+       <h3 style="margin:0; font-size:16px; font-weight:600;">Дополнить профиль из ссылки</h3>
+       <p class="muted" style="margin-top:4px;">Вставьте ссылку на ваш LinkedIn или Google Doc с подробным описанием вашего бизнеса, проекта, услуг — мы достанем оттуда дополнительные детали и добавим в профиль</p>
+       <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+          <input type="text" id="prof-add-url" placeholder="https://linkedin.com/in/..." style="flex:1; min-width:200px;">
+          <button class="btn" id="btn-add-url">Добавить данные</button>
+       </div>
+       <div id="prof-add-url-status" class="facont-status" style="margin-top:4px;"></div>
+    </div>
   </div>
+</div>
 
-  <div id="facont-links-list">
-    <!-- сюда JS будет добавлять строки ссылок -->
-  </div>
+<h3 class="facont-subtitle" style="margin-top:32px; margin-bottom:12px; text-transform:uppercase; font-size:12px; font-weight:600; color:var(--facont-text-secondary);">Ссылки на мои ресурсы</h3>
 
-  <div style="margin-top:12px;">
-    <button class="btn" id="btn-save-links">Сохранить</button>
-    <span id="save-links-busy" style="display:none" class="spinner"></span>
-    <div id="save-links-status" class="facont-status"></div>
+<div class="facont-card">
+  <p class="muted">Добавьте ссылки на ваш сайт, соцсети и другие площадки — они могут использоваться в генерации контента</p>
+  
+  <div id="prof-links-list"></div>
+  
+  <div class="row" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--facont-border-soft);">
+    <div class="col" style="flex:2;">
+      <input type="text" id="prof-new-link-url" placeholder="https://...">
+    </div>
+    <div class="col" style="flex:1;">
+      <select id="prof-new-link-type" style="width:100%; padding:8px 10px; border-radius:6px; border:1px solid var(--facont-border); background:var(--facont-bg-card);">
+        <option value="">Тип ссылки</option>
+        <option value="website">Сайт</option>
+        <option value="linkedin">LinkedIn</option>
+        <option value="telegram">Telegram</option>
+        <option value="instagram">Instagram</option>
+        <option value="facebook">Facebook</option>
+        <option value="youtube">YouTube</option>
+        <option value="other">Другое</option>
+      </select>
+    </div>
+    <div class="col" style="flex:0 0 auto;">
+      <button class="btn secondary" id="btn-add-link-item">Добавить</button>
+    </div>
   </div>
+  <div id="save-links-status" class="facont-status" style="margin-top:4px;"></div>
+</div>
+
+<div class="facont-card" style="margin-top:24px; background:rgba(20, 1, 148, 0.05); border:none; border-left: 4px solid var(--facont-bg-sidebar);">
+  <p style="color:var(--facont-text); font-weight:600; font-size:14px;">Это ваша база для генерации контента. <span style="color:var(--facont-text-muted); font-weight:400;">Чем точнее информация в профиле — тем больше тексты звучат как вы. Обычно на сбор такой базы маркетолог тратит 3-4 часа интервью с клиентом.</span></p>
 </div>

@@ -1,79 +1,74 @@
-<div class="facont-card">
-  <h1>Идея в пост</h1>
-  <p class="muted">
-    Превратите свою идею в пост: напишите идею текстом или загрузите картинку/скриншот или наговорите ее голосом. Как вы хотите начать?
-  </p>
+<div class="facont-card" style="border:none; background:transparent; box-shadow:none; padding:0; margin-bottom:0;">
+  <h1 style="margin-bottom:6px;">Идея в пост</h1>
+  <p class="muted">Превратите свою идею в пост: напишите текст, наговорите голосом или загрузите скриншот</p>
+</div>
 
-  <!-- Табы -->
-  <div class="facont-tabs" style="margin-top: 24px; margin-bottom: 24px; display: flex; gap: 10px;">
-    <button class="facont-btn secondary" id="tab-btn-text" onclick="facontIdeaPostSwitchTab('text')">Ввести текст</button>
-    <button class="facont-btn secondary" id="tab-btn-image" onclick="facontIdeaPostSwitchTab('image')">Загрузить картинку/скриншот</button>
-    <button class="facont-btn secondary" id="tab-btn-voice" onclick="facontIdeaPostSwitchTab('voice')">Отправить голосовое в Telegram</button>
+<div class="card" id="idea-main-card">
+  <!-- Tabs -->
+  <div class="facont-tabs" style="display:flex; gap:8px; margin-bottom:16px;">
+    <button class="btn" data-tab="text" style="border-radius:10px;">📝 Текст</button>
+    <button class="btn secondary" data-tab="voice" style="border-radius:10px;">🎙️ Голос</button>
+    <button class="btn secondary" data-tab="image" style="border-radius:10px;">🖼️ Скриншот</button>
   </div>
 
-  <!-- Контент таба: Текст -->
-  <div id="tab-content-text" style="display: none;">
-    <textarea id="idea-text-input" class="facont-textarea" style="width: 100%; height: 120px;" placeholder="Опишите вашу идею для поста..."></textarea>
-    <div style="margin-top: 12px;">
-      <button class="facont-btn" onclick="facontIdeaPostSubmitText()">Отправить</button>
-    </div>
+  <!-- Tab: Text -->
+  <div id="tab-content-text" class="facont-tab-pane">
+    <textarea id="idea-text-input" style="min-height:160px;" placeholder="Опишите вашу идею для поста..."></textarea>
   </div>
 
-  <!-- Контент таба: Картинка -->
-  <div id="tab-content-image" style="display: none;">
-    <div style="margin-bottom: 12px;">
-      <input type="file" id="idea-image-input" accept="image/*" style="display: none;" onchange="facontIdeaPostFileChanged(this)">
-      <button class="facont-btn secondary" onclick="document.getElementById('idea-image-input').click()">Выберите файл</button>
-      <span id="idea-image-filename" class="muted" style="margin-left: 10px;">Файл не выбран</span>
-    </div>
-    <div>
-      <button class="facont-btn" onclick="facontIdeaPostSubmitImage()">Отправить</button>
-    </div>
-  </div>
-
-  <!-- Контент таба: Голос -->
-  <div id="tab-content-voice" style="display: none;">
-    <p class="muted" style="margin-bottom: 16px;">
-      Мы используем Telegram-бот для удобной записи голосовых сообщений.<br>
-      ИИ распознает вашу речь, очистит от слов-паразитов и напишет пост в вашем стиле.
-    </p>
-    <a href="https://t.me/facont_v1_bot?start=speak" target="_blank" class="facont-btn-primary" style="display:inline-block; text-decoration:none;">
-      Отправить голосовое в Telegram
+  <!-- Tab: Voice -->
+  <div id="tab-content-voice" class="facont-tab-pane" style="display:none; text-align:center; padding:40px; border:2px dashed var(--facont-border); border-radius:12px;">
+    <!-- Link to Telegram Bot as per original functionality but new design -->
+    <a href="https://t.me/facont_v1_bot?start=speak" target="_blank" style="text-decoration:none; display:block;">
+      <div style="background:var(--facont-bg-sidebar); width:60px; height:60px; border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+         <span style="font-size:24px;">🎙️</span>
+      </div>
+      <p class="muted" style="color:var(--facont-text);">Нажмите, чтобы перейти в Telegram и записать голосовое</p>
     </a>
   </div>
 
-  <!-- Блок результата (скрыт по умолчанию) -->
-  <div id="idea-result-block" class="card" style="margin-top:30px; display:none;">
-    <h2>Результат</h2>
-    <textarea id="idea-result-text" class="facont-textarea" style="height:240px;"></textarea>
-    <div id="idea-save-error" class="facont-error" style="display:none; margin-top:10px;"></div>
-    
-    <div id="idea-actions" style="display:none; margin-top:30px; flex-direction: column;">
-      <div class="facont-mb-16 facont-border-bottom-soft" style="padding-bottom:16px;">
-        <button class="facont-btn" id="btn-save-idea-result">Сохранить в базу</button>
-        <span id="idea-save-busy" style="display:none" class="spinner"></span>
-        <div id="idea-save-status" class="facont-status"></div>
-      </div>
+  <!-- Tab: Image -->
+  <div id="tab-content-image" class="facont-tab-pane" style="display:none; text-align:center; padding:40px; border:2px dashed var(--facont-border); border-radius:12px;">
+    <input type="file" id="idea-image-input" accept="image/*" style="display:none;">
+    <div onclick="document.getElementById('idea-image-input').click()" style="cursor:pointer;">
+      <div style="font-size:40px; margin-bottom:16px;">🖼️</div>
+      <p class="muted">Загрузите скриншот или перетащите сюда</p>
+      <span id="idea-filename" style="font-size:12px; color:var(--facont-primary-hover); display:block; margin-top:8px;"></span>
     </div>
   </div>
 
-  <div id="idea-error" class="facont-error" style="display:none; margin-top:12px;"></div>
-  <span id="idea-busy" style="display:none; border-top-color: var(--facont-focus);" class="spinner"></span>
+  <!-- Error -->
+  <div id="idea-error" class="facont-error" style="display:none; margin-top:10px;"></div>
+  
+  <!-- Main Action Button -->
+  <div style="text-align:right; margin-top:20px;">
+    <button id="idea-submit-btn" class="btn" style="padding:12px 24px; font-size:15px;">Создать пост</button>
+    <span id="idea-busy" class="spinner" style="display:none;"></span>
+  </div>
 </div>
 
-<!-- Модалка подтверждения смены таба -->
-<div class="facont-modal" id="idea-confirm-modal" style="display:none;">
-  <div class="facont-modal-backdrop"></div>
-  <div class="facont-modal-dialog">
-    <div class="facont-modal-header">
-      <h2>Новый пост?</h2>
-    </div>
-    <div class="facont-modal-body">
-      <p>Хотите сделать новый пост?</p>
-      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
-        <button class="facont-btn secondary" id="btn-cancel-new">Нет, продолжить с этим</button>
-        <button class="facont-btn" id="btn-confirm-new">Да, хочу новый</button>
-      </div>
-    </div>
+<!-- What you get -->
+<div style="margin-top:24px;">
+  <button class="btn secondary" id="idea-toggle-info" style="background:transparent; border:none; padding:0; color:var(--facont-text-secondary); display:flex; align-items:center; gap:6px;">Что получится <span style="font-size:10px;">▼</span></button>
+  <div id="idea-info-content" style="display:none; margin-top:12px;">
+    <ul style="padding-left:20px; color:var(--facont-text-muted); font-size:14px; line-height:1.6;">
+      <li>Готовый пост в вашем стиле</li>
+      <li>Продающая структура</li>
+      <li>Несколько вариантов заголовков</li>
+      <li>Призыв к действию (CTA)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Result Block -->
+<div id="idea-result-block" class="card" style="margin-top:24px; display:none;">
+  <h2 style="margin-bottom:12px;">Готово!</h2>
+  <textarea id="idea-result-text" style="min-height:300px; margin-bottom:16px;"></textarea>
+  
+  <div id="idea-save-status" class="facont-status" style="margin-bottom:10px;"></div>
+  <button id="btn-save-idea-result" class="btn">Сохранить в базу</button>
+  
+  <div style="margin-top:16px;">
+    <button id="btn-new-post" class="btn secondary">Новый пост</button>
   </div>
 </div>

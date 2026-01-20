@@ -108,7 +108,12 @@ async function facontInitOnboardingOverview() {
       ? res.onboardingByStep 
       : {};
 
+    // Update statuses and progress
+    let doneCount = 0;
     blocks.forEach(block => {
+      const done = isDoneValue(onboarding[block.id]);
+      if (done) doneCount++;
+      
       updateBlockStatus(root, block.id, onboarding[block.id]);
       
       // Answers for modal
@@ -117,15 +122,50 @@ async function facontInitOnboardingOverview() {
       storeBlockAnswers(root, block.id, answers);
     });
 
-    const allDone = blocks.every(b => isDoneValue(onboarding[b.id]));
+    // Progress Bar
+    const totalCount = blocks.length;
+    const progressEl = document.getElementById('onb-total-progress-bar');
+    const progressText = document.getElementById('onb-total-progress-text');
+    if (progressEl) progressEl.style.width = ((doneCount / totalCount) * 100) + '%';
+    if (progressText) progressText.textContent = `${doneCount}/${totalCount}`;
+
+    // Completion
+    const allDone = doneCount === totalCount;
     const completeCard = root.querySelector('#facont-onb-complete');
     if (completeCard) completeCard.style.display = allDone ? 'block' : 'none';
+
+    // Welcome Modal logic
+    const welcomeModal = document.getElementById('facont-onb-welcome-modal');
+    if (welcomeModal) {
+      const seen = localStorage.getItem('facont_onboarding_welcome_seen');
+      // Show if not seen yet
+      if (!seen) {
+        welcomeModal.style.display = 'flex';
+        
+        const startBtn = document.getElementById('btn-onb-start');
+        if (startBtn) {
+          // Clone to prevent duplicate listeners if re-inited
+          const newBtn = startBtn.cloneNode(true);
+          startBtn.parentNode.replaceChild(newBtn, startBtn);
+          
+          newBtn.addEventListener('click', () => {
+            welcomeModal.style.display = 'none';
+            localStorage.setItem('facont_onboarding_welcome_seen', 'true');
+          });
+        }
+      }
+    }
 
   } catch (e) {
     console.error('Failed to load settings', e);
   }
 
-  // Event Handlers
+  // Event Handlers (Click delegation)
+  // Check if listener already attached to avoid duplicates? 
+  // Ideally we should remove old listener or use a flag. 
+  // Simplest: just attach. If re-attached, multiple events? 
+  // root is typically replaced when view changes, so fine.
+  
   root.addEventListener('click', (e) => {
     // Fill / Restart
     const btnOpen = e.target.closest('[data-open-block]') || e.target.closest('[data-onb-restart]');
@@ -156,7 +196,10 @@ async function facontInitOnboardingOverview() {
     if (fin) {
       const action = fin.dataset.onbComplete;
       if (action === 'extended') alert('Расширенная настройка пока не реализована.');
-      else if (action === 'content') alert('Создание контента пока не реализовано.');
+      else if (action === 'content') {
+        // Redirect to content creation (e.g. idea post)
+        if (window.facontShowView) window.facontShowView('idea_post');
+      }
     }
   });
 }
