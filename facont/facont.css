@@ -49,6 +49,11 @@
   color: #fff;
 }
 
+::-moz-selection {
+  background: var(--facont-magenta);
+  color: #fff;
+}
+
 /* базовый сброс внутри приложения */
 .facont-app * {
   box-sizing: border-box;
@@ -434,14 +439,14 @@
 }
 
 .onb1-progress-bar {
-  height: 6px;
+  height: 12px;
   background: var(--facont-border-soft);
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
 }
 
 .onb1-progress-bar-inner {
-  height: 6px;
+  height: 12px;
   background: var(--facont-primary);
   width: 0;
   transition: width 0.2s ease;

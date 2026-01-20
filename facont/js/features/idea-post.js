@@ -4,37 +4,79 @@
 
 function facontInitIdeaPost() {
   
-  // Tabs Logic
+  // Elements
   const tabs = document.querySelectorAll('#idea-main-card [data-tab]');
   const panes = document.querySelectorAll('#idea-main-card .facont-tab-pane');
   const submitBtnContainer = document.querySelector('#idea-submit-btn').parentElement;
+  const resultBlock = document.getElementById('idea-result-block');
+  
+  // Modal Elements
+  const modal = document.getElementById('idea-confirm-modal');
+  const btnConfirm = document.getElementById('btn-confirm-new');
+  const btnCancel = document.getElementById('btn-cancel-new');
   
   let activeTab = 'text';
+  let pendingTab = null;
 
+  function switchTab(target) {
+    activeTab = target;
+    
+    // Reset styles
+    tabs.forEach(t => {
+      t.classList.add('secondary');
+      if (t.dataset.tab === target) {
+        t.classList.remove('secondary');
+      }
+    });
+    
+    // Show pane
+    panes.forEach(p => p.style.display = 'none');
+    const activePane = document.getElementById('tab-content-' + target);
+    if (activePane) activePane.style.display = 'block';
+    
+    // Hide submit button for Voice (since it uses Telegram link)
+    if (target === 'voice') {
+      submitBtnContainer.style.display = 'none';
+    } else {
+      submitBtnContainer.style.display = 'block';
+    }
+  }
+
+  // Tabs Logic
   if (tabs.length > 0) {
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         const target = tab.dataset.tab;
-        activeTab = target;
+        if (target === activeTab) return;
         
-        // Reset styles
-        tabs.forEach(t => {
-          t.classList.add('secondary');
-        });
-        tab.classList.remove('secondary');
-        
-        // Show pane
-        panes.forEach(p => p.style.display = 'none');
-        const activePane = document.getElementById('tab-content-' + target);
-        if (activePane) activePane.style.display = 'block';
-        
-        // Hide submit button for Voice (since it uses Telegram link)
-        if (target === 'voice') {
-          submitBtnContainer.style.display = 'none';
+        // Check if result is visible (content generated)
+        if (resultBlock && resultBlock.style.display !== 'none') {
+          pendingTab = target;
+          if (modal) modal.style.display = 'flex';
         } else {
-          submitBtnContainer.style.display = 'block';
+          switchTab(target);
         }
       });
+    });
+  }
+  
+  // Modal Handlers
+  if (btnConfirm) {
+    btnConfirm.addEventListener('click', () => {
+      // Clear result
+      resetForm();
+      if (modal) modal.style.display = 'none';
+      
+      // Switch tab
+      if (pendingTab) switchTab(pendingTab);
+      pendingTab = null;
+    });
+  }
+  
+  if (btnCancel) {
+    btnCancel.addEventListener('click', () => {
+      if (modal) modal.style.display = 'none';
+      pendingTab = null;
     });
   }
 

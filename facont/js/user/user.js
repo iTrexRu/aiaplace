@@ -144,7 +144,6 @@ function facontInitProfile() {
 
     if (link.id) row.dataset.id = String(link.id);
     
-    // Icon based on type? For now just generic or text
     const typeLabel = link.type || 'Ссылка';
     
     row.innerHTML = `
@@ -171,16 +170,14 @@ function facontInitProfile() {
   // --- Load Data ---
   async function loadProfile() {
     try {
-      // Load Settings (Onboarding status) + Profile (Links)
-      const [resSettings, resProfile] = await Promise.all([
-        facontCallAPI('get_settings', {}),
-        facontCallAPI('get_profile', {})
-      ]);
-
+      // Use get_profile primarily as requested
+      const resProfile = await facontCallAPI('get_profile', {});
+      const profile = (resProfile && resProfile.profile) || (resProfile && resProfile.user) || resProfile || {};
+      
+      // Also get onboarding status from settings if needed, but try to use profile data
+      const resSettings = await facontCallAPI('get_settings', {});
       const user = resSettings.user || {};
       const onboarding = user.onboarding || {};
-      const onboardingByStep = resSettings.onboardingByStep || {};
-      const profile = (resProfile && resProfile.profile) || (resProfile && resProfile.user) || resProfile || {};
 
       // Render Cards
       blocks.forEach(block => {
@@ -198,24 +195,25 @@ function facontInitProfile() {
         if (statusBadge) {
           if (isDone) {
             statusBadge.textContent = 'Заполнено';
-            statusBadge.style.background = 'var(--facont-btn-bg)'; // Yellow
+            statusBadge.style.background = 'var(--facont-btn-bg)';
             statusBadge.style.color = 'var(--facont-text)';
           } else {
             statusBadge.textContent = 'Не заполнен';
-            statusBadge.style.background = '#ffe0e0'; // Pinkish
+            statusBadge.style.background = '#ffe0e0';
             statusBadge.style.color = 'var(--facont-danger)';
           }
         }
 
-        // Summary
+        // Summary - Prefer 'result' from get_profile, fallback to settings
         if (summaryEl) {
-          // Try to get summary from onboardingByStep
-          const entry = onboardingByStep[block];
           let text = '';
-          if (entry && entry.meta) {
-             text = entry.meta.summary || entry.meta.finalText || entry.meta.result || '';
+          // Check profile response for result text
+          if (profile[block] && profile[block].result) {
+             text = profile[block].result;
+          } else if (typeof profile[block] === 'string') {
+             text = profile[block];
           }
-          // If empty but done, maybe we don't have meta yet?
+          
           if (!text && isDone) text = 'Данные заполнены.';
           if (!text && !isDone) text = 'Пройдите этот блок в онбординге.';
           
@@ -226,19 +224,19 @@ function facontInitProfile() {
         if (btnView) btnView.style.display = isDone ? 'inline-flex' : 'none';
         if (btnEdit) {
            btnEdit.textContent = isDone ? 'Редактировать' : 'Заполнить';
-           // If not done, maybe highlight?
            if (!isDone) {
              btnEdit.style.background = 'var(--facont-btn-bg)';
              btnEdit.classList.remove('secondary');
            } else {
-             btnEdit.classList.add('secondary'); // or keep primary? Screenshot shows primary for Edit
+             btnEdit.classList.add('secondary');
              btnEdit.style.background = 'var(--facont-btn-bg)';
            }
         }
       });
 
       // Render Links
-      renderLinks(profile.links || []);
+      currentLinksState = profile.links || [];
+      renderLinks(currentLinksState);
 
     } catch (e) {
       console.error(e);
@@ -247,123 +245,21 @@ function facontInitProfile() {
 
   // --- Handlers ---
 
-  // Card Buttons
   document.querySelectorAll('[data-prof-action]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const action = btn.dataset.profAction;
       const block = btn.dataset.block;
       
-      if (action === 'view') {
-        // Show modal with answers? Or go to onboarding view?
-        // Reuse onboarding modal if possible? 
-        // Or just redirect to onboarding block page which has "View" logic?
-        // Let's redirect to onboarding block.
-        if (window.facontShowView) window.facontShowView('onboarding_' + block);
-      } else if (action === 'edit') {
+      if (action === 'view' || action === 'edit') {
         if (window.facontShowView) window.facontShowView('onboarding_' + block);
       }
     });
   });
 
+  let currentLinksState = [];
+
   // Add Link
   if (btnAddLink) {
-    btnAddLink.addEventListener('click', async (e) => {
-      const url = newLinkUrl.value.trim();
-      const type = newLinkType.value;
-      
-      if (!url) return;
-      
-      // Save immediately
-      try {
-        if (saveLinksStatus) saveLinksStatus.textContent = 'Сохранение...';
-        
-        // We need to get current links first? Or just append?
-        // API 'modify_links' usually replaces? Or adds?
-        // Let's fetch current profile again to be safe or maintain local state.
-        // Assuming we just send the NEW list.
-        
-        // Collect existing links from DOM? No, better from state.
-        // But for simplicity, let's assume we need to send ALL links.
-        // We'll reload profile, add new one, save all.
-        
-        const res = await facontCallAPI('get_profile', {});
-        const currentLinks = (res.profile && res.profile.links) || [];
-        
-        currentLinks.push({ url, type, id: Date.now() });
-        
-        await facontCallAPI('modify_links', { links: currentLinks });
-        
-        newLinkUrl.value = '';
-        renderLinks(currentLinks);
-        if (saveLinksStatus) saveLinksStatus.textContent = '';
-        
-      } catch (e) {
-        if (saveLinksStatus) saveLinksStatus.textContent = 'Ошибка: ' + e.message;
-      }
-    });
-  }
-
-  // Remove Link
-  if (linksContainer) {
-    linksContainer.addEventListener('click', async (e) => {
-      if (e.target.closest('[data-remove-link]')) {
-        const row = e.target.closest('.facont-link-row');
-        // Delete from server?
-        // We need to save the new state without this link.
-        // Simple approach: remove from DOM, then save all DOM links.
-        if (row) {
-           row.remove();
-           // Collect all links from DOM
-           const links = [];
-           linksContainer.querySelectorAll('.facont-link-row').forEach(r => {
-              const url = r.querySelector('a').href;
-              const type = r.querySelector('div > div').textContent.toLowerCase(); // rough
-              // Better to store data in row
-              links.push({ url, type: 'saved' }); // We lose type info if parsing DOM text?
-           });
-           
-           // Actually, better to reload-modify-save logic.
-           // But here let's just trigger reload? No.
-           // Let's re-implement saveLinks properly.
-           saveAllLinksFromDOM();
-        }
-      }
-    });
-  }
-  
-  async function saveAllLinksFromDOM() {
-     // This is tricky if we don't store structured data in DOM.
-     // Let's reload logic: fetch, filter, save.
-     // To filter, we need ID.
-     // I added data-id to row.
-     // ...
-     // Let's defer complexity. The user wants "Add/Remove".
-     // I'll stick to a simpler flow: Add calls API. Remove calls API (if API supports remove).
-     // Current API `modify_links` replaces whole list.
-     // So I need the list.
-     
-     // REWRITE: Keep links in memory.
-  }
-  
-  let currentLinksState = [];
-  
-  // Override loadProfile to store state
-  const originalLoadProfile = loadProfile;
-  loadProfile = async function() {
-     await originalLoadProfile();
-     // Update local state from what we rendered? 
-     // Better: Update renderLinks to update state.
-     // But renderLinks is called by loadProfile.
-     // Let's just fetch again in loadProfile and set state.
-     const res = await facontCallAPI('get_profile', {});
-     currentLinksState = (res.profile && res.profile.links) || [];
-     renderLinks(currentLinksState);
-  }
-
-  // Add Link (Updated)
-  if (btnAddLink) {
-    // Remove old listener if any? No, we are defining new function scope.
-    // Replace element to clear listeners
     const newBtn = btnAddLink.cloneNode(true);
     btnAddLink.parentNode.replaceChild(newBtn, btnAddLink);
     
@@ -372,30 +268,49 @@ function facontInitProfile() {
        const type = newLinkType.value;
        if (!url) return;
        
-       currentLinksState.push({ url, type, id: Date.now() });
-       renderLinks(currentLinksState);
-       newLinkUrl.value = '';
+       if (saveLinksStatus) saveLinksStatus.textContent = 'Сохранение...';
+       
+       const newLinks = [...currentLinksState, { url, type, id: Date.now() }];
        
        try {
-         await facontCallAPI('modify_links', { links: currentLinksState });
-       } catch(e) { console.error(e); }
+         const res = await facontCallAPI('modify_links', { links: newLinks });
+         
+         if (res.ok === false && res.text) {
+            if (saveLinksStatus) saveLinksStatus.textContent = res.text;
+            return;
+         }
+         
+         // Success
+         currentLinksState = newLinks;
+         renderLinks(currentLinksState);
+         newLinkUrl.value = '';
+         if (saveLinksStatus) saveLinksStatus.textContent = '';
+         
+       } catch(e) { 
+         if (saveLinksStatus) saveLinksStatus.textContent = 'Ошибка: ' + e.message;
+       }
     });
   }
   
-  // Remove Link logic in renderLinks
-  // We need to re-attach event delegation or handle it.
-  // Using existing delegation on linksContainer.
+  // Remove Link
   linksContainer.addEventListener('click', async (e) => {
       const btn = e.target.closest('[data-remove-link]');
       if (!btn) return;
       const row = btn.closest('.facont-link-row');
       const id = row.dataset.id;
       
-      currentLinksState = currentLinksState.filter(l => String(l.id) !== String(id));
-      renderLinks(currentLinksState);
+      const newLinks = currentLinksState.filter(l => String(l.id) !== String(id));
       
       try {
-         await facontCallAPI('modify_links', { links: currentLinksState });
+         const res = await facontCallAPI('modify_links', { links: newLinks });
+         
+         if (res.ok === false && res.text) {
+            alert(res.text); // Fallback alert for remove error
+            return;
+         }
+         
+         currentLinksState = newLinks;
+         renderLinks(currentLinksState);
       } catch(e) { console.error(e); }
   });
 
@@ -410,9 +325,16 @@ function facontInitProfile() {
       statusAddUrl.textContent = 'Обработка...';
       
       try {
-        await facontCallAPI('collect_site', { websiteUrl: url });
-        statusAddUrl.textContent = 'Данные добавлены в профиль.';
-        inputAddUrl.value = '';
+        const res = await facontCallAPI('collect_site', { websiteUrl: url });
+        
+        if (res.ok === false && res.text) {
+           statusAddUrl.textContent = res.text;
+        } else {
+           statusAddUrl.textContent = 'Данные добавлены в профиль.';
+           inputAddUrl.value = '';
+           // Reload profile to see changes?
+           loadProfile();
+        }
       } catch(e) {
         statusAddUrl.textContent = 'Ошибка: ' + e.message;
       } finally {

@@ -325,7 +325,8 @@ class OnboardingEngine {
       this.setBusy(false);
       
       if (btn) {
-        btn.style.display = 'none'; // Hide Save button
+        btn.disabled = true;
+        btn.textContent = 'Сохранено';
         
         // Find next block
         const allBlocks = window.FACONT_ONBOARDING_CONFIG.blocks.sort((a,b)=>a.order-b.order);
@@ -334,6 +335,9 @@ class OnboardingEngine {
         
         const actionsContainer = btn.parentElement;
         
+        // Prevent duplicates
+        if (actionsContainer.querySelector('[data-action="nav"]')) return;
+
         if (nextBlock) {
           const nextBtn = document.createElement('button');
           nextBtn.className = 'btn';

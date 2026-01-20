@@ -4,27 +4,79 @@
 
 function facontInitCarousel() {
   
-  // Tabs Logic
+  // Elements
   const tabs = document.querySelectorAll('#carousel-main-card [data-tab]');
   const panes = document.querySelectorAll('#carousel-main-card .facont-tab-pane');
+  const resultBlock = document.getElementById('carousel-result-block');
   
+  // Modal Elements
+  const modal = document.getElementById('carousel-confirm-modal');
+  const btnConfirm = document.getElementById('btn-confirm-new');
+  const btnCancel = document.getElementById('btn-cancel-new');
+
+  let activeTab = 'text';
+  let pendingTab = null;
+
+  function switchTab(target) {
+    activeTab = target;
+    
+    // Reset tabs style
+    tabs.forEach(t => {
+      t.classList.add('secondary');
+      if (t.dataset.tab === target) {
+        t.classList.remove('secondary');
+      }
+    });
+    
+    // Show pane
+    panes.forEach(p => p.style.display = 'none');
+    const activePane = document.getElementById('tab-content-' + target);
+    if (activePane) activePane.style.display = 'block';
+  }
+
   if (tabs.length > 0) {
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         const target = tab.dataset.tab;
-        
-        // Reset all tabs to secondary
-        tabs.forEach(t => {
-          t.classList.add('secondary');
-        });
-        // Set active tab to primary
-        tab.classList.remove('secondary');
-        
-        // Show target pane
-        panes.forEach(p => p.style.display = 'none');
-        const activePane = document.getElementById('tab-content-' + target);
-        if (activePane) activePane.style.display = 'block';
+        if (target === activeTab) return;
+
+        // Check if result is visible (content generated)
+        if (resultBlock && resultBlock.style.display !== 'none') {
+          pendingTab = target;
+          if (modal) modal.style.display = 'flex';
+        } else {
+          switchTab(target);
+        }
       });
+    });
+  }
+
+  // Modal Handlers
+  if (btnConfirm) {
+    btnConfirm.addEventListener('click', () => {
+      // Clear result logic
+      if (resultBlock) {
+        resultBlock.style.display = 'none';
+        // Clear textarea
+        const resText = document.getElementById('carousel-result-text');
+        if (resText) resText.value = '';
+      }
+      
+      // Clear inputs? Optional, but "New Post" usually implies fresh start.
+      // Keeping input might be useful if they just want to try another format with same text.
+      // User said: "if new - button clicked works. if continue - stay".
+      // Usually "New" means discard current result.
+      
+      if (pendingTab) switchTab(pendingTab);
+      if (modal) modal.style.display = 'none';
+      pendingTab = null;
+    });
+  }
+
+  if (btnCancel) {
+    btnCancel.addEventListener('click', () => {
+      if (modal) modal.style.display = 'none';
+      pendingTab = null;
     });
   }
 
@@ -36,7 +88,6 @@ function facontInitCarousel() {
     btnInfo.addEventListener('click', () => {
       const isHidden = infoContent.style.display === 'none';
       infoContent.style.display = isHidden ? 'block' : 'none';
-      // Optional: arrow rotation logic could go here
     });
   }
 

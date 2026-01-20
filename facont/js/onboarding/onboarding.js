@@ -137,22 +137,18 @@ async function facontInitOnboardingOverview() {
     // Welcome Modal logic
     const welcomeModal = document.getElementById('facont-onb-welcome-modal');
     if (welcomeModal) {
-      const seen = localStorage.getItem('facont_onboarding_welcome_seen');
-      // Show if not seen yet
-      if (!seen) {
-        welcomeModal.style.display = 'flex';
+      // Always show modal when entering onboarding overview
+      welcomeModal.style.display = 'flex';
+      
+      const startBtn = document.getElementById('btn-onb-start');
+      if (startBtn) {
+        // Clone to prevent duplicate listeners if re-inited
+        const newBtn = startBtn.cloneNode(true);
+        startBtn.parentNode.replaceChild(newBtn, startBtn);
         
-        const startBtn = document.getElementById('btn-onb-start');
-        if (startBtn) {
-          // Clone to prevent duplicate listeners if re-inited
-          const newBtn = startBtn.cloneNode(true);
-          startBtn.parentNode.replaceChild(newBtn, startBtn);
-          
-          newBtn.addEventListener('click', () => {
-            welcomeModal.style.display = 'none';
-            localStorage.setItem('facont_onboarding_welcome_seen', 'true');
-          });
-        }
+        newBtn.addEventListener('click', () => {
+          welcomeModal.style.display = 'none';
+        });
       }
     }
 

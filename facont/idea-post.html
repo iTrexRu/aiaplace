@@ -72,3 +72,20 @@
     <button id="btn-new-post" class="btn secondary">Новый пост</button>
   </div>
 </div>
+
+<!-- Confirmation Modal -->
+<div class="facont-modal" id="idea-confirm-modal" style="display:none;">
+  <div class="facont-modal-backdrop"></div>
+  <div class="facont-modal-dialog" style="max-width:400px;">
+    <div class="facont-modal-header" style="border:none; padding-bottom:0;">
+      <h2 style="font-size:18px; margin:0;">Новый пост?</h2>
+    </div>
+    <div class="facont-modal-body" style="padding-top:10px;">
+      <p style="margin-bottom:20px; color:var(--facont-text-muted);">Хотите сделать новый пост или продолжить работать с текущим?</p>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button class="btn secondary" id="btn-cancel-new">Продолжить</button>
+        <button class="btn" id="btn-confirm-new">Новый</button>
+      </div>
+    </div>
+  </div>
+</div>

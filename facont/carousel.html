@@ -68,3 +68,20 @@
     <a href="#" id="carousel-new-link" class="facont-link">Сгенерировать новую →</a>
   </div>
 </div>
+
+<!-- Confirmation Modal -->
+<div class="facont-modal" id="carousel-confirm-modal" style="display:none;">
+  <div class="facont-modal-backdrop"></div>
+  <div class="facont-modal-dialog" style="max-width:400px;">
+    <div class="facont-modal-header" style="border:none; padding-bottom:0;">
+      <h2 style="font-size:18px; margin:0;">Новая карусель?</h2>
+    </div>
+    <div class="facont-modal-body" style="padding-top:10px;">
+      <p style="margin-bottom:20px; color:var(--facont-text-muted);">Хотите сделать новую карусель или продолжить работать с текущей?</p>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button class="btn secondary" id="btn-cancel-new">Продолжить</button>
+        <button class="btn" id="btn-confirm-new">Новая</button>
+      </div>
+    </div>
+  </div>
+</div>
