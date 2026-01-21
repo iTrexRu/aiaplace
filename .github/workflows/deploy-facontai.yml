@@ -1,4 +1,4 @@
-name: Deploy aiaplace theme (NEW SFTP)
+name: Deploy facontai (NEW SFTP)
 
 on:
   push:
@@ -7,15 +7,11 @@ on:
 
 jobs:
   deploy:
-    name: Deploy via SFTP
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Вариант A: по ключу (предпочтительно) test2
-      - name: Sync to NEW server (rsync over ssh)
+      - name: Deploy (key)
         if: ${{ secrets.SFTP_PRIVATE_KEY != '' }}
         uses: easingthemes/ssh-deploy@v5.1.0
         env:
@@ -28,14 +24,10 @@ jobs:
           ARGS: "-rlgoDzvc --delete"
           EXCLUDE: |
             **/.git*
-            **/.git*/**
             **/.github/**
             **/node_modules/**
-            **/dist/**
-            **/build/**
 
-      # Вариант B: по паролю (если ключа нет)
-      - name: Upload to NEW server (scp with password)
+      - name: Deploy (password)
         if: ${{ secrets.SFTP_PRIVATE_KEY == '' && secrets.SFTP_PASSWORD != '' }}
         uses: appleboy/scp-action@v0.1.7
         with:
