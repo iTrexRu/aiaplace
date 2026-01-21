@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Deploy (password)
-        if: ${{ secrets.SFTP_PRIVATE_KEY == '' && secrets.SFTP_PASSWORD != '' }}
+        if: ${{ secrets.SFTP_PASSWORD != '' }}
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SFTP_SERVER }}
