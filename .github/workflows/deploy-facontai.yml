@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Вариант A: по ключу (предпочтительно)
+      # Вариант A: по ключу (предпочтительно) test2
       - name: Sync to NEW server (rsync over ssh)
         if: ${{ secrets.SFTP_PRIVATE_KEY != '' }}
         uses: easingthemes/ssh-deploy@v5.1.0
