@@ -62,3 +62,14 @@ jobs:
             find "${{ secrets.SFTP_SERVER_DIR }}" -maxdepth 4 \
               \( -name "home.html" -o -name "login.html" -o -name "facont.css" -o -name "facont.js" -o -name "404.html" \) \
               -print 2>/dev/null | head -n 100
+            echo "TARGET=${{ secrets.SFTP_SERVER_DIR }}"
+            echo "---- ls TARGET ----"
+            ls -la "${{ secrets.SFTP_SERVER_DIR }}" | head -n 50
+
+            echo "---- ls TARGET/www ----"
+            ls -la "${{ secrets.SFTP_SERVER_DIR }}/www" | head -n 50 || true
+
+            echo "---- find index in both ----"
+            find "${{ secrets.SFTP_SERVER_DIR }}" -maxdepth 2 -name "index.html" -o -name "index.php" -print
+            find "${{ secrets.SFTP_SERVER_DIR }}/www" -maxdepth 2 -name "index.html" -o -name "index.php" -print || true
+
