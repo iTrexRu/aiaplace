@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.SFTP_USER }}
           password: ${{ secrets.SFTP_PASSWORD }}
           port: ${{ secrets.SFTP_PORT }}
-          source: "facont/"
+          source: "facont/**"
           target: ${{ secrets.SFTP_SERVER_DIR }}
           strip_components: 1
           overwrite: true
