@@ -13,23 +13,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1) Локальная проверка: что реально есть в repo на раннере
       - name: Debug - verify local source files
         shell: bash
         run: |
           set -e
-          echo "PWD=$(pwd)"
-          echo "Top level:"
-          ls -la
-          echo "facont folder exists?"
-          test -d facont && echo "OK: facont/ exists" || (echo "ERROR: facont/ missing" && exit 1)
+          test -d facont || (echo "ERROR: facont/ missing" && exit 1)
           echo "Count files under facont/:"
           find facont -type f | wc -l
-          echo "Sample files:"
-          find facont -type f | head -n 50
+          echo "Sample:"
+          find facont -type f | head -n 30
 
-      # 2) Деплой: заливаем содержимое facont/ в корень на новом сервере
-      - name: Deploy facont to NEW server (SFTP password)
+      - name: Deploy to ABSOLUTE docroot
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SFTP_SERVER }}
@@ -42,8 +36,7 @@ jobs:
           overwrite: true
           debug: true
 
-      # 3) Проверка на сервере: есть ли файлы там, куда ты деплоишь
-      - name: Post-deploy check (remote)
+      - name: Post-deploy check (remote, absolute paths)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SFTP_SERVER }}
@@ -54,22 +47,23 @@ jobs:
             set -e
             echo "WHOAMI=$(whoami)"
             echo "PWD=$(pwd)"
-            echo "---- TARGET DIR ----"
-            echo "${{ secrets.SFTP_SERVER_DIR }}"
-            echo "---- ls TARGET ----"
-            ls -la "${{ secrets.SFTP_SERVER_DIR }}" || true
-            echo "---- find known files in TARGET (maxdepth 4) ----"
-            find "${{ secrets.SFTP_SERVER_DIR }}" -maxdepth 4 \
-              \( -name "home.html" -o -name "login.html" -o -name "facont.css" -o -name "facont.js" -o -name "404.html" \) \
-              -print 2>/dev/null | head -n 100
-            echo "TARGET=${{ secrets.SFTP_SERVER_DIR }}"
-            echo "---- ls TARGET ----"
-            ls -la "${{ secrets.SFTP_SERVER_DIR }}" | head -n 50
 
-            echo "---- ls TARGET/www ----"
-            ls -la "${{ secrets.SFTP_SERVER_DIR }}/www" | head -n 50 || true
+            echo "ABS_TARGET=${{ secrets.SFTP_SERVER_DIR }}"
+            echo "---- test ABS_TARGET ----"
+            if [ -d "${{ secrets.SFTP_SERVER_DIR }}" ]; then
+              echo "OK: target exists"
+            else
+              echo "ERROR: target does NOT exist"
+              exit 1
+            fi
 
-            echo "---- find index in both ----"
-            find "${{ secrets.SFTP_SERVER_DIR }}" -maxdepth 2 -name "index.html" -o -name "index.php" -print
-            find "${{ secrets.SFTP_SERVER_DIR }}/www" -maxdepth 2 -name "index.html" -o -name "index.php" -print || true
+            echo "---- ls ABS_TARGET ----"
+            ls -la "${{ secrets.SFTP_SERVER_DIR }}" | head -n 120
 
+            echo "---- ls ABS_TARGET/app ----"
+            ls -la "${{ secrets.SFTP_SERVER_DIR }}/app" | head -n 80 || true
+
+            echo "---- find key files ----"
+            find "${{ secrets.SFTP_SERVER_DIR }}" -maxdepth 2 \
+              \( -name "index.html" -o -name "index.php" -o -name "home.html" -o -name "login.html" -o -name "*.css" -o -name "*.js" \) \
+              -print 2>/dev/null | head -n 200
