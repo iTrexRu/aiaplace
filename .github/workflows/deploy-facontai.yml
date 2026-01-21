@@ -1,0 +1,48 @@
+name: Deploy aiaplace theme (NEW SFTP)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy via SFTP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Вариант A: по ключу (предпочтительно)
+      - name: Sync to NEW server (rsync over ssh)
+        if: ${{ secrets.SFTP_PRIVATE_KEY != '' }}
+        uses: easingthemes/ssh-deploy@v5.1.0
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SFTP_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SFTP_SERVER }}
+          REMOTE_USER: ${{ secrets.SFTP_USER }}
+          REMOTE_PORT: ${{ secrets.SFTP_PORT }}
+          TARGET: ${{ secrets.SFTP_SERVER_DIR }}
+          SOURCE: "./"
+          ARGS: "-rlgoDzvc --delete"
+          EXCLUDE: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/dist/**
+            **/build/**
+
+      # Вариант B: по паролю (если ключа нет)
+      - name: Upload to NEW server (scp with password)
+        if: ${{ secrets.SFTP_PRIVATE_KEY == '' && secrets.SFTP_PASSWORD != '' }}
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SFTP_SERVER }}
+          username: ${{ secrets.SFTP_USER }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          port: ${{ secrets.SFTP_PORT }}
+          source: "./"
+          target: ${{ secrets.SFTP_SERVER_DIR }}
+          overwrite: true
