@@ -12,13 +12,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Deploy (password)
-        if: ${{ secrets.SFTP_PASSWORD != '' }}
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SFTP_SERVER }}
           username: ${{ secrets.SFTP_USER }}
           password: ${{ secrets.SFTP_PASSWORD }}
           port: ${{ secrets.SFTP_PORT }}
-          source: "./"
+          source: "./facont/"
           target: ${{ secrets.SFTP_SERVER_DIR }}
           overwrite: true
