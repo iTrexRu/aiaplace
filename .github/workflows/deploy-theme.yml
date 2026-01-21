@@ -20,7 +20,7 @@ jobs:
         run: |
           echo "FTP_SERVER set? -> $([[ -n '${{ secrets.FTP_SERVER }}' ]] && echo YES || echo NO)"
           echo "FTP_USER set?   -> $([[ -n '${{ secrets.FTP_USER }}' ]] && echo YES || echo NO)"
-          echo "FTP_PASS set?   -> $([[ -n '${{ secrets.FTP_PASSWORD }}' ]] && echo YES || echo NO)"
+          echo "FTP_PASS set?   -> $([[ -n '${{ secrets.FTP_PASSWORD1 }}' ]] && echo YES || echo NO)"
           echo "FTP_PORT set?   -> $([[ -n '${{ secrets.FTP_PORT }}' ]] && echo YES || echo NO)"
 
       # 2) Диагностика сети: DNS и порты
@@ -62,12 +62,16 @@ jobs:
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          password: ${{ secrets.FTP_PASSWORD1 }}
           # если создал секрет FTP_PORT - раскомментируй
           # port: ${{ secrets.FTP_PORT }}
           protocol: ftp
-          local-dir: ./
-          server-dir: /wp-content/themes/blocksy-child/
+          # Deploy only the self-contained static package from /facont
+          local-dir: ./facont/
+          # IMPORTANT: adjust server-dir for your target. For example:
+          # - new server root: /
+          # - old server subfolder: /facont/
+          server-dir: /
           exclude: |
             **/.git*
             **/.git*/**
