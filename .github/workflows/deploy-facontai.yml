@@ -21,3 +21,19 @@ jobs:
           source: "./facont/"
           target: ${{ secrets.SFTP_SERVER_DIR }}
           overwrite: true
+
+          - name: Post-deploy check (remote)
+            uses: appleboy/ssh-action@v1.0.3
+            with:
+                host: ${{ secrets.SFTP_SERVER }}
+                username: ${{ secrets.SFTP_USER }}
+                password: ${{ secrets.SFTP_PASSWORD }}
+                port: ${{ secrets.SFTP_PORT }}
+                script: |
+                echo "WHOAMI=$(whoami)"
+                echo "PWD=$(pwd)"
+                echo "TARGET=${{ secrets.SFTP_SERVER_DIR }}"
+                ls -la "${{ secrets.SFTP_SERVER_DIR }}" || true
+                ls -la "${{ secrets.SFTP_SERVER_DIR }}/facont" || true
+                echo "Find a known file:"
+                find "${{ secrets.SFTP_SERVER_DIR }}" -maxdepth 4 -name "login.html" -o -name "onboarding-overview.html" 2>/dev/null | head -n 50
