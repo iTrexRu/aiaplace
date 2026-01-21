@@ -8,45 +8,57 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      SFTP_SERVER: ${{ secrets.SFTP_SERVER }}
-      SFTP_PORT: ${{ secrets.SFTP_PORT }}
-      SFTP_USER: ${{ secrets.SFTP_USER }}
-      SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
-      SFTP_SERVER_DIR: ${{ secrets.SFTP_SERVER_DIR }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy facont (SFTP password)
+      # 1) Локальная проверка: что реально есть в repo на раннере
+      - name: Debug - verify local source files
+        shell: bash
+        run: |
+          set -e
+          echo "PWD=$(pwd)"
+          echo "Top level:"
+          ls -la
+          echo "facont folder exists?"
+          test -d facont && echo "OK: facont/ exists" || (echo "ERROR: facont/ missing" && exit 1)
+          echo "Count files under facont/:"
+          find facont -type f | wc -l
+          echo "Sample files:"
+          find facont -type f | head -n 50
+
+      # 2) Деплой: заливаем содержимое facont/ в корень на новом сервере
+      - name: Deploy facont to NEW server (SFTP password)
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ env.SFTP_SERVER }}
-          username: ${{ env.SFTP_USER }}
-          password: ${{ env.SFTP_PASSWORD }}
-          port: ${{ env.SFTP_PORT }}
+          host: ${{ secrets.SFTP_SERVER }}
+          username: ${{ secrets.SFTP_USER }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          port: ${{ secrets.SFTP_PORT }}
           source: "facont/**"
-          target: ${{ env.SFTP_SERVER_DIR }}
+          target: ${{ secrets.SFTP_SERVER_DIR }}
           strip_components: 1
           overwrite: true
           debug: true
 
+      # 3) Проверка на сервере: есть ли файлы там, куда ты деплоишь
       - name: Post-deploy check (remote)
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ env.SFTP_SERVER }}
-          username: ${{ env.SFTP_USER }}
-          password: ${{ env.SFTP_PASSWORD }}
-          port: ${{ env.SFTP_PORT }}
+          host: ${{ secrets.SFTP_SERVER }}
+          username: ${{ secrets.SFTP_USER }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          port: ${{ secrets.SFTP_PORT }}
           script: |
             set -e
             echo "WHOAMI=$(whoami)"
             echo "PWD=$(pwd)"
-            echo "TARGET=$SFTP_SERVER_DIR"
+            echo "---- TARGET DIR ----"
+            echo "${{ secrets.SFTP_SERVER_DIR }}"
             echo "---- ls TARGET ----"
-            ls -la "$SFTP_SERVER_DIR" || true
-            echo "---- ls TARGET/facont ----"
-            ls -la "$SFTP_SERVER_DIR/facont" || true
-            echo "---- find known files (maxdepth 5) ----"
-            find "$SFTP_SERVER_DIR" -maxdepth 5 \( -name "login.html" -o -name "onboarding-overview.html" -o -name "index.html" \) -print 2>/dev/null | head -n 50
+            ls -la "${{ secrets.SFTP_SERVER_DIR }}" || true
+            echo "---- find known files in TARGET (maxdepth 4) ----"
+            find "${{ secrets.SFTP_SERVER_DIR }}" -maxdepth 4 \
+              \( -name "home.html" -o -name "login.html" -o -name "facont.css" -o -name "facont.js" -o -name "404.html" \) \
+              -print 2>/dev/null | head -n 100
