@@ -11,22 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy (key)
-        if: ${{ secrets.SFTP_PRIVATE_KEY != '' }}
-        uses: easingthemes/ssh-deploy@v5.1.0
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SFTP_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.SFTP_SERVER }}
-          REMOTE_USER: ${{ secrets.SFTP_USER }}
-          REMOTE_PORT: ${{ secrets.SFTP_PORT }}
-          TARGET: ${{ secrets.SFTP_SERVER_DIR }}
-          SOURCE: "./"
-          ARGS: "-rlgoDzvc --delete"
-          EXCLUDE: |
-            **/.git*
-            **/.github/**
-            **/node_modules/**
-
       - name: Deploy (password)
         if: ${{ secrets.SFTP_PRIVATE_KEY == '' && secrets.SFTP_PASSWORD != '' }}
         uses: appleboy/scp-action@v0.1.7
