@@ -67,7 +67,7 @@ jobs:
           # port: ${{ secrets.FTP_PORT }}
           protocol: ftp
           # Deploy only the self-contained static package from /facont
-          local-dir: ./aiaplace/facont/
+          local-dir: ./aiac/facont/
           # IMPORTANT: adjust server-dir for your target. For example:
           # - new server root: /
           # - old server subfolder: /facont/
