@@ -20,10 +20,9 @@
     <template id="facont-app-template">
       <div class="facont-app">
         <aside class="facont-sidebar">
-          <div>
-            <div class="facont-logo">ИИ-контент</div>
-            <div class="facont-subtitle">однопользовательский интерфейс</div>
-          </div>
+          <a class="facont-brand" href="./" aria-label="Facont — главная">
+            <img class="facont-logo-img" src="./assets/Facont_logo_white.svg" alt="Facont" />
+          </a>
 
           <ul class="facont-menu">
             <li class="facont-menu-item active" data-view="home">Home</li>

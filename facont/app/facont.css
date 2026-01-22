@@ -197,6 +197,25 @@
   gap: 24px;
 }
 
+/* Brand (logo) block in sidebar */
+.facont-brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-decoration: none;
+}
+
+.facont-logo-img {
+  width: 180px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.facont-brand:hover {
+  opacity: 0.92;
+}
+
 .facont-logo {
   font-weight: 700;
   font-size: 18px;
