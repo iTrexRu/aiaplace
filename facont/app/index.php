@@ -8,7 +8,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Facont App</title>
-    <link rel="stylesheet" href="./facont.css" />
+    <?php
+      // Cache busting for static hosting / CDN.
+      // Ensures clients fetch updated CSS and assets after deploy.
+      $facont_ver = @filemtime(__DIR__ . '/facont.css');
+      if (!$facont_ver) { $facont_ver = time(); }
+    ?>
+    <link rel="stylesheet" href="./facont.css?v=<?php echo $facont_ver; ?>" />
   </head>
   <body>
 
@@ -21,7 +27,7 @@
       <div class="facont-app">
         <aside class="facont-sidebar">
           <a class="facont-brand" href="./" aria-label="Facont — главная">
-            <img class="facont-logo-img" src="./assets/Facont_logo_white.svg" alt="Facont" />
+            <img class="facont-logo-img" src="./assets/Facont_logo_white.svg?v=<?php echo $facont_ver; ?>" alt="Facont" />
           </a>
 
           <ul class="facont-menu">
