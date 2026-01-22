@@ -120,17 +120,32 @@ function facontInitForgot() {
     const statusEl = document.getElementById("facont-forgot-status");
     const btn = form.querySelector("button");
 
+    if (!email) return;
+
     btn.disabled = true;
     if (statusEl) {
       statusEl.textContent = "Отправка...";
       statusEl.style.display = "block";
+      statusEl.classList.remove('facont-hidden');
       statusEl.classList.remove('facont-text-success', 'facont-text-danger');
     }
 
     try {
-      await facontCallAPI("auth_forgot_password", { email });
+      const res = await facontCallAPI("auth_forgot_password", { email });
+
+      // n8n typically returns { ok: true/false, message: '...' }
+      // We always show message to user to avoid the "waiting" effect.
+      const ok = (res && typeof res.ok !== 'undefined') ? !!res.ok : true;
+      const message = (res && res.message)
+        ? String(res.message)
+        : "Если такой email существует, мы отправили ссылку.";
+
+      if (!ok) {
+        throw new Error(message);
+      }
+
       if (statusEl) {
-        statusEl.textContent = "Если такой email существует, мы отправили ссылку.";
+        statusEl.textContent = message;
         statusEl.classList.remove('facont-text-danger');
         statusEl.classList.add('facont-text-success');
       }

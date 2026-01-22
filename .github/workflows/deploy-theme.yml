@@ -20,7 +20,7 @@ jobs:
         run: |
           echo "FTP_SERVER set? -> $([[ -n '${{ secrets.FTP_SERVER }}' ]] && echo YES || echo NO)"
           echo "FTP_USER set?   -> $([[ -n '${{ secrets.FTP_USER }}' ]] && echo YES || echo NO)"
-          echo "FTP_PASS set?   -> $([[ -n '${{ secrets.FTP_PASSWORD1 }}' ]] && echo YES || echo NO)"
+          echo "FTP_PASS set?   -> $([[ -n '${{ secrets.FTP_PASSWORD }}' ]] && echo YES || echo NO)"
           echo "FTP_PORT set?   -> $([[ -n '${{ secrets.FTP_PORT }}' ]] && echo YES || echo NO)"
 
       # 2) Диагностика сети: DNS и порты
@@ -62,7 +62,7 @@ jobs:
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD1 }}
+          password: ${{ secrets.FTP_PASSWORD }}
           # если создал секрет FTP_PORT - раскомментируй
           # port: ${{ secrets.FTP_PORT }}
           protocol: ftp
