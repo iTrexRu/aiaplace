@@ -203,13 +203,16 @@
   align-items: center;
   justify-content: flex-start;
   text-decoration: none;
+  width: 100%;
 }
 
 .facont-logo-img {
-  width: 60%;
-  max-width: 80%;
+  /* Fit into sidebar: 80% of available width */
+  width: 80%;
+  max-width: 100%;
   height: auto;
   display: block;
+  object-fit: contain;
 }
 
 .facont-brand:hover {
