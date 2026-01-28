@@ -44,10 +44,17 @@ class OnboardingEngine {
   }
 
   renderHeader() {
-    // Determine progress
-    const total = this.config.steps.length;
-    const current = this.currentStepIndex + 1;
-    const percent = ((this.currentStepIndex) / (total - 1)) * 100;
+    // Determine progress based on question steps only
+    const steps = Array.isArray(this.config.steps) ? this.config.steps : [];
+    const questionIndices = steps
+      .map((step, index) => ({ step, index }))
+      .filter(({ step }) => step && step.type === 'question')
+      .map(({ index }) => index);
+
+    const total = questionIndices.length || 1;
+    const currentQuestionIndex = questionIndices.findIndex(index => index === this.currentStepIndex);
+    const current = currentQuestionIndex >= 0 ? currentQuestionIndex + 1 : 0;
+    const percent = total > 0 ? (Math.max(current - 1, 0) / total) * 100 : 0;
 
     return `
       <div class="onb1-progress">
