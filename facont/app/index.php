@@ -13,6 +13,16 @@
       // Ensures clients fetch updated CSS and assets after deploy.
       $facont_ver = @filemtime(__DIR__ . '/facont.css');
       if (!$facont_ver) { $facont_ver = time(); }
+
+      // Commit info (optional): can be provided via ENV or commit.txt
+      $facont_commit = getenv('FACONT_COMMIT');
+      if (!$facont_commit) {
+        $commit_path = __DIR__ . '/commit.txt';
+        if (@file_exists($commit_path)) {
+          $facont_commit = trim((string) @file_get_contents($commit_path));
+        }
+      }
+      if (!$facont_commit) { $facont_commit = 'unknown'; }
     ?>
     <link rel="stylesheet" href="./facont.css?v=<?php echo $facont_ver; ?>" />
   </head>
@@ -61,6 +71,7 @@
       // Base URL for partials/relative assets.
       // IMPORTANT: keep it relative so deployments to different folders/domains work.
       window.FACONT_BASE_URL = '.';
+      console.info('Facont commit:', '<?php echo htmlspecialchars($facont_commit, ENT_QUOTES); ?>');
     </script>
 
     <!-- Modules -->
