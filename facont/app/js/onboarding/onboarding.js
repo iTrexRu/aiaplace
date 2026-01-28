@@ -198,6 +198,54 @@ async function facontInitOnboardingOverview() {
       }
     }
   });
+
+  // Express onboarding
+  const expressInput = document.getElementById('facont-express-input');
+  const expressBtn = document.getElementById('facont-express-submit');
+  const expressStatus = document.getElementById('facont-express-status');
+
+  if (expressBtn) {
+    expressBtn.addEventListener('click', async () => {
+      const text = (expressInput && expressInput.value ? expressInput.value : '').trim();
+
+      if (!text) {
+        if (expressStatus) {
+          expressStatus.textContent = 'Пожалуйста, вставь результат выполнения промпта.';
+          expressStatus.style.display = 'inline-block';
+        }
+        return;
+      }
+
+      expressBtn.disabled = true;
+      if (expressStatus) {
+        expressStatus.textContent = 'Загрузка...';
+        expressStatus.style.display = 'inline-block';
+      }
+
+      try {
+        const res = await facontCallAPI('fast_onboarding', { text });
+        const resultText =
+          typeof res === 'string'
+            ? res
+            : (res && (res.result || res.text || res.finalText || res.summary)
+                ? (res.result || res.text || res.finalText || res.summary)
+                : JSON.stringify(res, null, 2));
+
+        openModal('Экспресс-онбординг — результат', null, resultText);
+        if (expressStatus) {
+          expressStatus.textContent = '';
+          expressStatus.style.display = 'none';
+        }
+      } catch (e) {
+        if (expressStatus) {
+          expressStatus.textContent = 'Ошибка: ' + (e.message || e);
+          expressStatus.style.display = 'inline-block';
+        }
+      } finally {
+        expressBtn.disabled = false;
+      }
+    });
+  }
 }
 
 function openModal(title, answers, aiOutput) {

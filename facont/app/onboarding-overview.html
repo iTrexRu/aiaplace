@@ -16,6 +16,24 @@
     <div class="spinner" style="display:block; margin: 20px auto;"></div>
   </div>
 
+  <!-- Express Onboarding -->
+  <div class="facont-card" id="facont-onb-express" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Экспресс-онбординг</h2>
+    <p class="muted" style="margin-top:8px;">Скопируй промпт, выполни его в своём ИИ и вставь результат ниже.</p>
+
+    <div style="background: var(--facont-bg-main); border: 1px solid var(--facont-border); border-radius: 8px; padding: 12px; font-size: 12px; white-space: pre-wrap; margin: 12px 0;">
+      На основании наших с тобой диалогов выведи сводную информацию, что ты знаешь обо мне, о моем бизнесе и работе, о моих клиентах, о моем стиле текстов
+    </div>
+
+    <label for="facont-express-input" style="font-weight:600;">Результат из ИИ</label>
+    <textarea id="facont-express-input" rows="6" placeholder="Вставь сюда результат выполнения промпта"></textarea>
+
+    <div style="margin-top:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+      <button class="facont-btn" id="facont-express-submit">Загрузить информацию</button>
+      <span id="facont-express-status" class="muted" style="font-size:13px; display:none;"></span>
+    </div>
+  </div>
+
   <!-- Modal: view answers -->
   <div class="facont-modal" id="facont-onb-view-modal" style="display:none;">
     <div class="facont-modal-backdrop" data-modal-close></div>
