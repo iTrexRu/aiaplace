@@ -23,6 +23,14 @@ jobs:
           echo "Sample:"
           find facont -type f | head -n 30
 
+      - name: Write commit hash for frontend
+        shell: bash
+        run: |
+          set -e
+          COMMIT_HASH=$(git rev-parse HEAD)
+          echo "$COMMIT_HASH" > facont/app/commit.txt
+          echo "Wrote commit hash: $COMMIT_HASH"
+
       - name: Deploy to ABSOLUTE docroot
         uses: appleboy/scp-action@v0.1.7
         with:
