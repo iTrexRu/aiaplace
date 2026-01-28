@@ -64,22 +64,22 @@
     </script>
 
     <!-- Modules -->
-    <script src="./js/core/api.js"></script>
-    <script src="./js/auth/auth.js"></script>
-    <script src="./js/home/home.js"></script>
-    <script src="./js/onboarding/onboarding-config.js"></script>
-    <script src="./js/onboarding/onboarding-engine.js"></script>
-    <script src="./js/onboarding/onboarding.js"></script>
-    <script src="./js/user/user.js"></script>
-    <script src="./js/content/content.js"></script>
-    <script src="./js/features/generic-generator.js"></script>
-    <script src="./js/features/idea-post.js"></script>
-    <script src="./js/features/stories-text.js"></script>
-    <script src="./js/features/titles.js"></script>
-    <script src="./js/features/carousel.js"></script>
-    <script src="./js/features/reels.js"></script>
-    <script src="./js/core/router.js"></script>
-    <script src="./js/core/bootstrap.js"></script>
-    <script src="./facont.js"></script>
+    <script src="./js/core/api.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/auth/auth.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/home/home.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/onboarding/onboarding-config.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/onboarding/onboarding-engine.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/onboarding/onboarding.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/user/user.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/content/content.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/features/generic-generator.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/features/idea-post.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/features/stories-text.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/features/titles.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/features/carousel.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/features/reels.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/core/router.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/core/bootstrap.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./facont.js?v=<?php echo $facont_ver; ?>"></script>
   </body>
 </html>
