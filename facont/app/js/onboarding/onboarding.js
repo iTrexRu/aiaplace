@@ -368,7 +368,8 @@ function facontInitOnboardingGeneric(blockId, containerId) {
   const config = window.FACONT_ONBOARDING_CONFIG;
   if (!config || !config.blocks) {
     const container = document.getElementById(containerId);
-    if (container) container.innerHTML = '<p class="error">Ошибка конфигурации: blocks not found. (Config script might not be loaded)</p>';
+    const errorHtml = '<p class="error">Ошибка конфигурации: blocks not found. (Config script might not be loaded)</p>';
+    if (container) container.innerHTML = errorHtml;
     console.error('Onboarding config missing');
     return;
   }
