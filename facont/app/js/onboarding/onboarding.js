@@ -178,8 +178,12 @@ async function facontInitOnboardingOverview() {
     // Welcome Modal logic
     const welcomeModal = document.getElementById('facont-onb-welcome-modal');
     if (welcomeModal) {
-      // Always show modal when entering onboarding overview
-      welcomeModal.style.display = 'flex';
+      // Show modal only if onboarding is not fully complete
+      if (!allDone) {
+        welcomeModal.style.display = 'flex';
+      } else {
+        welcomeModal.style.display = 'none';
+      }
       
       const startBtn = document.getElementById('btn-onb-start');
       if (startBtn) {
