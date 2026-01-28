@@ -60,6 +60,42 @@ function updateBlockStatus(root, blockId, value) {
   }
 }
 
+function storeBlockAiOutput(root, blockId, aiOutput) {
+  const card = root.querySelector(`.facont-onb-block[data-block="${blockId}"]`);
+  if (!card) return;
+
+  const cleanOutput = (aiOutput || '').trim();
+  if (!cleanOutput) {
+    delete card.dataset.aiOutput;
+    return;
+  }
+
+  try {
+    card.dataset.aiOutput = JSON.stringify(cleanOutput);
+  } catch (_) {
+    card.dataset.aiOutput = cleanOutput;
+  }
+}
+
+function renderBlockStatusText(root, blockId, aiOutput, isDone) {
+  const el = root.querySelector(`[data-status="${blockId}"]`);
+  if (!el) return;
+
+  if (!isDone) {
+    el.textContent = 'Не заполнен';
+    return;
+  }
+
+  const text = (aiOutput || '').trim();
+  if (!text) {
+    el.textContent = 'Готово';
+    return;
+  }
+
+  const trimmed = text.length > 140 ? text.slice(0, 140).trim() + '…' : text;
+  el.textContent = trimmed;
+}
+
 function storeBlockAnswers(root, blockId, answers) {
   const card = root.querySelector(`.facont-onb-block[data-block="${blockId}"]`);
   if (!card) return;
@@ -120,6 +156,11 @@ async function facontInitOnboardingOverview() {
       const entry = onboardingByStep[block.id];
       const answers = entry && entry.meta && entry.meta.answers ? entry.meta.answers : null;
       storeBlockAnswers(root, block.id, answers);
+
+      // AI output for summary + modal
+      const aiOutput = entry && entry.aiOutput ? entry.aiOutput : null;
+      storeBlockAiOutput(root, block.id, aiOutput);
+      renderBlockStatusText(root, block.id, aiOutput, done);
     });
 
     // Progress Bar
@@ -180,10 +221,17 @@ async function facontInitOnboardingOverview() {
       if (card && card.dataset.answers) {
         try { answers = JSON.parse(card.dataset.answers); } catch (_) {}
       }
+
+      let aiOutput = null;
+      if (card && card.dataset.aiOutput) {
+        try { aiOutput = JSON.parse(card.dataset.aiOutput); } catch (_) {
+          aiOutput = card.dataset.aiOutput;
+        }
+      }
       
       const blockConfig = blocks.find(b => b.id === blockId);
       const title = blockConfig ? `${blockConfig.title} — ответы` : 'Ответы';
-      openModal(title, answers);
+      openModal(title, answers, aiOutput);
       return;
     }
 
