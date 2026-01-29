@@ -413,10 +413,13 @@ class OnboardingEngine {
   extractFinalText(res) {
     if (!res) return '';
     if (Array.isArray(res) && res[0] && res[0].ok) {
-      return String(res[0].onboarding_res || res[0].result || res[0].finalText || res[0].text || res[0].summary || res[0].stylePrompt || '').trim();
+      const item = res[0];
+      const value = item.onboarding_res || item.result || item.finalText || item.text || item.summary || item.stylePrompt || '';
+      return String(value).trim();
     }
     if (typeof res === 'object') {
-      return String(res.onboarding_res || res.result || res.finalText || res.text || res.summary || res.stylePrompt || '').trim();
+      const value = res.onboarding_res || res.result || res.finalText || res.text || res.summary || res.stylePrompt || '';
+      return String(value).trim();
     }
     return String(res).trim();
   }
