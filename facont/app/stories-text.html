@@ -1,34 +1,34 @@
 
+<div class="facont-card" style="border:none; background:transparent; box-shadow:none; padding:0; margin-bottom:0;">
+  <h1 style="margin-bottom:6px;">Сторис из текста</h1>
+  <p class="muted">Вставьте любой текст и получите 3 сценария сторис под ваш контент.</p>
+</div>
+
 <div class="card" id="stories-text-container">
+  <div id="stories-instruction-block">
+    <p class="muted">Вставьте любой свой текст: пост, статью, заметки, черновик. Нажмите кнопку генерации сторис.</p>
 
-  <h1>Сторис из текста</h1>
-
-  <div id="stories-instruction-block" class="card" style="margin-top:20px;">
-    <h2>Инструкция</h2>
-
-    <h3>Что нужно сделать</h3>
-    <p>Вставьте любой свой текст: пост, статью, заметки, черновик.<br>Нажмите кнопку генерации сторис.</p>
-
-    <h3>Что вы получите через 1 минуту</h3>
-    <p>3 разных сценария сторис под один и тот же текст:</p>
-    <ul>
+    <p class="muted">3 разных сценария сторис под один и тот же текст:</p>
+    <ul class="muted" style="padding-left:20px;">
       <li>готовая разбивка на экраны с текстом для каждой сторис,</li>
       <li>варианты интерактивов (вопросы, опросы, квизы – с юмором и без),</li>
       <li>подсказки: что написать титром, а что лучше сказать голосом,</li>
       <li>идеи для визуалов и советы, как увеличить охваты и вовлечённость.</li>
     </ul>
 
-    <p>Вы даёте сырой текст – "Фабрика" пишет три готовых формата сторис, из которых можно сразу собирать публикацию.</p>
+    <p class="muted">Вы даёте сырой текст – «Фабрика» пишет три готовых формата сторис, из которых можно сразу собирать публикацию.</p>
 
-    <textarea id="stories-text-input" class="facont-textarea" placeholder="Вставьте ваш текст здесь..." style="margin-top:15px;"></textarea>
+    <textarea id="stories-text-input" placeholder="Вставьте ваш текст здесь..." style="min-height:160px; margin-top:12px;"></textarea>
 
     <div id="stories-error" class="facont-error" style="display:none; margin-top:10px;"></div>
 
-    <button id="stories-generate-btn" class="facont-btn primary" style="margin-top:15px;">Создать сторис</button>
+    <div style="text-align:right; margin-top:20px;">
+      <button id="stories-generate-btn" class="btn" style="padding:12px 24px; font-size:15px;">Создать сторис</button>
+    </div>
   </div>
 
-  <div id="stories-result-block" class="card" style="margin-top:30px; display:none;">
-    <h1>Сторис из текста</h1>
+  <div id="stories-result-block" class="card" style="margin-top:24px; display:none;">
+    <h2 style="margin-bottom:12px;">Сторис готовы</h2>
 
     <div style="margin-bottom:20px;">
       <strong>&#128142; Что вы получили:</strong><br><br>
@@ -46,11 +46,11 @@
       &#8594; Люди возвращаются на следующий день<br>
     </div>
 
-    <textarea id="stories-result-text" class="facont-textarea" style="height:240px;"></textarea>
+    <textarea id="stories-result-text" style="height:240px;"></textarea>
 
     <div id="stories-save-error" class="facont-error" style="display:none; margin-top:10px;"></div>
 
-    <button id="stories-save-result" class="facont-btn primary" style="margin-top:15px;">Сохранить</button>
+    <button id="stories-save-result" class="btn" style="margin-top:15px;">Сохранить</button>
 
     <div id="stories-actions" style="display:none; margin-top:30px; flex-direction: column;">
       
@@ -66,8 +66,8 @@
       </div>
 
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="facont-btn secondary" data-open="carousel">&#128202; Карусель</button>
-        <button class="facont-btn secondary" data-open="reels">&#127916; Reels</button>
+        <button class="btn secondary" data-open="carousel">&#128202; Карусель</button>
+        <button class="btn secondary" data-open="reels">&#127916; Reels</button>
       </div>
 
       <div style="margin-top:20px;">

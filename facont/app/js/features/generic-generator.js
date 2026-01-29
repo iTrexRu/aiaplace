@@ -64,6 +64,15 @@ function facontBindGeneratorScreen(cfg) {
 
   if (!btnGenerate) return;
 
+  if (inputEl && !inputEl.value && typeof localStorage !== 'undefined') {
+    try {
+      const savedTheme = (localStorage.getItem('facont_current_theme') || '').trim();
+      if (savedTheme) {
+        inputEl.value = savedTheme;
+      }
+    } catch (_) {}
+  }
+
   // Generate Handler
   btnGenerate.addEventListener('click', async () => {
     facontShowInlineError(generateErrorEl, '');

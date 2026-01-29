@@ -1,34 +1,23 @@
+<div class="facont-card" style="border:none; background:transparent; box-shadow:none; padding:0; margin-bottom:0;">
+  <h1 style="margin-bottom:6px;">Reels</h1>
+  <p class="muted">Вставьте вводные — получите стратегию и контент‑план под ваши ролики.</p>
+</div>
+
 <div class="card" id="reels-container">
-  <h1>Reels</h1>
+  <div id="reels-instruction-block">
+    <p class="muted">Вставьте короткие данные о своём проекте: ниша, продукт, аудитория, цель, ваш уровень и оборудование.</p>
+    <p class="muted">На выходе: паттерны, формулы хуков, идеи роликов и контент‑план на месяц.</p>
 
-  <div id="reels-instruction-block" class="card" style="margin-top:20px;">
-    <h2>Инструкция</h2>
-
-    <h3>Что нужно сделать</h3>
-    <ul>
-      <li>Вставьте короткие данные о своём проекте: ниша, продукт, аудитория, цель, ваш уровень и оборудование.</li>
-      <li>Нажмите кнопку генерации стратегии.</li>
-    </ul>
-
-    <h3>Что вы получите через пару минут</h3>
-    <p>
-      Таблица 1. Паттерны и закономерности: топ-10 рабочих схем в вашей нише, примеры из файла, почему это заходит, как адаптировать под вас, готовые хуки, сложность съёмки.<br>
-      Таблица 2. Формулы хуков: 10+ универсальных конструкций, чтобы быстро придумывать свои первые секунды.<br>
-      Таблица 3. Идеи роликов + анти-кейсы: минимум 5 идей (быстрые и сложные), плюс что не стоит снимать — с примерами и причинами.<br>
-      Таблица 4. Контент-план на месяц: 20-30 тем с кратким смыслом, “почему актуально” и отметкой Evergreen или Тренд.
-    </p>
-    <p>
-      Вы даёте вводные — система возвращает понятную стратегию и готовый контент-план, который можно сразу переносить в календарь и снимать.
-    </p>
-
-    <textarea id="reels-text-input" class="facont-textarea" placeholder="Ниша, продукт, аудитория, цель, уровень, оборудование..." style="margin-top:15px;"></textarea>
+    <textarea id="reels-text-input" placeholder="Ниша, продукт, аудитория, цель, уровень, оборудование..." style="min-height:160px; margin-top:12px;"></textarea>
 
     <div id="reels-error" class="facont-error" style="display:none; margin-top:10px;"></div>
 
-    <button id="reels-generate-btn" class="facont-btn primary" style="margin-top:15px;">Сгенерировать стратегию</button>
+    <div style="text-align:right; margin-top:20px;">
+      <button id="reels-generate-btn" class="btn" style="padding:12px 24px; font-size:15px;">Сгенерировать стратегию</button>
+    </div>
   </div>
 
-  <div id="reels-result-block" class="card" style="margin-top:30px; display:none;">
+  <div id="reels-result-block" class="card" style="margin-top:24px; display:none;">
     <div style="margin-bottom:20px;">
       <strong>💎 Что вы получили:</strong><br><br>
 
@@ -66,16 +55,16 @@
       [Ссылка: Создать что-то новое →]
     </div>
 
-    <textarea id="reels-result-text" class="facont-textarea" style="height:240px;"></textarea>
+    <textarea id="reels-result-text" style="height:240px;"></textarea>
 
     <div id="reels-save-error" class="facont-error" style="display:none; margin-top:10px;"></div>
 
-    <button id="reels-save-result" class="facont-btn primary" style="margin-top:15px;">Сохранить</button>
+    <button id="reels-save-result" class="btn" style="margin-top:15px;">Сохранить</button>
 
     <div id="reels-actions" style="display:none; margin-top:30px; flex-direction: column;">
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="facont-btn secondary" data-open="titles">📺 Заголовки</button>
-        <button class="facont-btn secondary" data-open="carousel">🎭 Карусель</button>
+        <button class="btn secondary" data-open="titles">📺 Заголовки</button>
+        <button class="btn secondary" data-open="carousel">🎭 Карусель</button>
       </div>
 
       <div style="margin-top:20px;">

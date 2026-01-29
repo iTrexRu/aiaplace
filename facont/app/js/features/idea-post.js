@@ -18,6 +18,16 @@ function facontInitIdeaPost() {
   let activeTab = 'text';
   let pendingTab = null;
 
+  if (activeTab === 'text') {
+    const input = document.getElementById('idea-text-input');
+    if (input && !input.value && typeof localStorage !== 'undefined') {
+      try {
+        const savedTheme = (localStorage.getItem('facont_current_theme') || '').trim();
+        if (savedTheme) input.value = savedTheme;
+      } catch (_) {}
+    }
+  }
+
   function switchTab(target) {
     activeTab = target;
     
