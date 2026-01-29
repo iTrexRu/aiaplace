@@ -60,6 +60,9 @@ function facontRenderApp() {
   } else {
     facontShowView('home', { replace: true });
   }
+  if (typeof window.facontBindThemeEvents === 'function') {
+    window.facontBindThemeEvents();
+  }
 }
 
 // === Auth Init ===
@@ -120,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function getThemeElements() {
     return {
       bar: document.getElementById('facont-theme-bar'),
-      input: document.getElementById('facont-theme-input'),
+      preview: document.getElementById('facont-theme-preview'),
       btnNew: document.getElementById('facont-theme-new'),
       modal: document.getElementById('facont-theme-modal'),
       modalConfirm: document.getElementById('facont-theme-confirm'),
@@ -143,8 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.facontUpdateThemeBar = function(view) {
-    const { bar, input } = getThemeElements();
-    if (!bar || !input) return;
+    const { bar, preview } = getThemeElements();
+    if (!bar || !preview) return;
     const hiddenViews = ['settings', 'profile'];
     const isOnboarding = view && view.startsWith('onboarding');
     if (isOnboarding || hiddenViews.includes(view)) {
@@ -152,22 +155,13 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     bar.classList.remove('facont-hidden');
-    input.value = getCurrentTheme();
+    const theme = getCurrentTheme();
+    preview.textContent = theme ? theme.split('\n').slice(0, 3).join('\n') : 'Пока нет темы';
   };
 
   function bindThemeEvents() {
-    const { bar, input, btnNew, modal, modalCancel, modalConfirmBtn } = getThemeElements();
-    if (!bar || !input) return;
-
-    input.addEventListener('change', () => {
-      const value = setCurrentTheme(input.value);
-      input.value = value;
-    });
-
-    input.addEventListener('blur', () => {
-      const value = setCurrentTheme(input.value);
-      input.value = value;
-    });
+    const { bar, btnNew, modal, modalCancel, modalConfirmBtn, preview } = getThemeElements();
+    if (!bar || !preview) return;
 
     if (btnNew) {
       btnNew.addEventListener('click', () => {
@@ -184,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalConfirmBtn) {
       modalConfirmBtn.addEventListener('click', () => {
         clearCurrentTheme();
-        const { modalConfirm, modalActions, input } = getThemeElements();
-        if (input) input.value = '';
+        const { modalConfirm, modalActions, preview } = getThemeElements();
+        if (preview) preview.textContent = 'Пока нет темы';
         if (modalConfirm) modalConfirm.style.display = 'none';
         if (modalActions) modalActions.style.display = 'block';
       });
@@ -211,7 +205,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  bindThemeEvents();
+  function updateThemeFromInput(value) {
+    const next = setCurrentTheme(value);
+    const { preview } = getThemeElements();
+    if (preview) {
+      preview.textContent = next ? next.split('\n').slice(0, 3).join('\n') : 'Пока нет темы';
+    }
+  }
+
+  window.facontSetThemeFromInput = function(value) {
+    if (!value) return;
+    updateThemeFromInput(value);
+  };
+
+  window.facontClearTheme = function() {
+    clearCurrentTheme();
+    const { preview } = getThemeElements();
+    if (preview) preview.textContent = 'Пока нет темы';
+  };
+
+  window.facontBindThemeEvents = bindThemeEvents;
   const params = new URLSearchParams(window.location.search);
   const view = params.get('view');
 

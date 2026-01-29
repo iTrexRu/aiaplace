@@ -143,6 +143,9 @@ async function submitText() {
   setError('');
 
   try {
+    if (typeof window.facontSetThemeFromInput === 'function') {
+      window.facontSetThemeFromInput(text);
+    }
     const res = await facontCallAPI('post-from-text', { text });
     showResult(res);
   } catch (e) {
@@ -167,6 +170,9 @@ async function submitImage() {
   reader.onload = async function(e) {
     const base64Data = e.target.result;
     try {
+      if (typeof window.facontSetThemeFromInput === 'function') {
+        window.facontSetThemeFromInput(file.name || 'Изображение');
+      }
       const res = await facontCallAPI('post-from-img', {
         image: base64Data,
         filename: file.name
@@ -249,6 +255,9 @@ function resetForm() {
   if (imageInput) imageInput.value = '';
   if (fileLabel) fileLabel.textContent = '';
   if (status) status.textContent = '';
+  if (typeof window.facontClearTheme === 'function') {
+    window.facontClearTheme();
+  }
   
   setError('');
   // Scroll to top

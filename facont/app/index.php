@@ -62,8 +62,8 @@
 
         <main class="facont-main">
           <div id="facont-theme-bar" class="facont-theme-bar facont-hidden">
-            <div class="facont-theme-label">Актуальная тема:</div>
-            <input id="facont-theme-input" class="facont-theme-input" type="text" placeholder="Введите тему..." />
+            <div class="facont-theme-title">Активная тема</div>
+            <div id="facont-theme-preview" class="facont-theme-preview">Пока нет темы</div>
             <button id="facont-theme-new" class="btn secondary">Новая тема</button>
           </div>
           <div id="facont-main"></div>
