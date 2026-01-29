@@ -61,6 +61,11 @@
         </aside>
 
         <main class="facont-main">
+          <div id="facont-theme-bar" class="facont-theme-bar facont-hidden">
+            <div class="facont-theme-label">Актуальная тема:</div>
+            <input id="facont-theme-input" class="facont-theme-input" type="text" placeholder="Введите тему..." />
+            <button id="facont-theme-new" class="btn secondary">Новая тема</button>
+          </div>
           <div id="facont-main"></div>
         </main>
       </div>
@@ -72,6 +77,35 @@
       window.FACONT_BASE_URL = '.';
       console.info('Facont commit:', '<?php echo htmlspecialchars($facont_commit, ENT_QUOTES); ?>');
     </script>
+
+    <!-- Theme modal -->
+    <div class="facont-modal" id="facont-theme-modal" style="display:none;">
+      <div class="facont-modal-backdrop" data-theme-close></div>
+      <div class="facont-modal-dialog" style="max-width: 420px;">
+        <div class="facont-modal-header" style="border:none; padding-bottom:0;">
+          <h2 style="font-size:18px; margin:0;">Новая тема</h2>
+        </div>
+        <div class="facont-modal-body" style="padding-top:10px;">
+          <div id="facont-theme-confirm">
+            <p style="margin-bottom:20px; color:var(--facont-text-muted);">Хочешь начать работать с новой темой?</p>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+              <button class="btn secondary" id="facont-theme-cancel">Продолжить с текущей</button>
+              <button class="btn" id="facont-theme-confirm-btn">Да</button>
+            </div>
+          </div>
+          <div id="facont-theme-actions" style="display:none;">
+            <p style="margin-bottom:16px; color:var(--facont-text-muted);">Выберите раздел для новой темы:</p>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+              <button class="btn secondary" data-theme-target="idea_post">Идея в пост</button>
+              <button class="btn secondary" data-theme-target="stories_text">Сторис из текста</button>
+              <button class="btn secondary" data-theme-target="titles">Заголовки</button>
+              <button class="btn secondary" data-theme-target="carousel">Карусель</button>
+              <button class="btn secondary" data-theme-target="reels">Reels</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Modules -->
     <script src="./js/core/api.js?v=<?php echo $facont_ver; ?>"></script>

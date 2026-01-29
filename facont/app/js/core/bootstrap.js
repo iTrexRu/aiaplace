@@ -91,6 +91,127 @@ async function facontLogout() {
 
 // === Bootstrap Entry Point ===
 document.addEventListener('DOMContentLoaded', () => {
+  const storageKey = 'facont_current_theme';
+
+  function getCurrentTheme() {
+    try {
+      return (localStorage.getItem(storageKey) || '').trim();
+    } catch (_) {
+      return '';
+    }
+  }
+
+  function setCurrentTheme(value) {
+    const next = (value || '').trim();
+    try {
+      if (next) {
+        localStorage.setItem(storageKey, next);
+      } else {
+        localStorage.removeItem(storageKey);
+      }
+    } catch (_) {}
+    return next;
+  }
+
+  function clearCurrentTheme() {
+    return setCurrentTheme('');
+  }
+
+  function getThemeElements() {
+    return {
+      bar: document.getElementById('facont-theme-bar'),
+      input: document.getElementById('facont-theme-input'),
+      btnNew: document.getElementById('facont-theme-new'),
+      modal: document.getElementById('facont-theme-modal'),
+      modalConfirm: document.getElementById('facont-theme-confirm'),
+      modalActions: document.getElementById('facont-theme-actions'),
+      modalCancel: document.getElementById('facont-theme-cancel'),
+      modalConfirmBtn: document.getElementById('facont-theme-confirm-btn')
+    };
+  }
+
+  function closeThemeModal() {
+    const { modal } = getThemeElements();
+    if (modal) modal.style.display = 'none';
+  }
+
+  function openThemeModal() {
+    const { modal, modalConfirm, modalActions } = getThemeElements();
+    if (modalConfirm) modalConfirm.style.display = 'block';
+    if (modalActions) modalActions.style.display = 'none';
+    if (modal) modal.style.display = 'flex';
+  }
+
+  window.facontUpdateThemeBar = function(view) {
+    const { bar, input } = getThemeElements();
+    if (!bar || !input) return;
+    const hiddenViews = ['settings', 'profile'];
+    const isOnboarding = view && view.startsWith('onboarding');
+    if (isOnboarding || hiddenViews.includes(view)) {
+      bar.classList.add('facont-hidden');
+      return;
+    }
+    bar.classList.remove('facont-hidden');
+    input.value = getCurrentTheme();
+  };
+
+  function bindThemeEvents() {
+    const { bar, input, btnNew, modal, modalCancel, modalConfirmBtn } = getThemeElements();
+    if (!bar || !input) return;
+
+    input.addEventListener('change', () => {
+      const value = setCurrentTheme(input.value);
+      input.value = value;
+    });
+
+    input.addEventListener('blur', () => {
+      const value = setCurrentTheme(input.value);
+      input.value = value;
+    });
+
+    if (btnNew) {
+      btnNew.addEventListener('click', () => {
+        openThemeModal();
+      });
+    }
+
+    if (modalCancel) {
+      modalCancel.addEventListener('click', () => {
+        closeThemeModal();
+      });
+    }
+
+    if (modalConfirmBtn) {
+      modalConfirmBtn.addEventListener('click', () => {
+        clearCurrentTheme();
+        const { modalConfirm, modalActions, input } = getThemeElements();
+        if (input) input.value = '';
+        if (modalConfirm) modalConfirm.style.display = 'none';
+        if (modalActions) modalActions.style.display = 'block';
+      });
+    }
+
+    if (modal) {
+      modal.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target && target.hasAttribute('data-theme-close')) {
+          closeThemeModal();
+        }
+      });
+
+      modal.addEventListener('click', (event) => {
+        const btn = event.target.closest('[data-theme-target]');
+        if (!btn) return;
+        const view = btn.dataset.themeTarget;
+        closeThemeModal();
+        if (view && typeof window.facontShowView === 'function') {
+          window.facontShowView(view);
+        }
+      });
+    }
+  }
+
+  bindThemeEvents();
   const params = new URLSearchParams(window.location.search);
   const view = params.get('view');
 
