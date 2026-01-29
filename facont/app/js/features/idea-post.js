@@ -1,5 +1,5 @@
 // -----------------------------
-// IDEA POST FEATURE
+// IDEA POST FEATURE 
 // -----------------------------
 
 function facontInitIdeaPost() {
