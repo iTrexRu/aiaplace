@@ -53,14 +53,17 @@ class OnboardingEngine {
 
     const total = questionIndices.length || 1;
     const currentQuestionIndex = questionIndices.findIndex(index => index === this.currentStepIndex);
+    const lastQuestionIndex = questionIndices.length ? questionIndices[questionIndices.length - 1] : -1;
+    const isAfterQuestions = currentQuestionIndex === -1 && this.currentStepIndex > lastQuestionIndex;
     const current = currentQuestionIndex >= 0 ? currentQuestionIndex + 1 : 0;
-    const percent = total > 0 ? (Math.max(current - 1, 0) / total) * 100 : 0;
+    const percent = isAfterQuestions ? 100 : (total > 0 ? (Math.max(current - 1, 0) / total) * 100 : 0);
+    const progressLabel = isAfterQuestions ? 'Готово' : `Шаг ${current} из ${total}`;
 
     return `
       <div class="onb1-progress">
         <div class="onb1-progress-header">
           <span>${this.config.title}</span>
-          <span>Шаг ${current} из ${total}</span>
+          <span>${progressLabel}</span>
         </div>
         <div class="onb1-progress-bar">
           <div class="onb1-progress-bar-inner" style="width: ${percent}%"></div>

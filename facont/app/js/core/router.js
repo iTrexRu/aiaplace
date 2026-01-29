@@ -183,11 +183,6 @@ async function facontShowView(view, options = {}) {
     return;
   }
 
-  if (view === 'nlp') {
-    await facontLoadPartial('nlp.html');
-    return;
-  }
-
   // Unknown view -> 404 placeholder
   await facontLoadPartial('404.html');
 }

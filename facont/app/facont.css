@@ -430,7 +430,7 @@
 
 .facont-status-done,
 .facont-onb-status.done {
-  color: var(--facont-success);
+  color: var(--facont-text-muted);
 }
 
 /* inline errors under textareas */

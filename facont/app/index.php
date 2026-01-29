@@ -48,7 +48,6 @@
             <li class="facont-menu-item" data-view="titles">Заголовки</li>
             <li class="facont-menu-item" data-view="carousel">Карусель</li>
             <li class="facont-menu-item" data-view="reels">Reels</li>
-            <li class="facont-menu-item" data-view="nlp">НЛП</li>
             <li class="facont-menu-item" data-view="content_list">Готовый контент</li>
             <li class="facont-menu-item" data-view="settings">Настройки</li>
             <li class="facont-menu-item" data-view="profile">Профиль</li>
