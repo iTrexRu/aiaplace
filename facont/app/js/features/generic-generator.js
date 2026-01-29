@@ -91,6 +91,16 @@ function facontBindGeneratorScreen(cfg) {
       if (typeof window.facontSetThemeFromInput === 'function') {
         window.facontSetThemeFromInput(text);
       }
+      if (typeof window.facontMarkThemeProgress === 'function' && cmdGenerate) {
+        const map = {
+          stories_text: 'stories_text',
+          gen_titles: 'titles',
+          gen_carousel: 'carousel',
+          gen_reels: 'reels'
+        };
+        const key = map[cmdGenerate];
+        if (key) window.facontMarkThemeProgress(key);
+      }
       const res = await facontCallAPI(cmdGenerate, { text });
 
       // If backend returns a logical error in JSON with HTTP 200

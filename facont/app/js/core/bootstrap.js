@@ -95,6 +95,7 @@ async function facontLogout() {
 // === Bootstrap Entry Point ===
 document.addEventListener('DOMContentLoaded', () => {
   const storageKey = 'facont_current_theme';
+  const progressKey = 'facont_theme_progress';
 
   function getCurrentTheme() {
     try {
@@ -120,17 +121,51 @@ document.addEventListener('DOMContentLoaded', () => {
     return setCurrentTheme('');
   }
 
+  function getThemeProgress() {
+    try {
+      const raw = localStorage.getItem(progressKey);
+      return raw ? JSON.parse(raw) : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function setThemeProgress(next) {
+    try {
+      localStorage.setItem(progressKey, JSON.stringify(next || {}));
+    } catch (_) {}
+    return next || {};
+  }
+
   function getThemeElements() {
     return {
       bar: document.getElementById('facont-theme-bar'),
       preview: document.getElementById('facont-theme-preview'),
       btnNew: document.getElementById('facont-theme-new'),
+      progressLinks: document.querySelectorAll('[data-theme-link]'),
+      progressChecks: document.querySelectorAll('[data-theme-check]'),
       modal: document.getElementById('facont-theme-modal'),
       modalConfirm: document.getElementById('facont-theme-confirm'),
       modalActions: document.getElementById('facont-theme-actions'),
       modalCancel: document.getElementById('facont-theme-cancel'),
       modalConfirmBtn: document.getElementById('facont-theme-confirm-btn')
     };
+  }
+
+  function renderThemeProgress() {
+    const { progressChecks } = getThemeElements();
+    if (!progressChecks || !progressChecks.length) return;
+    const progress = getThemeProgress();
+    progressChecks.forEach((check) => {
+      const key = check.dataset.themeCheck;
+      if (key && progress[key]) {
+        check.classList.add('done');
+        check.textContent = '✓';
+      } else {
+        check.classList.remove('done');
+        check.textContent = '';
+      }
+    });
   }
 
   function closeThemeModal() {
@@ -157,10 +192,11 @@ document.addEventListener('DOMContentLoaded', () => {
     bar.classList.remove('facont-hidden');
     const theme = getCurrentTheme();
     preview.textContent = theme ? theme.split('\n').slice(0, 3).join('\n') : 'Пока нет темы';
+    renderThemeProgress();
   };
 
   function bindThemeEvents() {
-    const { bar, btnNew, modal, modalCancel, modalConfirmBtn, preview } = getThemeElements();
+    const { bar, btnNew, modal, modalCancel, modalConfirmBtn, preview, progressLinks } = getThemeElements();
     if (!bar || !preview) return;
 
     if (btnNew) {
@@ -180,8 +216,22 @@ document.addEventListener('DOMContentLoaded', () => {
         clearCurrentTheme();
         const { modalConfirm, modalActions, preview } = getThemeElements();
         if (preview) preview.textContent = 'Пока нет темы';
+        setThemeProgress({});
+        renderThemeProgress();
         if (modalConfirm) modalConfirm.style.display = 'none';
         if (modalActions) modalActions.style.display = 'block';
+      });
+    }
+
+    if (progressLinks && progressLinks.length) {
+      progressLinks.forEach((link) => {
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+          const view = link.dataset.themeLink;
+          if (view && typeof window.facontShowView === 'function') {
+            window.facontShowView(view);
+          }
+        });
       });
     }
 
@@ -218,10 +268,19 @@ document.addEventListener('DOMContentLoaded', () => {
     updateThemeFromInput(value);
   };
 
+  window.facontMarkThemeProgress = function(type) {
+    if (!type) return;
+    const next = { ...getThemeProgress(), [type]: true };
+    setThemeProgress(next);
+    renderThemeProgress();
+  };
+
   window.facontClearTheme = function() {
     clearCurrentTheme();
     const { preview } = getThemeElements();
     if (preview) preview.textContent = 'Пока нет темы';
+    setThemeProgress({});
+    renderThemeProgress();
   };
 
   window.facontBindThemeEvents = bindThemeEvents;

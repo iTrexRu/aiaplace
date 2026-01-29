@@ -65,6 +65,28 @@
             <div class="facont-theme-title">Активная тема</div>
             <div id="facont-theme-preview" class="facont-theme-preview">Пока нет темы</div>
             <button id="facont-theme-new" class="btn secondary">Новая тема</button>
+            <div class="facont-theme-progress">
+              <a href="#" class="facont-theme-item" data-theme-link="idea_post">
+                <span class="facont-theme-check" data-theme-check="idea_post"></span>
+                <span>Пост</span>
+              </a>
+              <a href="#" class="facont-theme-item" data-theme-link="stories_text">
+                <span class="facont-theme-check" data-theme-check="stories_text"></span>
+                <span>Сторис</span>
+              </a>
+              <a href="#" class="facont-theme-item" data-theme-link="titles">
+                <span class="facont-theme-check" data-theme-check="titles"></span>
+                <span>Заголовки</span>
+              </a>
+              <a href="#" class="facont-theme-item" data-theme-link="carousel">
+                <span class="facont-theme-check" data-theme-check="carousel"></span>
+                <span>Карусель</span>
+              </a>
+              <a href="#" class="facont-theme-item" data-theme-link="reels">
+                <span class="facont-theme-check" data-theme-check="reels"></span>
+                <span>Reels</span>
+              </a>
+            </div>
           </div>
           <div id="facont-main"></div>
         </main>

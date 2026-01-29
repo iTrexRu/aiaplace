@@ -156,6 +156,9 @@ async function submitText() {
     if (typeof window.facontSetThemeFromInput === 'function') {
       window.facontSetThemeFromInput(text);
     }
+    if (typeof window.facontMarkThemeProgress === 'function') {
+      window.facontMarkThemeProgress('idea_post');
+    }
     const res = await facontCallAPI('post-from-text', { text });
     showResult(res);
   } catch (e) {
@@ -182,6 +185,9 @@ async function submitImage() {
     try {
       if (typeof window.facontSetThemeFromInput === 'function') {
         window.facontSetThemeFromInput(file.name || 'Изображение');
+      }
+      if (typeof window.facontMarkThemeProgress === 'function') {
+        window.facontMarkThemeProgress('idea_post');
       }
       const res = await facontCallAPI('post-from-img', {
         image: base64Data,
