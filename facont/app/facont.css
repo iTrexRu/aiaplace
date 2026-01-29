@@ -289,7 +289,7 @@
   border: 1px solid var(--facont-border-soft);
   border-radius: 10px;
   box-shadow: 0 1px 3px var(--facont-shadow-card);
-  position: absolute;
+  position: fixed;
   top: auto;
   bottom: 24px;
   right: 24px;

@@ -256,10 +256,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateThemeFromInput(value) {
+    const prev = getCurrentTheme();
     const next = setCurrentTheme(value);
     const { preview } = getThemeElements();
     if (preview) {
       preview.textContent = next ? next.split('\n').slice(0, 3).join('\n') : 'Пока нет темы';
+    }
+    if (prev && next && prev !== next) {
+      setThemeProgress({});
+      renderThemeProgress();
     }
   }
 
