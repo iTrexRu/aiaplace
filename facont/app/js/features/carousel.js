@@ -61,6 +61,10 @@ function facontInitCarousel() {
         const resText = document.getElementById('carousel-result-text');
         if (resText) resText.value = '';
       }
+
+      if (typeof window.facontClearTheme === 'function') {
+        window.facontClearTheme();
+      }
       
       // Clear inputs? Optional, but "New Post" usually implies fresh start.
       // Keeping input might be useful if they just want to try another format with same text.

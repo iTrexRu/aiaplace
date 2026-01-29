@@ -79,6 +79,9 @@ function facontBindGeneratorScreen(cfg) {
     btnGenerate.textContent = generateBtnLoadingText || 'Генерирую...';
 
     try {
+      if (typeof window.facontSetThemeFromInput === 'function') {
+        window.facontSetThemeFromInput(text);
+      }
       const res = await facontCallAPI(cmdGenerate, { text });
 
       // If backend returns a logical error in JSON with HTTP 200
@@ -192,6 +195,10 @@ function facontBindGeneratorScreen(cfg) {
 
       facontShowInlineError(generateErrorEl, '');
       facontShowInlineError(saveErrorEl, '');
+
+      if (typeof window.facontClearTheme === 'function') {
+        window.facontClearTheme();
+      }
 
       window.scrollTo(0, 0);
     });
