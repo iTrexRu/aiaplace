@@ -290,8 +290,8 @@
   border-radius: 10px;
   box-shadow: 0 1px 3px var(--facont-shadow-card);
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 120px;
+  right: 24px;
   width: 240px;
   z-index: 2;
 }
@@ -307,8 +307,13 @@
   font-size: 13px;
   color: var(--facont-text);
   line-height: 1.4;
-  max-height: 3.6em;
+  max-height: 4.2em;
+  min-height: 4.2em;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  margin-bottom: 2px;
 }
 
 .facont-theme-progress {
