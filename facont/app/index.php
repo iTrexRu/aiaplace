@@ -48,6 +48,7 @@
             <li class="facont-menu-item" data-view="titles">Заголовки</li>
             <li class="facont-menu-item" data-view="carousel">Карусель</li>
             <li class="facont-menu-item" data-view="reels">Reels</li>
+            <li class="facont-menu-item" data-view="my_prompt">Свой промт</li>
             <li class="facont-menu-item" data-view="content_list">Готовый контент</li>
             <li class="facont-menu-item" data-view="settings">Настройки</li>
             <li class="facont-menu-item" data-view="profile">Профиль</li>
@@ -85,6 +86,10 @@
               <a href="#" class="facont-theme-item" data-theme-link="reels">
                 <span class="facont-theme-check" data-theme-check="reels"></span>
                 <span>Reels</span>
+              </a>
+              <a href="#" class="facont-theme-item" data-theme-link="my_prompt">
+                <span class="facont-theme-check" data-theme-check="my_prompt"></span>
+                <span>Свой промт</span>
               </a>
             </div>
           </div>
@@ -144,6 +149,7 @@
     <script src="./js/features/titles.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./js/features/carousel.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./js/features/reels.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/features/my-prompt.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./js/core/router.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./js/core/bootstrap.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./facont.js?v=<?php echo $facont_ver; ?>"></script>

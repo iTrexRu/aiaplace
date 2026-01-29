@@ -200,6 +200,20 @@ async function facontShowView(view, options = {}) {
     return;
   }
 
+  if (view === 'my_prompt') {
+    const main = await facontLoadPartial('my-prompt.html');
+    if (typeof facontInitMyPrompt === 'function') facontInitMyPrompt();
+    if (typeof facontUpdateThemeBar === 'function') facontUpdateThemeBar(view);
+    return;
+  }
+
+  if (view === 'my_prompt_manage') {
+    const main = await facontLoadPartial('my-prompt-manage.html');
+    if (typeof facontInitMyPromptManage === 'function') facontInitMyPromptManage();
+    if (typeof facontUpdateThemeBar === 'function') facontUpdateThemeBar(view);
+    return;
+  }
+
   // Unknown view -> 404 placeholder
   await facontLoadPartial('404.html');
   if (typeof facontUpdateThemeBar === 'function') facontUpdateThemeBar(view);

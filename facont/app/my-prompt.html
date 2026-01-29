@@ -1,0 +1,40 @@
+<div class="facont-card" style="border:none; background:transparent; box-shadow:none; padding:0; margin-bottom:0;">
+  <h1 style="margin-bottom:6px;">Свой промт</h1>
+  <p class="muted">Запусти свой промт для текущей темы. Выбери промт из списка и при необходимости отредактируй его перед запуском.</p>
+</div>
+
+<div class="card" id="my-prompt-main-card">
+  <div class="facont-flex facont-gap-8 facont-mb-16" style="align-items:flex-start;">
+    <div style="flex:1;">
+      <label class="muted" for="my-prompt-select">Выбери свой промт</label>
+      <select id="my-prompt-select" class="facont-w-100" style="height:40px; border-radius:8px; border:1px solid var(--facont-border); padding:6px 10px;"></select>
+    </div>
+    <div style="display:flex; align-items:flex-end;">
+      <button id="my-prompt-manage-link" class="btn secondary" style="height:40px;">Управление</button>
+    </div>
+  </div>
+
+  <div class="facont-mb-16">
+    <label class="muted" for="my-prompt-text">Текст промта</label>
+    <textarea id="my-prompt-text" style="min-height:140px;" placeholder="Введите текст промта..."></textarea>
+    <div class="facont-text-secondary facont-mt-10 facont-small">Изменения здесь используются только для текущего запуска.</div>
+  </div>
+
+  <div class="facont-mb-16">
+    <label class="muted" for="my-prompt-theme">Тема</label>
+    <textarea id="my-prompt-theme" style="min-height:120px;" placeholder="Опишите тему..."></textarea>
+  </div>
+
+  <div id="my-prompt-generate-error" class="facont-error" style="display:none; margin-top:8px;"></div>
+
+  <div style="text-align:right; margin-top:20px;">
+    <button id="my-prompt-run" class="btn" style="padding:12px 24px; font-size:15px;">Выполнить</button>
+    <span id="my-prompt-busy" class="spinner" style="display:none;"></span>
+  </div>
+</div>
+
+<div id="my-prompt-result" class="card" style="margin-top:24px; display:none;">
+  <h2 style="margin-bottom:12px;">Результат</h2>
+  <textarea id="my-prompt-result-text" style="min-height:260px;"></textarea>
+  <div id="my-prompt-save-error" class="facont-error" style="display:none; margin-top:10px;"></div>
+</div>
