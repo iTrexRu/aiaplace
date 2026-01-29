@@ -290,7 +290,8 @@
   border-radius: 10px;
   box-shadow: 0 1px 3px var(--facont-shadow-card);
   position: absolute;
-  top: 120px;
+  top: auto;
+  bottom: 24px;
   right: 24px;
   width: 240px;
   z-index: 2;
@@ -310,6 +311,8 @@
   max-height: 4.2em;
   min-height: 4.2em;
   overflow: hidden;
+  word-break: break-word;
+  white-space: pre-wrap;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
