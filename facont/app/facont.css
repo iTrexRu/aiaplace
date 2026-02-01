@@ -412,10 +412,26 @@
 /* поля ввода, которые есть в онбординге и настройках */
 .card input[type="text"],
 .card input[type="url"],
+.card input[type="email"],
+.card input[type="password"],
+.card input[type="number"],
+.card input[type="search"],
 .card textarea,
+.card select,
 .facont-card input[type="text"],
 .facont-card input[type="url"],
-.facont-card textarea {
+.facont-card input[type="email"],
+.facont-card input[type="password"],
+.facont-card input[type="number"],
+.facont-card input[type="search"],
+.facont-card textarea,
+.facont-card select,
+.facont-modal-body input[type="text"],
+.facont-modal-body input[type="url"],
+.facont-modal-body input[type="email"],
+.facont-modal-body input[type="password"],
+.facont-modal-body textarea,
+.facont-modal-body select {
   width: 100%;
   margin-top: 6px;
   padding: 8px 10px;
@@ -427,15 +443,21 @@
 }
 
 .card textarea,
-.facont-card textarea {
+.facont-card textarea,
+.facont-modal-body textarea {
   min-height: 120px;
   resize: vertical;
 }
 
 .card input:focus,
 .card textarea:focus,
+.card select:focus,
 .facont-card input:focus,
-.facont-card textarea:focus {
+.facont-card textarea:focus,
+.facont-card select:focus,
+.facont-modal-body input:focus,
+.facont-modal-body textarea:focus,
+.facont-modal-body select:focus {
   outline: none;
   border-color: var(--facont-focus);
   box-shadow: 0 0 0 1px var(--facont-shadow-focus);
