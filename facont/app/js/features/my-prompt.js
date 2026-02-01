@@ -13,7 +13,15 @@ function facontNormalizeMyPromptItem(item) {
 
 async function facontFetchMyPrompts() {
   const res = await facontCallAPI('list_my_prompts');
-  const raw = Array.isArray(res) ? res : (res && (res.items || res.prompts || res.data) ? (res.items || res.prompts || res.data) : []);
+  let raw = [];
+  if (Array.isArray(res)) {
+    raw = res;
+    if (res[0] && Array.isArray(res[0].response)) {
+      raw = res[0].response;
+    }
+  } else if (res && (res.items || res.prompts || res.data || res.response)) {
+    raw = res.items || res.prompts || res.data || res.response;
+  }
   return raw.map(facontNormalizeMyPromptItem).filter(Boolean);
 }
 
