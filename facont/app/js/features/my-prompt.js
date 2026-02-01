@@ -328,7 +328,7 @@ function facontInitMyPromptManage() {
   if (modal) {
     modal.addEventListener('click', (event) => {
       const target = event.target;
-      if (target && target.hasAttribute('data-my-prompt-close')) {
+      if (target && target.hasAttribute('data-modal-close')) {
         closeModal();
       }
     });

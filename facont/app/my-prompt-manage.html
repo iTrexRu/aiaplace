@@ -18,12 +18,13 @@
 </div>
 
 <div class="facont-modal" id="my-prompt-modal" style="display:none;">
-  <div class="facont-modal-backdrop"></div>
-  <div class="facont-modal-dialog" style="max-width:520px;">
-    <div class="facont-modal-header" style="border:none; padding-bottom:0;">
-      <h2 id="my-prompt-modal-title" style="font-size:18px; margin:0;">Новый промт</h2>
+  <div class="facont-modal-backdrop" data-modal-close></div>
+  <div class="facont-modal-dialog" role="dialog" aria-modal="true" style="max-width:520px;">
+    <div class="facont-modal-header">
+      <h2 id="my-prompt-modal-title">Новый промт</h2>
+      <button class="facont-btn secondary" data-modal-close>Закрыть</button>
     </div>
-    <div class="facont-modal-body" style="padding-top:10px;">
+    <div class="facont-modal-body">
       <div class="facont-mb-16">
         <label class="muted" for="my-prompt-title">Название промта</label>
         <input id="my-prompt-title" type="text" placeholder="Название" />
