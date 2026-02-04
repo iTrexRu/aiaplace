@@ -132,6 +132,9 @@ function facontInitProfile() {
   const inputAddUrl = document.getElementById('prof-add-url');
   const statusAddUrl = document.getElementById('prof-add-url-status');
 
+  const btnUpgradePro = document.getElementById('btn-upgrade-pro');
+  const statusPayment = document.getElementById('payment-status');
+
   // --- Helper: Render Link Row ---
   function createLinkRow(link = {}) {
     if (!linksContainer) return;
@@ -345,6 +348,37 @@ function facontInitProfile() {
       } catch(e) { console.error(e); }
   });
 
+
+  // Upgrade to PRO
+  if (btnUpgradePro) {
+    btnUpgradePro.addEventListener('click', async () => {
+      btnUpgradePro.disabled = true;
+      if (statusPayment) {
+        statusPayment.style.display = 'block';
+        statusPayment.textContent = 'Подготовка оплаты...';
+      }
+
+      try {
+        const res = await facontCallAPI('payment_init', {
+          amount: 10,
+          currency: 'USD',
+          tariff: 'pro_monthly'
+        });
+
+        if (res && res.payment_url) {
+          window.location.href = res.payment_url;
+        } else {
+          throw new Error(res.message || 'Не удалось получить ссылку на оплату');
+        }
+      } catch (e) {
+        if (statusPayment) {
+          statusPayment.textContent = 'Ошибка: ' + (e.message || e);
+          statusPayment.classList.add('facont-text-danger');
+        }
+        btnUpgradePro.disabled = false;
+      }
+    });
+  }
 
   // Add Data from URL
   if (btnAddUrl) {
