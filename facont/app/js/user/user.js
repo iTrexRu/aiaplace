@@ -257,6 +257,22 @@ function facontInitProfile() {
       currentLinksState = links;
       renderLinks(currentLinksState);
 
+      // --- Subscription UI ---
+      const isPro = onboarding && onboarding.pro === 'ok';
+      const subActions = document.getElementById('prof-sub-actions');
+      const subStatusOk = document.getElementById('prof-sub-status-ok');
+      const subDesc = document.getElementById('prof-sub-desc');
+
+      if (isPro) {
+        if (subActions) subActions.style.display = 'none';
+        if (subStatusOk) subStatusOk.style.display = 'flex';
+        if (subDesc) subDesc.textContent = 'У вас активирован полный доступ ко всем функциям системы.';
+      } else {
+        if (subActions) subActions.style.display = 'flex';
+        if (subStatusOk) subStatusOk.style.display = 'none';
+        if (subDesc) subDesc.textContent = 'Доступ ко всем генераторам и неограниченному количеству контента.';
+      }
+
     } catch (e) {
       console.error('Error loading profile:', e);
     }
