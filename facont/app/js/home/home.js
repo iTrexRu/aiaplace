@@ -68,6 +68,61 @@ function facontInitHome() {
     return value === 'ok';
   }
 
+  async function loadStats() {
+    const statsEl = document.getElementById('facont-home-stats');
+    if (!statsEl) return;
+
+    // TODO: Move to settings config. Rate: 1500 RUB/h, Time: 0.5h
+    const PRICE_PER_CONTENT = 750;
+
+    try {
+      const res = await facontCallAPI('content-list', {});
+      
+      const rawItems =
+        (res && typeof res === 'object' && !Array.isArray(res) && Array.isArray(res.items))
+          ? res.items
+          : (Array.isArray(res) && res[0] && Array.isArray(res[0].items))
+            ? res[0].items
+            : [];
+
+      const items = (rawItems || []).filter((it) => {
+        const generated = (it && it.generated_content ? String(it.generated_content) : '').trim();
+        return generated.length > 0;
+      });
+
+      const totalCount = items.length;
+      const totalSaved = totalCount * PRICE_PER_CONTENT;
+
+      const now = new Date();
+      const todayString = now.toLocaleDateString('ru-RU');
+      
+      const todayItems = items.filter(it => {
+        if (!it.created_at) return false;
+        const d = new Date(it.created_at);
+        return d.toLocaleDateString('ru-RU') === todayString;
+      });
+
+      const todayCount = todayItems.length;
+      const todaySaved = todayCount * PRICE_PER_CONTENT;
+
+      const elTotalCount = document.getElementById('stat-total-count');
+      const elTotalSaved = document.getElementById('stat-total-saved');
+      const elTodayCount = document.getElementById('stat-today-count');
+      const elTodaySaved = document.getElementById('stat-today-saved');
+
+      if (elTotalCount) elTotalCount.textContent = String(totalCount);
+      if (elTotalSaved) elTotalSaved.textContent = totalSaved.toLocaleString('ru-RU') + ' ₽';
+      if (elTodayCount) elTodayCount.textContent = String(todayCount);
+      if (elTodaySaved) elTodaySaved.textContent = todaySaved.toLocaleString('ru-RU') + ' ₽';
+
+      statsEl.style.display = 'block';
+
+    } catch (e) {
+      console.warn('Failed to load stats:', e);
+      statsEl.style.display = 'none';
+    }
+  }
+
   (async () => {
     setError('');
     clearActions();
@@ -113,6 +168,7 @@ function facontInitHome() {
         addBtn('Карусель', 'carousel');
         addBtn('Reels', 'reels');
         addBtn('Готовый контент', 'content_list');
+        loadStats();
         return;
       }
 
@@ -147,6 +203,7 @@ function facontInitHome() {
 
       // content list under "Посмотрим..."
       addBtn('Готовый контент', 'content_list', contentActionsEl);
+      loadStats();
       return;
 
     } catch (e) {

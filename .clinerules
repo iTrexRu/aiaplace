@@ -1,0 +1,22 @@
+# Rules for AI Assistant (Cline)
+
+## General Process
+1.  **Plan Mode First**: Always analyze the request and codebase in PLAN MODE before making changes.
+2.  **Context Sync**: Start every session by identifying the current state, branch, and recent changes.
+3.  **Documentation**: Keep `docs/` updated. If you change code logic, update `FUNCTIONS.md` or `PROJECT_CONTEXT.md`.
+4.  **Language**: Communicate in Russian unless instructed otherwise. Code comments should be in English or Russian (consistent with file).
+
+## Code Style (Frontend)
+*   **JS**: Vanilla JS, ES6 Modules. No transpilers.
+*   **CSS**: CSS Variables for theming. BEM-like naming (`.block-element`).
+*   **Formatting**: 2 spaces indentation. Semicolons required.
+*   **Files**: Keep files under 1000 lines. Split large modules if necessary.
+
+## Architecture
+*   **Routing**: Use `facontShowView` for navigation. Do not use `window.location.href` for internal links.
+*   **API**: Always use `facontCallAPI`. Do not use `fetch` directly for backend calls.
+*   **State**: Use `localStorage` for persistent session data only.
+
+## Constraints
+*   Do NOT introduce build tools (Webpack, Vite, etc.) without explicit permission.
+*   Do NOT change the folder structure of `facont/` root without approval.

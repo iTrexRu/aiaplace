@@ -862,3 +862,32 @@
     flex-direction: column;
   }
 }
+
+/* Dashboard Stats */
+.facont-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.facont-stat-card {
+  background: var(--facont-bg-card);
+  border: 1px solid var(--facont-border-soft);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.facont-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--facont-text);
+}
+
+.facont-stat-label {
+  font-size: 13px;
+  color: var(--facont-text-secondary);
+}
