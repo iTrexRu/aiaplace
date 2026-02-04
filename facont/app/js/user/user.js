@@ -424,7 +424,29 @@ function facontInitProfile() {
     });
   }
 
+  // --- Handle Payment Return ---
+  function checkPaymentStatus() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      if (statusPayment) {
+        statusPayment.style.display = 'block';
+        statusPayment.textContent = 'Оплата прошла успешно! Ваш аккаунт PRO активирован.';
+        statusPayment.classList.remove('facont-text-danger');
+        statusPayment.classList.add('facont-text-success');
+      }
+      
+      // Clear URL params to avoid message on refresh
+      const url = new URL(window.location.href);
+      url.searchParams.delete('payment');
+      window.history.replaceState({}, '', url.toString());
+
+      // Notify user with alert or modal if needed
+      // alert('Поздравляем! Доступ PRO активирован.');
+    }
+  }
+
   loadProfile();
+  checkPaymentStatus();
 }
 
 window.facontInitSettings = facontInitSettings;
