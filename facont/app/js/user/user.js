@@ -366,7 +366,23 @@ function facontInitProfile() {
         });
 
         if (res && res.payment_url) {
-          window.location.href = res.payment_url;
+          const w = 500;
+          const h = 700;
+          const left = (screen.width / 2) - (w / 2);
+          const top = (screen.height / 2) - (h / 2);
+          
+          window.open(
+            res.payment_url, 
+            'AllPay', 
+            `width=${w},height=${h},top=${top},left=${left},status=yes,toolbar=no,menubar=no,location=no`
+          );
+
+          if (statusPayment) {
+            statusPayment.textContent = 'Окно оплаты открыто. После завершения платежа обновите страницу.';
+            statusPayment.classList.remove('facont-text-danger');
+            statusPayment.classList.add('facont-text-success');
+          }
+          btnUpgradePro.disabled = false;
         } else {
           throw new Error(res.message || 'Не удалось получить ссылку на оплату');
         }
