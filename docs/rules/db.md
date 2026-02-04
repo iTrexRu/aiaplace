@@ -88,3 +88,5 @@
 *   `preferred_ai` (text): NULLABLE.
 *   `password_hash` (text): NULLABLE.
 *   `is_email_verified` (boolean): default `false`.
+*   `tariff` (text): default `'free'`.
+*   `tariff_expires_at` (timestamp with time zone): NULLABLE.

@@ -258,7 +258,11 @@ function facontInitProfile() {
       renderLinks(currentLinksState);
 
       // --- Subscription UI ---
-      const isPro = onboarding && onboarding.pro === 'ok';
+      // New logic: check tariff and expiry date
+      const tariff = user.tariff || 'free';
+      const expiresAt = user.tariffExpiresAt || user.tariff_expires_at;
+      const isPro = tariff === 'pro' && (!expiresAt || new Date(expiresAt) > new Date());
+      
       const subActions = document.getElementById('prof-sub-actions');
       const subStatusOk = document.getElementById('prof-sub-status-ok');
       const subDesc = document.getElementById('prof-sub-desc');
@@ -266,7 +270,14 @@ function facontInitProfile() {
       if (isPro) {
         if (subActions) subActions.style.display = 'none';
         if (subStatusOk) subStatusOk.style.display = 'flex';
-        if (subDesc) subDesc.textContent = 'У вас активирован полный доступ ко всем функциям системы.';
+        if (subDesc) {
+           let desc = 'У вас активирован полный доступ ко всем функциям системы.';
+           if (expiresAt) {
+             const dateStr = new Date(expiresAt).toLocaleDateString('ru-RU');
+             desc += ` Подписка действует до ${dateStr}.`;
+           }
+           subDesc.textContent = desc;
+        }
       } else {
         if (subActions) subActions.style.display = 'flex';
         if (subStatusOk) subStatusOk.style.display = 'none';
