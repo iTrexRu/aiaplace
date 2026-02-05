@@ -33,11 +33,12 @@ function facontInitDailyIdeas(containerId, type = 'block') {
       
       // Call API
       const res = await facontCallAPI('actual_ideas', {});
-      if (res && res.featured) {
+      // Validate structure
+      if (res && res.featured && Array.isArray(res.list)) {
         ideasData = res;
         localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(ideasData));
       } else {
-        // Fallback if API returns empty
+        console.warn('API returned invalid structure:', res);
         ideasData = getPlaceholderData();
       }
       render();
@@ -144,10 +145,212 @@ function facontInitDailyIdeas(containerId, type = 'block') {
     return html;
   }
 
+  }
+
   // === HOME BLOCK RENDERER ===
   function renderHomeBlock() {
     const { featured, list, stats } = ideasData;
-    const count = list.length;
+    const count = list ? list.length : 0;
+    
+    const featuredTitle = featured.title || 'Идея дня';
+    const featuredHint = featured.hint || featured.subtitle || '';
+    const featuredWhy = featured.why || featured.opening || '';
+    const featuredFormat = featured.format || 'Пост';
+    const featuredTime = featured.time || '2 мин';
+
+    if (!isExpanded) {
+      // COLLAPSED STATE
+      container.innerHTML = `
+        <div class="facont-idea-card">
+          <div class="facont-idea-card-header">
+            <div class="facont-idea-label">
+              <span class="facont-idea-label-dot"></span>
+              Идея дня
+            </div>
+          </div>
+          <div class="facont-idea-content">
+            <div class="facont-idea-main">
+              <h2 class="facont-idea-question">${featuredTitle}</h2>
+              <p class="facont-idea-hint">${featuredHint}</p>
+              <p class="facont-idea-why">${featuredWhy}</p>
+              <div class="facont-idea-actions">
+                <button class="facont-idea-btn" data-action="use-featured">Дополнить историю · ${featuredTime}</button>
+                <span class="facont-idea-format">${featuredFormat}</span>
+              </div>
+            </div>
+            <div class="facont-idea-side" data-action="expand">
+              <div class="facont-idea-counter">+${count}</div>
+              <div class="facont-idea-counter-label">темы<br>ждут вас</div>
+              <span class="facont-idea-side-link">Смотреть →</span>
+            </div>
+          </div>
+          <div class="idea-card-footer" style="margin-top:28px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+            ${renderWeekProgress(stats)}
+          </div>
+        </div>
+      `;
+    } else {
+      // EXPANDED STATE
+      let listHtml = '';
+      (list || []).forEach(item => {
+        listHtml += `
+          <div class="facont-idea-item">
+            <span class="facont-idea-type-badge">${item.badge || 'Идея'}</span>
+            <h4>${item.title}</h4>
+            <p>${item.why || item.subtitle || item.opening || ''}</p>
+            <div class="facont-idea-item-footer">
+              <span style="font-size:12px; color:rgba(255,255,255,0.35);">${item.format || 'Пост'}</span>
+              <button class="facont-idea-item-btn" data-action="use-item" data-title="${item.title}">Создать · ${item.time || '3м'}</button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="facont-idea-card">
+          <div class="facont-idea-expanded-header">
+            <h2 class="facont-idea-expanded-title">Ваши идеи для контента сегодня</h2>
+            <div class="facont-idea-expanded-actions">
+              <button class="facont-idea-expanded-btn" data-action="refresh">🔄 Обновить</button>
+              <button class="facont-idea-expanded-btn" data-action="collapse">Свернуть ↑</button>
+            </div>
+          </div>
+          <div class="facont-idea-expanded-layout">
+            <div class="facont-idea-featured">
+              <span class="facont-idea-featured-label">⭐ Рекомендуем</span>
+              <h3>${featuredTitle}</h3>
+              <p class="facont-idea-featured-hint">${featuredHint}</p>
+              <p class="facont-idea-featured-why">${featuredWhy}</p>
+              <div class="facont-idea-featured-footer">
+                <span class="facont-idea-format">${featuredFormat}</span>
+                <button class="facont-idea-btn" data-action="use-featured">Дополнить · ${featuredTime}</button>
+              </div>
+            </div>
+            <div class="facont-idea-list">
+              ${listHtml}
+            </div>
+          </div>
+          <div class="idea-card-footer" style="margin-top:28px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+            ${renderWeekProgress(stats)}
+          </div>
+        </div>
+      `;
+    }
+    attachEvents();
+  }
+
+  // === DRAWER RENDERER ===
+  function renderDrawer() {
+    const { featured, list, stats } = ideasData;
+    const count = list ? list.length : 0;
+    
+    const featuredTitle = featured.title || 'Идея дня';
+    const featuredHint = featured.hint || featured.subtitle || '';
+    const featuredWhy = featured.why || featured.opening || '';
+    const featuredFormat = featured.format || 'Пост';
+    const featuredTime = featured.time || '2 мин';
+  // === HOME BLOCK RENDERER ===
+  function renderHomeBlock() {
+    const { featured, list, stats } = ideasData;
+    const count = list ? list.length : 0;
+    
+    const featuredTitle = featured.title || 'Идея дня';
+    const featuredHint = featured.hint || featured.subtitle || '';
+    const featuredWhy = featured.why || featured.opening || '';
+    const featuredFormat = featured.format || 'Пост';
+    const featuredTime = featured.time || '2 мин';
+
+    if (!isExpanded) {
+      // COLLAPSED STATE
+      container.innerHTML = `
+        <div class="facont-idea-card">
+          <div class="facont-idea-card-header">
+            <div class="facont-idea-label">
+              <span class="facont-idea-label-dot"></span>
+              Идея дня
+            </div>
+          </div>
+          <div class="facont-idea-content">
+            <div class="facont-idea-main">
+              <h2 class="facont-idea-question">${featuredTitle}</h2>
+              <p class="facont-idea-hint">${featuredHint}</p>
+              <p class="facont-idea-why">${featuredWhy}</p>
+              <div class="facont-idea-actions">
+                <button class="facont-idea-btn" data-action="use-featured">Дополнить историю · ${featuredTime}</button>
+                <span class="facont-idea-format">${featuredFormat}</span>
+              </div>
+            </div>
+            <div class="facont-idea-side" data-action="expand">
+              <div class="facont-idea-counter">+${count}</div>
+              <div class="facont-idea-counter-label">темы<br>ждут вас</div>
+              <span class="facont-idea-side-link">Смотреть →</span>
+            </div>
+          </div>
+          <div class="idea-card-footer" style="margin-top:28px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+            ${renderWeekProgress(stats)}
+          </div>
+        </div>
+      `;
+    } else {
+      // EXPANDED STATE
+      let listHtml = '';
+      (list || []).forEach(item => {
+        listHtml += `
+          <div class="facont-idea-item">
+            <span class="facont-idea-type-badge">${item.badge || 'Идея'}</span>
+            <h4>${item.title}</h4>
+            <p>${item.why || item.subtitle || item.opening || ''}</p>
+            <div class="facont-idea-item-footer">
+              <span style="font-size:12px; color:rgba(255,255,255,0.35);">${item.format || 'Пост'}</span>
+              <button class="facont-idea-item-btn" data-action="use-item" data-title="${item.title}">Создать · ${item.time || '3м'}</button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="facont-idea-card">
+          <div class="facont-idea-expanded-header">
+            <h2 class="facont-idea-expanded-title">Ваши идеи для контента сегодня</h2>
+            <div class="facont-idea-expanded-actions">
+              <button class="facont-idea-expanded-btn" data-action="refresh">🔄 Обновить</button>
+              <button class="facont-idea-expanded-btn" data-action="collapse">Свернуть ↑</button>
+            </div>
+          </div>
+          <div class="facont-idea-expanded-layout">
+            <div class="facont-idea-featured">
+              <span class="facont-idea-featured-label">⭐ Рекомендуем</span>
+              <h3>${featuredTitle}</h3>
+              <p class="facont-idea-featured-hint">${featuredHint}</p>
+              <p class="facont-idea-featured-why">${featuredWhy}</p>
+              <div class="facont-idea-featured-footer">
+                <span class="facont-idea-format">${featuredFormat}</span>
+                <button class="facont-idea-btn" data-action="use-featured">Дополнить · ${featuredTime}</button>
+              </div>
+            </div>
+            <div class="facont-idea-list">
+              ${listHtml}
+            </div>
+          </div>
+          <div class="idea-card-footer" style="margin-top:28px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+            ${renderWeekProgress(stats)}
+          </div>
+        </div>
+      `;
+    }
+    attachEvents();
+  }
+
+  // === DRAWER RENDERER ===
+  function renderDrawer() {
+    const { featured, list, stats } = ideasData;
+    const count = list ? list.length : 0;
+    
+    const featuredTitle = featured.title || 'Идея дня';
+    const featuredHint = featured.hint || featured.subtitle || '';
+    const featuredWhy = featured.why || featured.opening || '';
+    const featuredFormat = featured.format || 'Пост';
+    const featuredTime = featured.time || '2 мин';
 
     if (!isExpanded) {
       // COLLAPSED STATE
@@ -243,7 +446,7 @@ function facontInitDailyIdeas(containerId, type = 'block') {
             <span class="facont-idea-label-dot" style="width:4px; height:4px;"></span>
             Идея дня
           </div>
-          <span style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.8); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${featured.title}</span>
+          <span style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.8); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${featuredTitle}</span>
         </div>
         <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
           <div style="font-size:12px; color:rgba(255,255,255,0.4);"><strong>+${count}</strong> темы</div>
@@ -268,24 +471,24 @@ function facontInitDailyIdeas(containerId, type = 'block') {
              <!-- Featured -->
              <div class="facont-idea-featured" style="padding:20px;">
                 <span class="facont-idea-featured-label" style="font-size:9px; padding:3px 8px; margin-bottom:10px;">⭐ Рекомендуем</span>
-                <div style="font-size:16px; font-weight:800; margin-bottom:6px;">${featured.title}</div>
-                <p style="font-size:12px; color:rgba(255,255,255,0.45); margin-bottom:10px;">${featured.why}</p>
+                <div style="font-size:16px; font-weight:800; margin-bottom:6px;">${featuredTitle}</div>
+                <p style="font-size:12px; color:rgba(255,255,255,0.45); margin-bottom:10px;">${featuredWhy}</p>
                 <div class="facont-idea-featured-footer" style="margin-top:auto;">
-                   <span style="font-size:11px; color:rgba(255,255,255,0.3);">${featured.format}</span>
-                   <button class="facont-idea-btn" style="padding:9px 16px; font-size:11px;" data-action="use-featured">Дополнить · ${featured.time}</button>
+                   <span style="font-size:11px; color:rgba(255,255,255,0.3);">${featuredFormat}</span>
+                   <button class="facont-idea-btn" style="padding:9px 16px; font-size:11px;" data-action="use-featured">Дополнить · ${featuredTime}</button>
                 </div>
              </div>
 
              <!-- List -->
              <div class="facont-idea-list">
-               ${list.map(item => `
+               ${(list || []).map(item => `
                  <div class="facont-idea-item" style="padding:16px;">
-                    <span class="facont-idea-type-badge" style="font-size:9px; padding:3px 8px; margin-bottom:8px;">${item.badge}</span>
+                    <span class="facont-idea-type-badge" style="font-size:9px; padding:3px 8px; margin-bottom:8px;">${item.badge || 'Идея'}</span>
                     <h4 style="font-size:13px; margin-bottom:4px;">${item.title}</h4>
-                    <p style="font-size:10px; margin-bottom:8px;">${item.why}</p>
+                    <p style="font-size:10px; margin-bottom:8px;">${item.why || item.subtitle || item.opening || ''}</p>
                     <div class="facont-idea-item-footer">
-                       <span style="font-size:10px; color:rgba(255,255,255,0.35);">${item.format}</span>
-                       <button class="facont-idea-item-btn" style="padding:7px 12px; font-size:11px;" data-action="use-item" data-title="${item.title}">Создать · ${item.time}</button>
+                       <span style="font-size:10px; color:rgba(255,255,255,0.35);">${item.format || 'Пост'}</span>
+                       <button class="facont-idea-item-btn" style="padding:7px 12px; font-size:11px;" data-action="use-item" data-title="${item.title}">Создать · ${item.time || '3м'}</button>
                     </div>
                  </div>
                `).join('')}
