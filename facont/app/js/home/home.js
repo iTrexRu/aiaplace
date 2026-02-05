@@ -127,6 +127,25 @@ function facontInitHome() {
     setError('');
     clearActions();
 
+    // (0) Init Daily Ideas IMMEDIATELY (don't wait for profile)
+    if (typeof facontInitDailyIdeas === 'function') {
+        let ideasContainer = document.getElementById('facont-daily-ideas-home');
+        // Ensure container exists at the correct place (before title)
+        if (!ideasContainer && titleEl) {
+           ideasContainer = document.createElement('div');
+           ideasContainer.id = 'facont-daily-ideas-home';
+           // Insert BEFORE title
+           titleEl.parentNode.insertBefore(ideasContainer, titleEl);
+           
+           // Spacing
+           ideasContainer.style.marginBottom = '24px';
+        }
+
+        if (ideasContainer) {
+           facontInitDailyIdeas('facont-daily-ideas-home', 'block');
+        }
+    }
+
     if (titleEl) titleEl.textContent = 'Загрузка...';
     setBody('');
 
@@ -191,27 +210,7 @@ function facontInitHome() {
       const generatorsActionsEl = document.getElementById('facont-home-actions-generators');
       const contentActionsEl = document.getElementById('facont-home-actions-content');
 
-      // (0) Render Daily Ideas Block at the top
-      if (typeof facontInitDailyIdeas === 'function') {
-        // Create container if not exists
-        let ideasContainer = document.getElementById('facont-daily-ideas-home');
-        if (!ideasContainer) {
-           ideasContainer = document.createElement('div');
-           ideasContainer.id = 'facont-daily-ideas-home';
-           // Insert after title
-           if (titleEl && titleEl.nextSibling) {
-             titleEl.parentNode.insertBefore(ideasContainer, titleEl.nextSibling);
-           } else if (titleEl) {
-             titleEl.parentNode.appendChild(ideasContainer);
-           }
-        }
-        
-        // Add spacing
-        ideasContainer.style.marginBottom = '24px';
-        ideasContainer.style.marginTop = '24px';
-
-        facontInitDailyIdeas('facont-daily-ideas-home', 'block');
-      }
+      // (old Daily Ideas init removed)
 
       // (3) "Завершить настройку" under onboarding пункт
       addBtn('Завершить настройку', 'onboarding_overview', onboardingActionsEl);
