@@ -31,10 +31,15 @@ function facontInitDailyIdeas(containerId, type = 'block') {
       // const res = await facontCallAPI('actual_ideas', {});
       // ideasData = res.data || [];
       
-      // Placeholder data for now (simulating API response structure)
-      ideasData = getPlaceholderData();
-      
-      localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(ideasData));
+      // Call API
+      const res = await facontCallAPI('actual_ideas', {});
+      if (res && res.featured) {
+        ideasData = res;
+        localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(ideasData));
+      } else {
+        // Fallback if API returns empty
+        ideasData = getPlaceholderData();
+      }
       render();
     } catch (e) {
       console.error('Failed to load daily ideas', e);
