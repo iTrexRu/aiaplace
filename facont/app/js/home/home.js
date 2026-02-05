@@ -127,34 +127,7 @@ function facontInitHome() {
     setError('');
     clearActions();
 
-    // (0) Init Daily Ideas IMMEDIATELY (don't wait for profile)
-    if (typeof facontInitDailyIdeas === 'function') {
-        let ideasContainer = document.getElementById('facont-daily-ideas-home');
-        // Ensure container exists at the correct place (before title)
-        if (!ideasContainer && titleEl) {
-           ideasContainer = document.createElement('div');
-           ideasContainer.id = 'facont-daily-ideas-home';
-           // Insert BEFORE title
-           titleEl.parentNode.insertBefore(ideasContainer, titleEl);
-           
-           // Spacing
-           ideasContainer.style.marginBottom = '24px';
-        }
-
-    if (ideasContainer) {
-       facontInitDailyIdeas('facont-daily-ideas-home', 'block');
-    }
-}
-
-// (0.1) Reposition Stats Block (ensure it's below everything)
-const statsEl = document.getElementById('facont-home-stats');
-if (statsEl) {
-    // Move to end of card
-    const card = document.getElementById('facont-home');
-    if (card) card.appendChild(statsEl);
-}
-
-if (titleEl) titleEl.textContent = 'Загрузка...';
+    if (titleEl) titleEl.textContent = 'Загрузка...';
     setBody('');
 
     try {
@@ -177,63 +150,70 @@ if (titleEl) titleEl.textContent = 'Загрузка...';
         );
         ensureActionsVisible();
         addBtn('Начать настройку', 'onboarding_overview');
-        return;
+      } else {
+        // all blocks done
+        const allDone = doneCount === blocks.length;
+
+        if (allDone) {
+          if (titleEl) titleEl.textContent = 'Чем займемся сегодня?';
+          setBody('');
+          ensureActionsVisible();
+          addBtn('Идея в пост', 'idea_post');
+          addBtn('Сторис из текста', 'stories_text');
+          addBtn('Заголовки', 'titles');
+          addBtn('Карусель', 'carousel');
+          addBtn('Reels', 'reels');
+          addBtn('Готовый контент', 'content_list');
+        } else {
+          // partial onboarding
+          if (titleEl) titleEl.textContent = 'Добро пожаловать в Фабрику контента!';
+          setBodyHtml(
+            '<strong>Что будем делать сейчас?</strong>' +
+              '<div class="facont-mt-12">- Завершим настройку системы под вас (это займёт 5–7 минут)</div>' +
+              '<div id="facont-home-actions-onboarding" class="facont-home-actions facont-mt-10"></div>' +
+              '<div class="facont-mt-16">- Начнем создавать контент?</div>' +
+              '<div id="facont-home-actions-generators" class="facont-home-actions facont-mt-10"></div>' +
+              '<div class="facont-mt-16">- Посмотрим, какой контент уже сделан раньше?</div>' +
+              '<div id="facont-home-actions-content" class="facont-home-actions facont-mt-10"></div>'
+          );
+
+          const onboardingActionsEl = document.getElementById('facont-home-actions-onboarding');
+          const generatorsActionsEl = document.getElementById('facont-home-actions-generators');
+          const contentActionsEl = document.getElementById('facont-home-actions-content');
+
+          addBtn('Завершить настройку', 'onboarding_overview', onboardingActionsEl);
+          addBtn('Идея в пост', 'idea_post', generatorsActionsEl);
+          addBtn('Сторис из текста', 'stories_text', generatorsActionsEl);
+          addBtn('Заголовки', 'titles', generatorsActionsEl);
+          addBtn('Карусель', 'carousel', generatorsActionsEl);
+          addBtn('Reels', 'reels', generatorsActionsEl);
+          addBtn('Готовый контент', 'content_list', contentActionsEl);
+        }
       }
 
-      // all blocks done
-      const allDone = doneCount === blocks.length;
+      // 1. Load Stats
+      await loadStats();
 
-      // all done: show generators as primary buttons
-      if (allDone) {
-        if (titleEl) titleEl.textContent = 'Чем займемся сегодня?';
-        setBody('');
-
-        ensureActionsVisible();
-        addBtn('Идея в пост', 'idea_post');
-        addBtn('Сторис из текста', 'stories_text');
-        addBtn('Заголовки', 'titles');
-        addBtn('Карусель', 'carousel');
-        addBtn('Reels', 'reels');
-        addBtn('Готовый контент', 'content_list');
-        loadStats();
-        return;
+      // 2. Init Daily Ideas AFTER everything else
+      if (typeof facontInitDailyIdeas === 'function') {
+          let ideasContainer = document.getElementById('facont-daily-ideas-home');
+          if (!ideasContainer && titleEl) {
+             ideasContainer = document.createElement('div');
+             ideasContainer.id = 'facont-daily-ideas-home';
+             titleEl.parentNode.insertBefore(ideasContainer, titleEl);
+             ideasContainer.style.marginBottom = '24px';
+          }
+          if (ideasContainer) {
+             facontInitDailyIdeas('facont-daily-ideas-home', 'block');
+          }
       }
 
-      // partial onboarding: structured layout with buttons under each пункт
-      if (titleEl) titleEl.textContent = 'Добро пожаловать в Фабрику контента!';
-
-      // (1) no "Добро пожаловать..." in the body
-      // (2) make "Что будем делать сейчас?" bold
-      setBodyHtml(
-        '<strong>Что будем делать сейчас?</strong>' +
-          '<div class="facont-mt-12">- Завершим настройку системы под вас (это займёт 5–7 минут)</div>' +
-          '<div id="facont-home-actions-onboarding" class="facont-home-actions facont-mt-10"></div>' +
-          '<div class="facont-mt-16">- Начнем создавать контент?</div>' +
-          '<div id="facont-home-actions-generators" class="facont-home-actions facont-mt-10"></div>' +
-          '<div class="facont-mt-16">- Посмотрим, какой контент уже сделан раньше?</div>' +
-          '<div id="facont-home-actions-content" class="facont-home-actions facont-mt-10"></div>'
-      );
-
-      const onboardingActionsEl = document.getElementById('facont-home-actions-onboarding');
-      const generatorsActionsEl = document.getElementById('facont-home-actions-generators');
-      const contentActionsEl = document.getElementById('facont-home-actions-content');
-
-      // (old Daily Ideas init removed)
-
-      // (3) "Завершить настройку" under onboarding пункт
-      addBtn('Завершить настройку', 'onboarding_overview', onboardingActionsEl);
-
-      // (4) generators under "Начнем создавать контент?"
-      addBtn('Идея в пост', 'idea_post', generatorsActionsEl);
-      addBtn('Сторис из текста', 'stories_text', generatorsActionsEl);
-      addBtn('Заголовки', 'titles', generatorsActionsEl);
-      addBtn('Карусель', 'carousel', generatorsActionsEl);
-      addBtn('Reels', 'reels', generatorsActionsEl);
-
-      // content list under "Посмотрим..."
-      addBtn('Готовый контент', 'content_list', contentActionsEl);
-      loadStats();
-      return;
+      // 3. Reposition Stats Block to the very bottom
+      const statsBlock = document.getElementById('facont-home-stats');
+      if (statsBlock) {
+          const card = document.getElementById('facont-home');
+          if (card) card.appendChild(statsBlock);
+      }
 
     } catch (e) {
       if (titleEl) titleEl.textContent = 'Facont';
