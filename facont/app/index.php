@@ -93,6 +93,9 @@
               </a>
             </div>
           </div>
+          <!-- Daily Ideas Drawer (hidden by default, injected here) -->
+          <div id="facont-daily-ideas-drawer" class="facont-drawer-container facont-hidden"></div>
+
           <div id="facont-main"></div>
         </main>
       </div>
@@ -143,6 +146,7 @@
     <script src="./js/onboarding/onboarding.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./js/user/user.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./js/content/content.js?v=<?php echo $facont_ver; ?>"></script>
+    <script src="./js/features/daily-ideas.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./js/features/generic-generator.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./js/features/idea-post.js?v=<?php echo $facont_ver; ?>"></script>
     <script src="./js/features/stories-text.js?v=<?php echo $facont_ver; ?>"></script>

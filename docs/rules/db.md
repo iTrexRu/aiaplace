@@ -63,6 +63,14 @@
 *   `created_at` (timestamp with time zone): default `now()`.
 *   `updated_at` (timestamp with time zone): default `now()`.
 
+### `daily_ideas`
+*   `id` (serial): PK.
+*   `user_id` (integer): NOT NULL.
+*   `date` (date): NOT NULL.
+*   `content` (jsonb): NOT NULL.
+*   `created_at` (timestamp with time zone): default `now()`.
+*   `UNIQUE (user_id, date)`.
+
 ### `users`
 *   `id` (integer): PK, auto-increment.
 *   `first_name` (text): NULLABLE.

@@ -61,6 +61,24 @@ async function facontShowView(view, options = {}) {
       .forEach(item => item.classList.toggle('active', item.dataset.view === view));
   }
 
+  // --- Daily Ideas Drawer Visibility Logic ---
+  // List of views where drawer should be visible
+  const drawerViews = [
+    'idea_post', 'stories_text', 'titles', 
+    'carousel', 'reels', 'my_prompt'
+  ];
+  
+  const drawerEl = document.getElementById('facont-daily-ideas-drawer');
+  if (drawerEl && window.facontInitDailyIdeas) {
+    if (drawerViews.includes(view)) {
+      drawerEl.classList.remove('facont-hidden');
+      // Initialize if not already (or just ensure it's rendered)
+      facontInitDailyIdeas('facont-daily-ideas-drawer', 'drawer');
+    } else {
+      drawerEl.classList.add('facont-hidden');
+    }
+  }
+
   // ==========================
   // РОУТЫ ОНБОРДИНГА
   // ==========================
