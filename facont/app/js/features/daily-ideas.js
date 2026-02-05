@@ -12,7 +12,7 @@ function facontInitDailyIdeas(containerId, type = 'block') {
   let ideasData = null;
   let isExpanded = false;
 
-  // --- Load Data ---
+  // --- Load Data --- 
   async function loadData() {
     // 1. Try local storage for today
     try {
