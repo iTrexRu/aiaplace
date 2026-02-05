@@ -26,26 +26,30 @@ function facontInitDailyIdeas(containerId, type = 'block') {
 
     // 2. Fetch from API
     renderLoading();
+    
+    // Safety delay to prevent overloading n8n with concurrent requests
+    // Wait 1.5s after page load start
+    await new Promise(r => setTimeout(r, 1500));
+
     try {
-      // TODO: Replace with real API call when ready
-      // const res = await facontCallAPI('actual_ideas', {});
-      // ideasData = res.data || [];
-      
       // Call API
       const res = await facontCallAPI('actual_ideas', {});
+      
       // Validate structure
       if (res && res.featured && Array.isArray(res.list)) {
         ideasData = res;
         localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(ideasData));
       } else {
-        console.warn('API returned invalid structure:', res);
+        console.warn('API returned invalid structure, using placeholder', res);
         ideasData = getPlaceholderData();
       }
-      render();
     } catch (e) {
-      console.error('Failed to load daily ideas', e);
-      renderError();
+      console.error('Failed to load daily ideas from API, using placeholder', e);
+      // HARD FALLBACK: If API fails (500, Timeout, etc), use placeholder so UI doesn't disappear
+      ideasData = getPlaceholderData();
     }
+    
+    render();
   }
 
   // --- Load State ---
@@ -364,12 +368,12 @@ function facontInitDailyIdeas(containerId, type = 'block') {
           </div>
           <div class="facont-idea-content">
             <div class="facont-idea-main">
-              <h2 class="facont-idea-question">${featured.title}</h2>
-              <p class="facont-idea-hint">${featured.hint}</p>
-              <p class="facont-idea-why">${featured.why}</p>
+              <h2 class="facont-idea-question">${featuredTitle}</h2>
+              <p class="facont-idea-hint">${featuredHint}</p>
+              <p class="facont-idea-why">${featuredWhy}</p>
               <div class="facont-idea-actions">
-                <button class="facont-idea-btn" data-action="use-featured">Дополнить историю · ${featured.time}</button>
-                <span class="facont-idea-format">${featured.format}</span>
+                <button class="facont-idea-btn" data-action="use-featured">Дополнить историю · ${featuredTime}</button>
+                <span class="facont-idea-format">${featuredFormat}</span>
               </div>
             </div>
             <div class="facont-idea-side" data-action="expand">

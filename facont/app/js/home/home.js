@@ -141,12 +141,20 @@ function facontInitHome() {
            ideasContainer.style.marginBottom = '24px';
         }
 
-        if (ideasContainer) {
-           facontInitDailyIdeas('facont-daily-ideas-home', 'block');
-        }
+    if (ideasContainer) {
+       facontInitDailyIdeas('facont-daily-ideas-home', 'block');
     }
+}
 
-    if (titleEl) titleEl.textContent = 'Загрузка...';
+// (0.1) Reposition Stats Block (ensure it's below everything)
+const statsEl = document.getElementById('facont-home-stats');
+if (statsEl) {
+    // Move to end of card
+    const card = document.getElementById('facont-home');
+    if (card) card.appendChild(statsEl);
+}
+
+if (titleEl) titleEl.textContent = 'Загрузка...';
     setBody('');
 
     try {
